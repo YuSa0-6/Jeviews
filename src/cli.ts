@@ -3,26 +3,30 @@
 // stdout にバージョン付き JSON を一つ、進捗と診断は stderr。
 // 終了コード: 0 = 完了、1 = 失敗または部分結果。
 
+import type { Provider } from './adapters/providers/provider.js';
 import { createTypeSafeProvider } from './adapters/providers/typesafe.js';
+import { createVercelGatewayProvider } from './adapters/providers/vercel-gateway.js';
 import { createGitRepository } from './adapters/repository/git.js';
-import type { ReviewOutput } from './review/output.js';
+import type { ProviderId, ReviewOutput } from './review/output.js';
 import { DEFAULT_MAX_STATE_BYTES, reviewAll } from './review/review.js';
 import { DEFAULT_THRESHOLDS } from './review/verdict.js';
 
-const USAGE = `usage: jeview all [--model <name>] [--max-state-bytes <n>] [--concurrency <n>]
+const USAGE = `usage: jeview all [--provider typesafe|vercel-gateway] [--model <name>] [--max-state-bytes <n>] [--concurrency <n>]
 
-env:
-  TYPESAFE_API_KEY   required
-  TYPESAFE_BASE_URL  optional, default https://api.typesafe.ai
+provider (default: typesafe when TYPESAFE_API_KEY is set, otherwise vercel-gateway when AI_GATEWAY_API_KEY is set):
+  typesafe         TypeSafe API direct.       env TYPESAFE_API_KEY, optional TYPESAFE_BASE_URL (https://api.typesafe.ai)
+  vercel-gateway   Vercel AI Gateway.         env AI_GATEWAY_API_KEY, optional AI_GATEWAY_BASE_URL (https://ai-gateway.vercel.sh/v4/ai)
+                   default model typesafe-ai/jev
 `;
 
-function fail(code: string, message: string): never {
+function fail(code: string, message: string, provider: ProviderId | null = null): never {
   const out: ReviewOutput = {
     schemaVersion: 1,
     run: {
       id: '',
       scope: 'all',
       mode: 'scan',
+      provider,
       model: '',
       snapshotId: '',
       policyHash: '',
@@ -42,8 +46,15 @@ function fail(code: string, message: string): never {
   process.exit(1);
 }
 
-function parseArgs(argv: string[]): { model?: string; maxStateBytes?: number; concurrency?: number } {
-  const opts: { model?: string; maxStateBytes?: number; concurrency?: number } = {};
+interface CliOptions {
+  provider?: ProviderId;
+  model?: string;
+  maxStateBytes?: number;
+  concurrency?: number;
+}
+
+function parseArgs(argv: string[]): CliOptions {
+  const opts: CliOptions = {};
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
     const next = () => {
@@ -51,7 +62,11 @@ function parseArgs(argv: string[]): { model?: string; maxStateBytes?: number; co
       if (v === undefined) fail('config', `missing value for ${a}`);
       return v;
     };
-    if (a === '--model') opts.model = next();
+    if (a === '--provider') {
+      const v = next();
+      if (v !== 'typesafe' && v !== 'vercel-gateway') fail('config', `unknown provider "${v}"\n${USAGE}`);
+      opts.provider = v;
+    } else if (a === '--model') opts.model = next();
     else if (a === '--max-state-bytes') opts.maxStateBytes = Number(next());
     else if (a === '--concurrency') opts.concurrency = Number(next());
     else fail('config', `unknown option ${a}\n${USAGE}`);
@@ -70,6 +85,25 @@ function loadEnvFiles(): void {
   }
 }
 
+/** 明示されないときの接続先。鍵がある方を使い、両方あれば TypeSafe 直結。 */
+function detectProvider(): ProviderId | undefined {
+  if (process.env['TYPESAFE_API_KEY']) return 'typesafe';
+  if (process.env['AI_GATEWAY_API_KEY']) return 'vercel-gateway';
+  return undefined;
+}
+
+function createProvider(id: ProviderId, model: string | undefined): Provider {
+  const keyName = id === 'typesafe' ? 'TYPESAFE_API_KEY' : 'AI_GATEWAY_API_KEY';
+  const urlName = id === 'typesafe' ? 'TYPESAFE_BASE_URL' : 'AI_GATEWAY_BASE_URL';
+  const apiKey = process.env[keyName];
+  if (!apiKey) throw new Error(`${keyName} is not set`);
+  const providerOpts: { apiKey: string; model?: string; baseUrl?: string } = { apiKey };
+  if (model) providerOpts.model = model;
+  const baseUrl = process.env[urlName];
+  if (baseUrl) providerOpts.baseUrl = baseUrl;
+  return id === 'typesafe' ? createTypeSafeProvider(providerOpts) : createVercelGatewayProvider(providerOpts);
+}
+
 async function main(): Promise<void> {
   loadEnvFiles();
   const [cmd, ...rest] = process.argv.slice(2);
@@ -80,14 +114,14 @@ async function main(): Promise<void> {
   if (cmd !== 'all') fail('config', `unsupported target "${cmd}". only "all" is implemented.\n${USAGE}`);
 
   const opts = parseArgs(rest);
-  const apiKey = process.env['TYPESAFE_API_KEY'];
-  if (!apiKey) fail('config', 'TYPESAFE_API_KEY is not set');
-
-  const providerOpts: Parameters<typeof createTypeSafeProvider>[0] = { apiKey };
-  if (opts.model) providerOpts.model = opts.model;
-  const baseUrl = process.env['TYPESAFE_BASE_URL'];
-  if (baseUrl) providerOpts.baseUrl = baseUrl;
-  const provider = createTypeSafeProvider(providerOpts);
+  const providerId = opts.provider ?? detectProvider();
+  if (!providerId) fail('config', 'set TYPESAFE_API_KEY or AI_GATEWAY_API_KEY (see .env.example)');
+  let provider: Provider;
+  try {
+    provider = createProvider(providerId, opts.model);
+  } catch (e) {
+    return fail('config', (e as Error).message, providerId);
+  }
 
   const repo = createGitRepository(process.cwd());
   let snapshotId: string;
@@ -104,6 +138,7 @@ async function main(): Promise<void> {
 
   const deps: Parameters<typeof reviewAll>[0] = {
     provider,
+    providerId,
     model: provider.model,
     snapshotId,
     files: listed.files,
@@ -123,6 +158,14 @@ async function main(): Promise<void> {
   process.stderr.write(
     `jeview: status=${out.run.status} ${JSON.stringify(summary)} requests=${out.run.usage.requests} inputTokens=${out.run.usage.inputTokens} costUsd=${out.run.usage.costUsd}\n`,
   );
+  // 失敗したファイルがあれば、理由の種類ごとに 1 行ずつ出す。同じ理由の繰り返しは件数にまとめる。
+  const reasons = new Map<string, number>();
+  for (const f of out.files) {
+    if (!f.error) continue;
+    const key = `${f.error.code}: ${f.error.message.split('\n')[0]?.slice(0, 300)}`;
+    reasons.set(key, (reasons.get(key) ?? 0) + 1);
+  }
+  for (const [key, n] of reasons) process.stderr.write(`jeview: ${n} file(s) failed with ${key}\n`);
   process.exit(out.run.status === 'completed' ? 0 : 1);
 }
 
