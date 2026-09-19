@@ -1,0 +1,28 @@
+{
+  "name": "jeviews",
+  "version": "0.0.1",
+  "description": "Jev だけで回るコードレビュー CLI の最小構成",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "jeview": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/cli.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}
