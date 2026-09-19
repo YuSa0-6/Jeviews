@@ -169,17 +169,7 @@ function ordered(checks: readonly Check[], results: readonly CheckResult[]): Che
 }
 
 function notApplicable(c: Check): CheckResult {
-  return {
-    axisId: c.axisId,
-    group: c.group,
-    checkId: c.id,
-    questionVersion: c.questionVersion,
-    applicable: false,
-    problem: null,
-    needsContext: null,
-    verdict: null,
-    reason: 'not_applicable',
-  };
+  return { ...emptyCheck(c, null, 'not_applicable'), applicable: false };
 }
 
 function emptyCheck(c: Check, verdict: 'NEED_REVIEW' | null, reason: CheckResult['reason']): CheckResult {

@@ -39,12 +39,7 @@ export interface Check {
   needsContext: string;
 }
 
-interface CheckSeed {
-  id: string;
-  group: CheckGroup;
-  axisId: AxisId;
-  problem: string;
-}
+type CheckSeed = Pick<Check, 'id' | 'group' | 'axisId' | 'problem'>;
 
 const QUESTION_VERSION = '2026-09-19.6';
 
@@ -160,12 +155,9 @@ export function needsContextFor(problem: string): string {
 }
 
 export const CHECKS: readonly Check[] = SEEDS.map((s) => ({
-  id: s.id,
-  group: s.group,
-  axisId: s.axisId,
+  ...s,
   appliesTo: GROUP_APPLIES_TO[s.group],
   questionVersion: QUESTION_VERSION,
-  problem: s.problem,
   needsContext: needsContextFor(s.problem),
 }));
 

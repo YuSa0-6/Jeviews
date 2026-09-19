@@ -20,12 +20,6 @@ export interface Exclusion {
   reason: string;
 }
 
-export interface Repository {
-  root(): Promise<string>;
-  snapshotId(): Promise<string>;
-  listAll(): Promise<{ files: TrackedFile[]; exclusions: Exclusion[] }>;
-}
-
 const EXCLUDED_BASENAMES = new Set([
   'pnpm-lock.yaml',
   'package-lock.json',
@@ -36,7 +30,7 @@ const EXCLUDED_BASENAMES = new Set([
   'go.sum',
 ]);
 
-export function createGitRepository(cwd: string): Repository {
+export function createGitRepository(cwd: string) {
   async function git(args: string[]): Promise<string> {
     const { stdout } = await execFileAsync('git', args, { cwd, maxBuffer: 64 * 1024 * 1024 });
     return stdout;
@@ -51,8 +45,8 @@ export function createGitRepository(cwd: string): Repository {
       const dirty = (await git(['status', '--porcelain', '--untracked-files=no'])).trim() !== '';
       return dirty ? `${head}+dirty` : head;
     },
-    async listAll() {
-      const root = await this.root();
+    async listAll(): Promise<{ files: TrackedFile[]; exclusions: Exclusion[] }> {
+      const root = (await git(['rev-parse', '--show-toplevel'])).trim();
       const raw = await git(['ls-files', '-z']);
       const paths = raw.split('\0').filter((p) => p.length > 0);
       const files: TrackedFile[] = [];
