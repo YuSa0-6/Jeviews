@@ -6,7 +6,7 @@ import type { Provider } from '../../review/ports.js';
 import { createTypeSafeProvider } from './typesafe.js';
 import { createVercelGatewayProvider } from './vercel-gateway.js';
 
-export interface ProviderOptions {
+interface ProviderOptions {
   apiKey: string;
   model?: string;
   baseUrl?: string;
