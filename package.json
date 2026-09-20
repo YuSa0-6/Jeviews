@@ -1,5 +1,5 @@
 {
-  "name": "jeviews",
+  "name": "jeview",
   "version": "0.0.1",
   "description": "Jev だけで回るコードレビュー CLI の最小構成",
   "type": "module",
