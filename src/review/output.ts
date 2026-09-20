@@ -59,12 +59,16 @@ export interface Usage {
   costUsd: number | null;
 }
 
+export type ProviderId = 'typesafe' | 'vercel-gateway';
+
 export interface ReviewOutput {
   schemaVersion: 1;
   run: {
     id: string;
     scope: Scope;
     mode: Mode;
+    /** 接続先。failed で接続先が決まる前に終わった場合だけ null */
+    provider: ProviderId | null;
     model: string;
     snapshotId: string;
     policyHash: string;

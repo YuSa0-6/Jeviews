@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { Provider, Question } from '../adapters/providers/typesafe.js';
-import { ProviderError } from '../adapters/providers/typesafe.js';
+import type { Provider, Question } from '../adapters/providers/provider.js';
+import { ProviderError } from '../adapters/providers/provider.js';
 import { CHECKS, questionId } from './checks.js';
 import { fileKind } from './file-kind.js';
 import type { CheckResult } from './output.js';
@@ -81,6 +81,8 @@ describe('fileKind', () => {
 
 function fakeProvider(answer: (q: string) => number, opts: { attempts?: number; usage?: boolean } = {}): Provider {
   return {
+    model: 'fake',
+    usdPerInputToken: 0.042 / 1_000_000,
     async ask(_state: unknown, questions: Record<string, Question>) {
       const answers: Record<string, { type: 'noul'; noul: number }> = {};
       for (const id of Object.keys(questions)) answers[id] = { type: 'noul', noul: answer(id) };
@@ -105,6 +107,7 @@ describe('reviewAll', () => {
   it('maps answers to per-check results and aggregates per file', async () => {
     const provider = fakeProvider((id) => (id === questionId('secret_hardcoded', 'problem') ? 0.9 : 0.05));
     const out = await reviewAll({
+      providerId: 'typesafe',
       provider,
       model: 'fake',
       snapshotId: 'snap',
@@ -129,12 +132,15 @@ describe('reviewAll', () => {
     let sent: string[] = [];
     const inner = fakeProvider(() => 0.05);
     const provider: Provider = {
+      model: 'fake',
+      usdPerInputToken: 0.042 / 1_000_000,
       async ask(state, questions) {
         sent = Object.keys(questions);
         return inner.ask(state, questions);
       },
     };
     const out = await reviewAll({
+      providerId: 'typesafe',
       provider,
       model: 'fake',
       snapshotId: 'snap',
@@ -155,6 +161,7 @@ describe('reviewAll', () => {
 
   it('uncertain checks do not make the file NEED_REVIEW', async () => {
     const out = await reviewAll({
+      providerId: 'typesafe',
       provider: fakeProvider((id) => (id.endsWith('__problem') ? 0.5 : 0.1)),
       model: 'fake',
       snapshotId: 'snap',
@@ -169,12 +176,15 @@ describe('reviewAll', () => {
   it('does not send oversized files and marks applicable checks NEED_REVIEW with input_too_large', async () => {
     let calls = 0;
     const provider: Provider = {
+      model: 'fake',
+      usdPerInputToken: 0.042 / 1_000_000,
       async ask() {
         calls += 1;
         throw new Error('should not be called');
       },
     };
     const out = await reviewAll({
+      providerId: 'typesafe',
       provider,
       model: 'fake',
       snapshotId: 'snap',
@@ -193,6 +203,8 @@ describe('reviewAll', () => {
     let n = 0;
     const good = fakeProvider(() => 0.0);
     const provider: Provider = {
+      model: 'fake',
+      usdPerInputToken: 0.042 / 1_000_000,
       async ask(state, questions) {
         n += 1;
         if ((state as { path: string }).path === 'bad.ts') {
@@ -204,6 +216,7 @@ describe('reviewAll', () => {
       },
     };
     const out = await reviewAll({
+      providerId: 'typesafe',
       provider,
       model: 'fake',
       snapshotId: 'snap',
@@ -224,6 +237,7 @@ describe('reviewAll', () => {
 
   it('nulls usage when the provider does not report tokens', async () => {
     const out = await reviewAll({
+      providerId: 'typesafe',
       provider: fakeProvider(() => 0, { usage: false }),
       model: 'fake',
       snapshotId: 'snap',

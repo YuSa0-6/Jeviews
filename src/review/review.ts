@@ -2,16 +2,17 @@
 // 依存は引数で渡す。
 
 import { createHash, randomUUID } from 'node:crypto';
-import type { Provider, Question } from '../adapters/providers/typesafe.js';
-import { ProviderError } from '../adapters/providers/typesafe.js';
+import type { Provider, Question } from '../adapters/providers/provider.js';
+import { ProviderError } from '../adapters/providers/provider.js';
 import type { Exclusion, TrackedFile } from '../adapters/repository/git.js';
 import { CHECKS, questionId, type Check } from './checks.js';
 import { fileKind } from './file-kind.js';
-import type { CheckResult, FileKind, FileResult, ReviewOutput, Thresholds, Usage } from './output.js';
+import type { CheckResult, FileKind, FileResult, ProviderId, ReviewOutput, Thresholds, Usage } from './output.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict, runStatus } from './verdict.js';
 
 export interface ReviewDeps {
   provider: Provider;
+  providerId: ProviderId;
   model: string;
   snapshotId: string;
   files: TrackedFile[];
@@ -26,8 +27,6 @@ export interface ReviewDeps {
 
 /** 仮説: コードは 1 トークン 3 バイト前後。state 上限 32k トークンに対して余裕を取る。 */
 export const DEFAULT_MAX_STATE_BYTES = 60_000;
-/** 出典: https://docs.typesafe.ai/models.md の価格。入力トークンのみ課金。 */
-const USD_PER_INPUT_TOKEN = 0.042 / 1_000_000;
 
 export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
   const thresholds = deps.thresholds ?? DEFAULT_THRESHOLDS;
@@ -122,7 +121,9 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     usage.outputTokens = null;
     usage.costUsd = null;
   } else {
-    usage.costUsd = Number(((usage.inputTokens ?? 0) * USD_PER_INPUT_TOKEN).toFixed(8));
+    // 単価は接続先が決める。価格が固定でない接続先 (Gateway) では null のまま。
+    const price = deps.provider.usdPerInputToken;
+    usage.costUsd = price === null ? null : Number(((usage.inputTokens ?? 0) * price).toFixed(8));
   }
 
   return {
@@ -131,6 +132,7 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
       id: randomUUID(),
       scope: 'all',
       mode: 'scan',
+      provider: deps.providerId,
       model: deps.model,
       snapshotId: deps.snapshotId,
       policyHash: policyHash(checks, thresholds, deps.model),
