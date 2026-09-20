@@ -46,6 +46,21 @@
       "format_spacing": {
         "truth": "clean",
         "source": "prettier"
+      },
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L55 環境変数 VITE_APP_AI_BACKEND の形式を検証せず、fetch の URL に使用しています。"
+      },
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L55 VITE_APP_AI_BACKEND が未設定または空でも、その値を補間してリクエストを送信します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L80 HTTP エラーの statusCode が 429 の場合、例外や失敗結果ではなく html を持つ通常の結果を返します。"
       }
     },
     "excalidraw-app/components/TopErrorBoundary.tsx": {
@@ -77,6 +92,11 @@
       "format_spacing": {
         "truth": "clean",
         "source": "prettier"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L31 JSON.parse の例外を記録・再送出せず、元の文字列を保存して処理を続けます。"
       }
     },
     "excalidraw-app/data/TTDStorage.ts": {
@@ -107,6 +127,11 @@
       "format_spacing": {
         "truth": "clean",
         "source": "prettier"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L35 IndexedDB の読み込みが失敗しても、正常に空の履歴を読み込んだ場合と同じ空配列を返します。"
       }
     },
     "excalidraw-app/share/ShareDialog.tsx": {
@@ -137,6 +162,16 @@
       "format_spacing": {
         "truth": "clean",
         "source": "prettier"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L100 navigator.share の catch ブロックはコメントだけで、エラーを破棄します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L80 クリップボードへのコピーが失敗しても、setJustCopied(true) を実行します。"
       }
     },
     "packages/common/src/binary-heap.ts": {
@@ -167,6 +202,11 @@
       "format_spacing": {
         "truth": "clean",
         "source": "prettier"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L27 bubbleUp の while 条件はリテラル true で常に真です。"
       }
     },
     "packages/common/src/emitter.ts": {
@@ -258,6 +298,11 @@
       "format_spacing": {
         "truth": "clean",
         "source": "prettier"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L667 objectType が「[object Object]」の場合は先に return するため、この不等比較は到達時に常に真です。"
       }
     },
     "packages/element/src/embeddable.ts": {
@@ -289,6 +334,11 @@
       "format_spacing": {
         "truth": "clean",
         "source": "prettier"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L66 URL 解析の例外を記録・再送出せず、正規表現による代替解析へ進みます。"
       }
     },
     "packages/element/src/renderElement.ts": {
@@ -707,6 +757,11 @@
       "format_spacing": {
         "truth": "clean",
         "source": "prettier"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L117 color は空の値なら「transparent」に置換済みなので、この三項演算の条件は常に真です。"
       }
     },
     "packages/excalidraw/components/ColorPicker/keyboardNavHandlers.ts": {
@@ -847,6 +902,16 @@
       "format_spacing": {
         "truth": "clean",
         "source": "prettier"
+      },
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L21 環境変数 VITE_APP_LIBRARY_URL の形式を検証せず、リンクの href に使用しています。"
+      },
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L21 VITE_APP_LIBRARY_URL が未設定または空でも、その値を補間したリンクを生成します。"
       }
     },
     "packages/excalidraw/components/MobileMenu.tsx": {
@@ -1085,6 +1150,11 @@
       "format_spacing": {
         "truth": "clean",
         "source": "prettier"
+      },
+      "error_unhandled_promise": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L81 非同期関数 fn を await も catch もせず呼び出しており、動的 import の拒否が未処理になります。"
       }
     },
     "packages/excalidraw/components/TTDDialog/TTDPreviewPanel.tsx": {

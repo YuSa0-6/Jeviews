@@ -169,6 +169,16 @@
       "format_spacing": {
         "truth": "clean",
         "source": "ruff-format"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L381 analyze_param には if、条件式、and、or を合わせて34個の分岐点があります。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L464 直前に FieldInfo と判定された value を field_info に代入しているため、この isinstance 条件は常に真です。"
       }
     },
     "fastapi/encoders.py": {
@@ -195,6 +205,16 @@
       "format_spacing": {
         "truth": "clean",
         "source": "ruff-format"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L46 ImportError を捕捉すると空の PyExtraColor クラスを定義するだけで、エラーの記録、再送出、失敗の返却を行いません。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L129 jsonable_encoder には条件分岐、ループ、例外ハンドラー、論理演算を合わせて33個の分岐点があります。"
       }
     },
     "fastapi/middleware/asyncexitstack.py": {
@@ -300,6 +320,16 @@
       "format_spacing": {
         "truth": "clean",
         "source": "ruff-format"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L311 get_openapi_path には条件分岐、ループ、論理演算を合わせて36個の分岐点があります。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L638 get_openapi_path は必ず3要素のタプルを返すため、戻り値 result の真偽判定は常に真です。"
       }
     },
     "fastapi/requests.py": {
@@ -378,6 +408,11 @@
       "format_spacing": {
         "truth": "clean",
         "source": "ruff-format"
+      },
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L219 デコードした認証情報にコロンがあれば、username や password が空でも HTTPBasicCredentials を返します。"
       }
     },
     "fastapi/security/oauth2.py": {
@@ -404,6 +439,11 @@
       "format_spacing": {
         "truth": "clean",
         "source": "ruff-format"
+      },
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L544 Authorization が「Bearer 」の場合もトークン部分の空文字列を検査せず返します。"
       }
     },
     "fastapi/security/utils.py": {
@@ -534,6 +574,16 @@
       "format_spacing": {
         "truth": "clean",
         "source": "ruff-format"
+      },
+      "lint_unreachable": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L23 TYPE_CHECKING は実行時には False なので、その条件内の APIRoute インポートは実行されません。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L22 typing からインポートした TYPE_CHECKING は実行時には常に False です。"
       }
     },
     "tests/test_empty_router.py": {

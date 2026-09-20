@@ -127,7 +127,7 @@ if (r.language === 'go') {
 }
 
 const codex = readJson(join(evalDir(name), `${subset}.codex.json`), { findings: {} }).findings;
-for (const [f, checks] of Object.entries(codex)) for (const [c, v] of Object.entries(checks)) if (truth[f] && truth[f][c]?.truth !== 'problem') truth[f][c] = v;
+for (const [f, checks] of Object.entries(codex)) for (const [c, v] of Object.entries(checks)) if (truth[f] && !truth[f][c]) truth[f][c] = v;
 
 const human = readJson(join(evalDir(name), `${subset}.human.json`), {});
 for (const [f, checks] of Object.entries(human)) for (const [c, v] of Object.entries(checks)) if (truth[f]) truth[f][c] = { ...v, source: v.source ?? 'human' };

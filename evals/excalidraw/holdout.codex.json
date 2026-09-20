@@ -1,0 +1,186 @@
+{
+  "repo": "excalidraw",
+  "subset": "holdout",
+  "model": "gpt-6-astra",
+  "findings": {
+    "excalidraw-app/components/AI.tsx": {
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L55 環境変数 VITE_APP_AI_BACKEND の形式を検証せず、fetch の URL に使用しています。"
+      },
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L55 VITE_APP_AI_BACKEND が未設定または空でも、その値を補間してリクエストを送信します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L80 HTTP エラーの statusCode が 429 の場合、例外や失敗結果ではなく html を持つ通常の結果を返します。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L27 generate コールバックには、応答検証、ストリーム処理、switch、論理演算を合わせて約15個以上の分岐点があります。"
+      }
+    },
+    "excalidraw-app/components/TopErrorBoundary.tsx": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L31 JSON.parse の例外を記録・再送出せず、元の文字列を保存して処理を続けます。"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L40 setState のコールバック引数 state は本体で参照されていません。"
+      }
+    },
+    "excalidraw-app/data/TTDStorage.ts": {
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L35 IndexedDB の読み込みが失敗しても、正常に空の履歴を読み込んだ場合と同じ空配列を返します。"
+      }
+    },
+    "excalidraw-app/share/ShareDialog.tsx": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L100 navigator.share の catch ブロックはコメントだけで、エラーを破棄します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L80 クリップボードへのコピーが失敗しても、setJustCopied(true) を実行します。"
+      }
+    },
+    "packages/common/src/binary-heap.ts": {
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L27 bubbleUp の while 条件はリテラル true で常に真です。"
+      }
+    },
+    "packages/element/src/duplicate.ts": {
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L136 duplicateElements には、グループ・フレーム・バインド要素の処理を通じて15個以上の分岐点があります。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L667 objectType が「[object Object]」の場合は先に return するため、この不等比較は到達時に常に真です。"
+      }
+    },
+    "packages/element/src/embeddable.ts": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L66 URL 解析の例外を記録・再送出せず、正規表現による代替解析へ進みます。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L171 getEmbedLink には、各サービスの判定、switch、三項演算、論理演算を合わせて15個以上の分岐点があります。"
+      }
+    },
+    "packages/element/src/renderElement.ts": {
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L431 drawElementOnCanvas には、要素種別の case、画像処理、テキスト処理を通じて15個以上の分岐点があります。"
+      }
+    },
+    "packages/element/src/stickyNote.ts": {
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L913 relayoutStickyNotes には、ループ、要素判定、更新判定、論理演算を合わせて15個以上の分岐点があります。"
+      }
+    },
+    "packages/element/src/zindex.ts": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L379 forEach コールバックの引数 i は本体で参照されていません。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L443 shiftElementsToEnd には、移動方向・フレーム・グループ・範囲検証を通じて15個以上の分岐点があります。"
+      }
+    },
+    "packages/excalidraw/actions/actionToggleStats.tsx": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L16 perform の引数 elements は本体で参照されていません。"
+      }
+    },
+    "packages/excalidraw/components/Button.tsx": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L36 composeEventHandlers に渡すコールバックの引数 event は本体で参照されていません。"
+      }
+    },
+    "packages/excalidraw/components/ColorPicker/PickerColorList.tsx": {
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L117 color は空の値なら「transparent」に置換済みなので、この三項演算の条件は常に真です。"
+      }
+    },
+    "packages/excalidraw/components/ColorPicker/keyboardNavHandlers.ts": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L146 分割代入された引数 updateData は関数本体で参照されていません。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L138 colorPickerKeyNavHandler には、キー判定、セクション切替、色移動を通じて15個以上の分岐点があります。"
+      }
+    },
+    "packages/excalidraw/components/LibraryMenuBrowseButton.tsx": {
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L21 環境変数 VITE_APP_LIBRARY_URL の形式を検証せず、リンクの href に使用しています。"
+      },
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L21 VITE_APP_LIBRARY_URL が未設定または空でも、その値を補間したリンクを生成します。"
+      }
+    },
+    "packages/excalidraw/components/TTDDialog/TTDDialog.tsx": {
+      "error_unhandled_promise": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L81 非同期関数 fn を await も catch もせず呼び出しており、動的 import の拒否が未処理になります。"
+      }
+    },
+    "packages/excalidraw/deburr.ts": {
+      "format_indentation": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L26 deburredLetters のプロパティは4スペースで字下げされていますが、他のブロックでは2スペースを使用しています。"
+      },
+      "format_quotes": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L83 同じ置換テーブル内で、補間やエスケープを必要としない文字列に単一引用符と二重引用符が混在しています。"
+      },
+      "format_spacing": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L26 同じ行内でカンマ後のスペースが1個の箇所と2個の箇所が混在しています。"
+      }
+    }
+  }
+}

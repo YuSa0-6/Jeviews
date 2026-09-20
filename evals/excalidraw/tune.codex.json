@@ -1,0 +1,201 @@
+{
+  "repo": "excalidraw",
+  "subset": "tune",
+  "model": "gpt-6-astra",
+  "findings": {
+    "excalidraw-app/CustomStats.tsx": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L69 クリップボードへのコピーで発生した例外を空の catch ブロックで破棄しています。"
+      }
+    },
+    "excalidraw-app/data/firebase.ts": {
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L285 環境変数から取得した storageBucket を形式の検証なしに取得先 URL へ組み込んでいます。"
+      },
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L286 設定の storageBucket が未指定または空でも URL を構築して fetch を実行します。"
+      }
+    },
+    "packages/common/src/editorInterface.ts": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L209 localStorage.setItem の例外をログ出力、再送出、失敗の返却なしに破棄しています。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L221 設定の永続化に失敗しても setDesktopUIMode は通常と同じ mode を返します。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L81 isMobileOrTablet には条件分岐と論理演算子による分岐点が19個あります。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L119 isAndroidTablet は isAndroidPhone の否定なので、両者の論理和は常に真です。"
+      }
+    },
+    "packages/element/src/groups.ts": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L238 filter のコールバックで受け取る groupId は本体で参照されていません。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L84 lastReturnValue には null またはオブジェクトしか代入されないため undefined との不一致比較は常に真です。"
+      }
+    },
+    "packages/element/src/heading.ts": {
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L69 headingForPointFromDiamondElement には条件分岐、三項演算子、論理演算子による分岐点が21個あります。"
+      }
+    },
+    "packages/excalidraw/actions/actionDeleteSelected.tsx": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L213 perform の引数 formData は関数本体で参照されていません。"
+      }
+    },
+    "packages/excalidraw/actions/actionStyles.ts": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L56 actionCopyStyles の perform は引数 formData を参照していません。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L109 elements.map のコールバックには条件分岐、三項演算子、論理演算子による分岐点が19個あります。"
+      }
+    },
+    "packages/excalidraw/charts/charts.parse.ts": {
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L21 tryParseCells には条件分岐、三項演算子、論理演算子による分岐点が20個あります。"
+      }
+    },
+    "packages/excalidraw/components/ColorPicker/HotkeyLabel.tsx": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1 インポートした React という名前はファイル内のほかの箇所で参照されていません。"
+      }
+    },
+    "packages/excalidraw/components/InitializeApp.tsx": {
+      "error_unhandled_promise": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L27 async 関数 updateLang を await も拒否ハンドラーも付けずに呼び出しています。"
+      }
+    },
+    "packages/excalidraw/components/MobileToolbar.tsx": {
+      "lint_unreachable": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L140 extraTools に image が含まれないため extraIcon の ImageIcon 分岐には到達できません。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L49 MobileToolbar 本体には三項演算子と論理演算子による分岐点が21個あります。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L139 extraToolSelected が真の場合に評価される image との比較は、extraTools に image がないため常に偽です。"
+      }
+    },
+    "packages/excalidraw/components/Stats/MultiFontSize.tsx": {
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L150 空の latestTextElements は既に return しており、その配列を map した fontSizes の長さは必ず正です。"
+      }
+    },
+    "packages/excalidraw/components/Stats/Position.tsx": {
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L30 handlePositionChange には条件分岐、三項演算子、論理演算子による分岐点が21個あります。"
+      }
+    },
+    "packages/excalidraw/components/TTDDialog/common.ts": {
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L124 空の mermaidDefinition は先に return し、その後再代入もないため、この条件は常に真です。"
+      }
+    },
+    "packages/excalidraw/components/shapeActionPredicates.ts": {
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L88 getShapeActionPredicates 本体には論理演算子による分岐点が20個あります。"
+      }
+    },
+    "packages/excalidraw/data/index.ts": {
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L98 exportCanvas には条件分岐、catch、三項演算子、論理演算子による分岐点が16個あります。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L155 外側の条件で type が svg または clipboard-svg に限定され、svg 分岐も除外されているため、この比較は常に真です。"
+      }
+    },
+    "packages/excalidraw/subset/woff2/woff2-bindings.ts": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1040 demangle 内の catch ブロックは例外をログ出力、再送出、失敗の返却なしに破棄しています。"
+      },
+      "error_unhandled_promise": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L989 fetch の Promise に成功ハンドラーだけを登録し、返された Promise も返却や await をしていません。"
+      },
+      "lint_unused_variable": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L334 functionPointers に配列を代入していますが、その変数は以後一度も参照されていません。"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L391 ccall の引数 opts は関数本体で参照されていません。"
+      },
+      "lint_unreachable": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1234 直前の abort は必ず例外を投げるため return 0 は実行されません。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L2324 craftInvokerFunction には条件分岐、ループ、三項演算子、論理演算子による分岐点が22個あります。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L2561 typeof の結果が入る t は文字列 array にはならないため、その比較は常に偽です。"
+      }
+    }
+  }
+}

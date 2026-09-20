@@ -1,0 +1,146 @@
+{
+  "repo": "fastapi",
+  "subset": "holdout",
+  "model": "gpt-6-astra",
+  "findings": {
+    "fastapi/datastructures.py": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L12 インポートした URL は、このファイルの他の箇所で参照されていません。"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L140 __get_pydantic_json_schema__ の core_schema と handler は関数本体で参照されていません。"
+      }
+    },
+    "fastapi/exception_handlers.py": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L11 http_exception_handler の request は関数本体で参照されていません。"
+      }
+    },
+    "fastapi/middleware/cors.py": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1 インポートした CORSMiddleware は、このファイルの他の箇所で参照されていません。"
+      }
+    },
+    "fastapi/middleware/trustedhost.py": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L2 インポートした TrustedHostMiddleware は、このファイルの他の箇所で参照されていません。"
+      }
+    },
+    "fastapi/openapi/docs.py": {
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L356 OAuth の state 検証に失敗しても警告後に処理を続け、code があれば成功側の callback を呼び出します。"
+      },
+      "format_quotes": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L329 埋め込み JavaScript では同じ文字列を '&' と \"&\" の両方で記述しています。"
+      },
+      "format_spacing": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L330 埋め込み JavaScript で引数の区切りが v,i,_arr と key, value のように混在しています。"
+      }
+    },
+    "fastapi/openapi/models.py": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L46 __get_pydantic_json_schema__ の core_schema と handler は関数本体で参照されていません。"
+      }
+    },
+    "fastapi/responses.py": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L29 ModuleNotFoundError を捕捉すると ujson に None を代入するだけで、記録・再送出・失敗の返却を行いません。"
+      },
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L5 インポートした EventSourceResponse は、このファイルの他の箇所で参照されていません。"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L64 UJSONResponse.render の self はメソッド本体で参照されていません。"
+      }
+    },
+    "fastapi/routing.py": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L2029 float(q) の ValueError を捕捉するハンドラーは pass のみです。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L2031 q の数値変換に失敗しても、quality を既定値 1.0 として通常の結果を yield します。"
+      },
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L112 インポートした Mount は、このファイルの他の箇所で参照されていません。"
+      },
+      "lint_unused_variable": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L818 APIWebSocketRoute.__init__ で戻り値を代入したローカル変数 _ は、その後読み取られません。"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L270 _DefaultLifespan.__call__ の app はメソッド本体で参照されていません。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L961 _populate_api_route_state には条件分岐、ループ、条件式、論理演算子による分岐点が15個以上あります。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L594 while True のループ条件は常に真です。"
+      }
+    },
+    "fastapi/security/open_id_connect_url.py": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L80 make_not_authenticated_error の self はメソッド本体で参照されていません。"
+      }
+    },
+    "fastapi/staticfiles.py": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1 インポートした StaticFiles は、このファイルの他の箇所で参照されていません。"
+      }
+    },
+    "fastapi/testclient.py": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1 インポートした TestClient は、このファイルの他の箇所で参照されていません。"
+      }
+    },
+    "tests/test_filter_pydantic_sub_model_pv2.py": {
+      "secret_hardcoded": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L34 ModelC の password に固定文字列 \"test-password\" を設定しています。"
+      }
+    }
+  }
+}

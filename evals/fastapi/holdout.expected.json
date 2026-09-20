@@ -298,6 +298,11 @@
       "format_spacing": {
         "truth": "clean",
         "source": "ruff-format"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L356 OAuth の state 検証に失敗しても警告後に処理を続け、code があれば成功側の callback を呼び出します。"
       }
     },
     "fastapi/openapi/models.py": {
@@ -402,6 +407,11 @@
       "format_spacing": {
         "truth": "clean",
         "source": "ruff-format"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L29 ModuleNotFoundError を捕捉すると ujson に None を代入するだけで、記録・再送出・失敗の返却を行いません。"
       }
     },
     "fastapi/routing.py": {
@@ -429,6 +439,26 @@
       "format_spacing": {
         "truth": "clean",
         "source": "ruff-format"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L2029 float(q) の ValueError を捕捉するハンドラーは pass のみです。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L2031 q の数値変換に失敗しても、quality を既定値 1.0 として通常の結果を yield します。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L961 _populate_api_route_state には条件分岐、ループ、条件式、論理演算子による分岐点が15個以上あります。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L594 while True のループ条件は常に真です。"
       }
     },
     "fastapi/security/base.py": {
@@ -612,6 +642,11 @@
       "format_spacing": {
         "truth": "clean",
         "source": "ruff-format"
+      },
+      "secret_hardcoded": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L34 ModelC の password に固定文字列 \"test-password\" を設定しています。"
       }
     },
     "tests/test_params_repr.py": {

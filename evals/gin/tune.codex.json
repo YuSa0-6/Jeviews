@@ -1,0 +1,128 @@
+{
+  "repo": "gin",
+  "subset": "tune",
+  "model": "gpt-6-astra",
+  "findings": {
+    "auth_test.go": {
+      "secret_hardcoded": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L85 Basic認証用アカウントのパスワードを文字列リテラルで固定しています。"
+      }
+    },
+    "benchmarks_test.go": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L16 登録するハンドラーの引数 c は空の関数本体で参照されません。"
+      }
+    },
+    "binding/binding_test.go": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L858 testFormBindingEmbeddedStruct の引数 badPath と badBody は関数本体で参照されません。"
+      }
+    },
+    "context.go": {
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1083 X-Forwarded-Proto ヘッダーの値を http または https か検証せずHTTPスキームとして返しています。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1197 Cookie値の QueryUnescape が失敗してもエラーを捨てて nil エラーを返します。"
+      }
+    },
+    "debug_test.go": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L71 HandlersChain 内の無名関数は引数 c を参照しません。"
+      }
+    },
+    "fs_test.go": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L24 mockFS の open 関数は引数 name を参照しません。"
+      }
+    },
+    "gin.go": {
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L719 handleHTTPRequest には条件分岐、ループ、論理演算子を合わせて15個以上の分岐点があります。"
+      }
+    },
+    "gin_test.go": {
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L81 http.Get が失敗しても t.Error の後で処理を続け、成功時と同様に res.Body を読み取ります。"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L108 DialTLS の引数 cfg は関数本体で参照されません。"
+      }
+    },
+    "path.go": {
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L23 cleanPath には条件分岐、case、ループ、論理演算子を合わせて15個以上の分岐点があります。"
+      }
+    },
+    "recovery.go": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L137 readNthLine のエラーを受けた分岐は記録も伝播もせず continue で破棄します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L165 scanner.Scan が読み取りエラーで失敗しても scanner.Err を確認せず nil エラーを返します。"
+      },
+      "secret_logged": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L72 Authorization だけをマスクしたリクエストをログに出すため、Proxy-Authorization の認証情報はそのまま出力されます。"
+      }
+    },
+    "response_writer_test.go": {
+      "format_spacing": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L43 連続するメソッド宣言で開始波括弧の前の空白幅が異なり、この行だけ隣接行と位置が揃っていません。"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L44 WriteHeader の引数 code は空のメソッド本体で参照されません。"
+      }
+    },
+    "tree_test.go": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L19 fakeHandler が返す無名関数は引数 c を参照しません。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L714 TestTreeFindCaseInsensitivePath にはループ、条件分岐、論理演算子を合わせて15個以上の分岐点があります。"
+      }
+    },
+    "utils.go": {
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L153 環境変数 PORT の値がポート番号の形式か検証せず、待ち受けアドレスのポート部分に使用します。"
+      }
+    }
+  }
+}

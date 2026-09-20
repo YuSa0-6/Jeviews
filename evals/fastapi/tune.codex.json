@@ -1,0 +1,159 @@
+{
+  "repo": "fastapi",
+  "subset": "tune",
+  "model": "gpt-6-astra",
+  "findings": {
+    "fastapi/_compat/v2.py": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L22 インポートした PydanticSchemaGenerationError は、このファイル内の他の箇所では参照されていません。"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L176 validate の引数 values は関数本体で参照されていません。"
+      }
+    },
+    "fastapi/applications.py": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1141 swagger_ui_redirect の引数 req は関数本体で参照されていません。"
+      }
+    },
+    "fastapi/concurrency.py": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L8 インポートした iterate_in_threadpool は、このファイル内の他の箇所では参照されていません。"
+      }
+    },
+    "fastapi/dependencies/utils.py": {
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L381 analyze_param には if、条件式、and、or を合わせて34個の分岐点があります。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L464 直前に FieldInfo と判定された value を field_info に代入しているため、この isinstance 条件は常に真です。"
+      }
+    },
+    "fastapi/encoders.py": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L46 ImportError を捕捉すると空の PyExtraColor クラスを定義するだけで、エラーの記録、再送出、失敗の返却を行いません。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L129 jsonable_encoder には条件分岐、ループ、例外ハンドラー、論理演算を合わせて33個の分岐点があります。"
+      }
+    },
+    "fastapi/middleware/httpsredirect.py": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1 インポートした HTTPSRedirectMiddleware は、このファイル内の他の箇所では参照されていません。"
+      }
+    },
+    "fastapi/middleware/wsgi.py": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1 インポートした WSGIMiddleware は、このファイル内の他の箇所では参照されていません。"
+      }
+    },
+    "fastapi/openapi/utils.py": {
+      "lint_unused_variable": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L392 get_openapi_path の戻り値から代入した cb_security_schemes は、その後一度も読み取られません。"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L281 generate_operation_summary の引数 method は関数本体で参照されていません。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L311 get_openapi_path には条件分岐、ループ、論理演算を合わせて36個の分岐点があります。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L638 get_openapi_path は必ず3要素のタプルを返すため、戻り値 result の真偽判定は常に真です。"
+      }
+    },
+    "fastapi/requests.py": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1 インポートした HTTPConnection と Request は、このファイル内の他の箇所では参照されていません。"
+      }
+    },
+    "fastapi/security/api_key.py": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L31 make_not_authenticated_error の引数 self はメソッド本体で参照されていません。"
+      }
+    },
+    "fastapi/security/http.py": {
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L219 デコードした認証情報にコロンがあれば、username や password が空でも HTTPBasicCredentials を返します。"
+      }
+    },
+    "fastapi/security/oauth2.py": {
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L544 Authorization が「Bearer 」の場合もトークン部分の空文字列を検査せず返します。"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L401 make_not_authenticated_error の引数 self はメソッド本体で参照されていません。"
+      }
+    },
+    "fastapi/security/utils.py": {
+      "lint_unused_variable": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L6 partition の区切り文字を代入したローカル変数 _ は、その後一度も読み取られません。"
+      }
+    },
+    "fastapi/templating.py": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1 インポートした Jinja2Templates は、このファイル内の他の箇所では参照されていません。"
+      }
+    },
+    "fastapi/types.py": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L7 インポートした IncEx は、このファイル内の他の箇所では参照されていません。"
+      }
+    },
+    "fastapi/utils.py": {
+      "lint_unreachable": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L23 TYPE_CHECKING は実行時には False なので、その条件内の APIRoute インポートは実行されません。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L22 typing からインポートした TYPE_CHECKING は実行時には常に False です。"
+      }
+    }
+  }
+}

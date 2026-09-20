@@ -129,6 +129,11 @@
       "format_quotes": {
         "truth": "clean",
         "source": "rubocop"
+      },
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L20 リクエストの id を数値形式か検証せず to_i で整数に変換しています。"
       }
     },
     "app/controllers/api/v1/admin/tags_controller.rb": {
@@ -189,6 +194,16 @@
       "format_quotes": {
         "truth": "clean",
         "source": "rubocop"
+      },
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L126 リクエストの id を数値形式か検証せず to_i で整数に変換しています。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L85 StatusPin の destroy が false を返しても処理を続け、通常の JSON レスポンスを返します。"
       }
     },
     "app/controllers/api/v1/tags_controller.rb": {
@@ -669,6 +684,11 @@
       "format_quotes": {
         "truth": "clean",
         "source": "rubocop"
+      },
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L51 ネットワーク応答に translatedText が存在するか確認せず map を呼び出しています。"
       }
     },
     "app/lib/vacuum/imports_vacuum.rb": {
@@ -1059,6 +1079,11 @@
       "format_quotes": {
         "truth": "clean",
         "source": "rubocop"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L12 call メソッドには条件分岐、論理演算子、rescue を合わせて約15個の分岐点があります。"
       }
     },
     "app/services/delete_account_service.rb": {
@@ -1089,6 +1114,11 @@
       "format_quotes": {
         "truth": "clean",
         "source": "rubocop"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L161 アカウントの destroy が false を返しても、呼び出し元は fulfill_deletion_request! に進みます。"
       }
     },
     "app/services/update_media_attachments_permissions_service.rb": {
@@ -1119,6 +1149,11 @@
       "format_quotes": {
         "truth": "clean",
         "source": "rubocop"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L4 call メソッドにはループ、条件分岐、case、rescue、三項演算子など約15個の分岐点があります。"
       }
     },
     "app/workers/activitypub/fetch_all_replies_worker.rb": {
@@ -1179,6 +1214,11 @@
       "format_quotes": {
         "truth": "clean",
         "source": "rubocop"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L24 フォロー処理の例外を捕捉すると、ログ出力、再送出、失敗の返却をせず next で次へ進みます。"
       }
     },
     "app/workers/scheduler/pghero_scheduler.rb": {
@@ -1239,6 +1279,16 @@
       "format_quotes": {
         "truth": "clean",
         "source": "rubocop"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L22 ActiveRecord::RecordNotFound を捕捉し、ログ出力や再送出をせず true を返します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L23 レコード検索などが ActiveRecord::RecordNotFound で失敗しても true を返します。"
       }
     },
     "app/workers/verify_account_links_worker.rb": {
@@ -1269,6 +1319,16 @@
       "format_quotes": {
         "truth": "clean",
         "source": "rubocop"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L16 ActiveRecord::RecordNotFound を捕捉し、ログ出力や再送出をせず true を返します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L17 レコード検索などが ActiveRecord::RecordNotFound で失敗しても true を返します。"
       }
     },
     "config/initializers/deprecations.rb": {
@@ -1419,6 +1479,11 @@
       "format_quotes": {
         "truth": "clean",
         "source": "rubocop"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L91 埋め込み SQL の duplicate_table 例外ハンドラーは、ログ出力、再送出、失敗の返却をせず例外を無視します。"
       }
     },
     "lib/vite/dev_server.rb": {
