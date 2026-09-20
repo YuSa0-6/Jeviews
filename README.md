@@ -1,9 +1,12 @@
-# Jeviews
+# jeview
 
 リポジトリの中身をまとめて [Jev](https://docs.typesafe.ai) に見てもらい、
 「気になるファイルはどれか」を JSON で返すコマンドです。
+プロジェクト名は Jeviews、コマンドと npm パッケージの名前は `jeview` です。
 
 大きなリポジトリを前にして「どこから読めばいいか」を決めたいときに使います。
+
+まだ実験段階です。コマンドや出力の形は予告なく変わることがあります。TypeSafe AI の公式ツールではありません。
 
 ## できること
 
@@ -30,7 +33,16 @@
 - TypeSafe のキー（`TYPESAFE_API_KEY`）
 - Vercel AI Gateway のキー（`AI_GATEWAY_API_KEY`）
 
-キーは `.env.local` か環境変数で渡します（`.env.example` を参照）。
+キーの渡し方は 3 つです。どれか 1 つで動きます。
+
+| 方法 | 書く場所 | 向いている場面 |
+| --- | --- | --- |
+| 環境変数 | シェルで `export TYPESAFE_API_KEY=...` | 手元で 1 回試す |
+| `.env.local` | 見たいリポジトリの直下に置く。`.gitignore` に入れておく | 手元で繰り返し使う |
+| CI の secret | GitHub Actions なら `env:` に `${{ secrets.TYPESAFE_API_KEY }}` | CI |
+
+`jeview` は実行したディレクトリの `.env.local` と `.env` をこの順で読み、シェルで設定済みの値を優先します。
+
 
 ## 使いかた
 
@@ -99,6 +111,14 @@ npm にはまだ公開していません。それまでは clone して `pnpm in
 - Vercel AI Gateway の無料枠はレートリミットが厳しめです。大きなリポジトリでは `--concurrency` を下げるか TypeSafe 直結を使ってください
 - 判定は Jev の確率にもとづく目安です。最終的な判断は人が行う前提で作っています
 
+## 困ったときは
+
+質問や不具合は [GitHub の Issue](https://github.com/YuSa0-6/Jeviews/issues) に書いてください。誤検知や見逃しの報告は、どのファイルのどの観点がどう間違ったかを添えてもらえると助かります。
+
+## 貢献するには
+
+小さな修正や質問だけでも歓迎です。手順は [CONTRIBUTING.md](CONTRIBUTING.md) にあります。参加するすべての人に [行動規範](CODE_OF_CONDUCT.md) が適用されます。
+
 ## License
 
-MIT
+MIT License. Copyright (c) 2026 Yusa (YuSa0-6). 全文は [LICENSE](LICENSE) を参照してください。
