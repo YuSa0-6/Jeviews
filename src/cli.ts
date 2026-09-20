@@ -53,6 +53,13 @@ interface CliOptions {
   concurrency?: number;
 }
 
+/** 1 以上の整数だけを受け付ける。typo や負数を黙って既定値に落とさない。 */
+function positiveInt(flag: string, raw: string): number {
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 1) fail('config', `${flag} must be a positive integer, got "${raw}"`);
+  return n;
+}
+
 function parseArgs(argv: string[]): CliOptions {
   const opts: CliOptions = {};
   for (let i = 0; i < argv.length; i++) {
@@ -67,8 +74,8 @@ function parseArgs(argv: string[]): CliOptions {
       if (v !== 'typesafe' && v !== 'vercel-gateway') fail('config', `unknown provider "${v}"\n${USAGE}`);
       opts.provider = v;
     } else if (a === '--model') opts.model = next();
-    else if (a === '--max-state-bytes') opts.maxStateBytes = Number(next());
-    else if (a === '--concurrency') opts.concurrency = Number(next());
+    else if (a === '--max-state-bytes') opts.maxStateBytes = positiveInt(a, next());
+    else if (a === '--concurrency') opts.concurrency = positiveInt(a, next());
     else fail('config', `unknown option ${a}\n${USAGE}`);
   }
   return opts;
@@ -79,8 +86,9 @@ function loadEnvFiles(): void {
   for (const file of ['.env.local', '.env']) {
     try {
       process.loadEnvFile(file);
-    } catch {
-      // ファイルがなければ何もしない
+    } catch (e) {
+      // ファイルがないのは正常。それ以外 (権限や構文) は隠さない
+      if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e;
     }
   }
 }
@@ -100,7 +108,10 @@ function createProvider(id: ProviderId, model: string | undefined): Provider {
   const providerOpts: { apiKey: string; model?: string; baseUrl?: string } = { apiKey };
   if (model) providerOpts.model = model;
   const baseUrl = process.env[urlName];
-  if (baseUrl) providerOpts.baseUrl = baseUrl;
+  if (baseUrl) {
+    if (!URL.canParse(baseUrl)) throw new Error(`${urlName} is not a valid URL: "${baseUrl}"`);
+    providerOpts.baseUrl = baseUrl;
+  }
   return id === 'typesafe' ? createTypeSafeProvider(providerOpts) : createVercelGatewayProvider(providerOpts);
 }
 
@@ -145,8 +156,8 @@ async function main(): Promise<void> {
     exclusions: listed.exclusions,
     log: (line) => process.stderr.write(line + '\n'),
   };
-  if (opts.maxStateBytes !== undefined && Number.isFinite(opts.maxStateBytes)) deps.maxStateBytes = opts.maxStateBytes;
-  if (opts.concurrency !== undefined && Number.isFinite(opts.concurrency)) deps.concurrency = opts.concurrency;
+  if (opts.maxStateBytes !== undefined) deps.maxStateBytes = opts.maxStateBytes;
+  if (opts.concurrency !== undefined) deps.concurrency = opts.concurrency;
 
   const out = await reviewAll(deps);
   process.stdout.write(JSON.stringify(out, null, 2) + '\n');
