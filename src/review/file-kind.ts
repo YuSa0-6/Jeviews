@@ -21,6 +21,7 @@ const CONFIG_BASENAMES = new Set([
 
 const TEST_BASENAME = /([._](test|spec)\.[^.]+|^test_[^/]+\.py)$/;
 const TEST_DIRS = new Set(['spec', 'test', 'tests', '__tests__']);
+const TEMPLATE_SUFFIX = /\.(example|sample|template|dist)(\.[^.]+)?$/;
 
 function isTestPath(path: string, base: string): boolean {
   if (TEST_BASENAME.test(base)) return true;
@@ -31,6 +32,7 @@ const DOC_EXT = new Set(['md', 'mdx', 'markdown', 'txt', 'rst', 'adoc', 'asciido
 
 export function fileKind(path: string): FileKind {
   const base = path.slice(path.lastIndexOf('/') + 1);
+  if (TEMPLATE_SUFFIX.test(base)) return 'template';
   if (CONFIG_BASENAMES.has(base) || base.startsWith('.env')) return 'config';
   const dot = base.lastIndexOf('.');
   const ext = dot >= 0 ? base.slice(dot + 1).toLowerCase() : '';

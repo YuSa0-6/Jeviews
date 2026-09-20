@@ -22,7 +22,7 @@ const GROUP_APPLIES_TO: Record<CheckGroup, readonly FileKind[]> = {
   input_validation: ['code'],
   error_handling: ['code'],
   lint: ['code'],
-  formatting: ['code', 'test', 'config'],
+  formatting: ['code', 'test', 'config', 'template'],
   secret_exposure: ['code', 'test', 'config', 'doc', 'other'],
 };
 
@@ -41,7 +41,7 @@ export interface Check {
 
 type CheckSeed = Pick<Check, 'id' | 'group' | 'axisId' | 'problem'>;
 
-const QUESTION_VERSION = '2026-09-20.1';
+const QUESTION_VERSION = '2026-09-21.1';
 
 const SEEDS: readonly CheckSeed[] = [
   // 入力の検証漏れ
@@ -83,7 +83,7 @@ const SEEDS: readonly CheckSeed[] = [
     group: 'error_handling',
     axisId: 'C',
     problem:
-      'Does `content` start an asynchronous operation (a promise) whose rejection is never awaited or handled?',
+      'Does `content` start an asynchronous operation (a promise, future, or async task) whose failure is never awaited or handled? Enqueuing a background job through a job queue (for example perform_async, perform_later, or enqueue) does not count.',
   },
   // 秘密情報の露出
   {
@@ -91,7 +91,7 @@ const SEEDS: readonly CheckSeed[] = [
     group: 'secret_exposure',
     axisId: 'B',
     problem:
-      'Does `content` contain a hard-coded credential value, such as an API key, password, access token, or private key?',
+      'Does `content` contain a hard-coded credential value, such as an API key, password, access token, or private key? An empty value, a placeholder such as "changeme", "xxx", or "<your key>", or a variable name with no value after it does not count.',
   },
   {
     id: 'secret_logged',
@@ -111,7 +111,8 @@ const SEEDS: readonly CheckSeed[] = [
     id: 'format_quotes',
     group: 'formatting',
     axisId: 'E',
-    problem: 'Does `content` mix single and double quotes for string literals without a consistent rule?',
+    problem:
+      'Does `content` mix single and double quotes for string literals without a consistent rule? Using double quotes only where interpolation or escape sequences are needed, and single quotes elsewhere, is a consistent rule.',
   },
   {
     id: 'format_spacing',
@@ -124,19 +125,21 @@ const SEEDS: readonly CheckSeed[] = [
     id: 'lint_unused_import',
     group: 'lint',
     axisId: 'E',
-    problem: 'Is there an import statement in `content` that imports a name which is never referenced anywhere else in `content`?',
+    problem:
+      'Is there an import, require, or use statement in `content` that brings in a name which is never referenced anywhere else in `content`? A require or import whose purpose is to load a library or plugin for its side effects (for example require "rails" or a railtie) does not count.',
   },
   {
     id: 'lint_unused_variable',
     group: 'lint',
     axisId: 'E',
-    problem: 'Is there a const, let, or var declaration in `content` whose name is never referenced anywhere else in `content`?',
+    problem: 'Is there a local variable assigned in `content` (for example with const, let, var, or a plain assignment) whose name is never read afterwards?',
   },
   {
     id: 'lint_unused_param',
     group: 'lint',
     axisId: 'E',
-    problem: 'Is there a function parameter in `content` that is never referenced inside that function body?',
+    problem:
+      'Is there a function or method parameter in `content` that is never referenced inside that function or method body? A parameter whose name starts with an underscore does not count. A parameter that is passed on to another call, including super, counts as referenced.',
   },
   {
     id: 'lint_unreachable',
@@ -154,7 +157,8 @@ const SEEDS: readonly CheckSeed[] = [
     id: 'lint_constant_condition',
     group: 'lint',
     axisId: 'E',
-    problem: 'Does `content` contain a comparison or condition that is always true or always false?',
+    problem:
+      'Does `content` contain an if, unless, while, or ternary condition, or a comparison, that is always true or always false? A method or function that simply returns a literal true or false is not a condition and does not count.',
   },
 ];
 
