@@ -4,6 +4,10 @@
   "description": "Jev だけで回るコードレビュー CLI の最小構成",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YuSa0-6/Jeviews.git"
+  },
   "bin": {
     "jeview": "dist/cli.js"
   },
@@ -17,6 +21,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/cli.ts",
+    "prepublishOnly": "pnpm run build",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
