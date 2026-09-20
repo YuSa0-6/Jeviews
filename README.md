@@ -30,7 +30,16 @@
 - TypeSafe のキー（`TYPESAFE_API_KEY`）
 - Vercel AI Gateway のキー（`AI_GATEWAY_API_KEY`）
 
-キーは `.env.local` か環境変数で渡します（`.env.example` を参照）。
+キーの渡し方は 3 つです。どれか 1 つで動きます。
+
+| 方法 | 書く場所 | 向いている場面 |
+| --- | --- | --- |
+| 環境変数 | シェルで `export TYPESAFE_API_KEY=...` | 手元で 1 回試す |
+| `.env.local` | 見たいリポジトリの直下に置く。`.gitignore` に入れておく | 手元で繰り返し使う |
+| CI の secret | GitHub Actions なら `env:` に `${{ secrets.TYPESAFE_API_KEY }}` | CI |
+
+`jeview` は実行したディレクトリの `.env.local` と `.env` をこの順で読み、シェルで設定済みの値を優先します。
+
 
 ## 使いかた
 
