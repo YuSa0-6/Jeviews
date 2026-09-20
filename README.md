@@ -1,9 +1,12 @@
-# Jeviews
+# jeview
 
 リポジトリの中身をまとめて [Jev](https://docs.typesafe.ai) に見てもらい、
 「気になるファイルはどれか」を JSON で返すコマンドです。
+プロジェクト名は Jeviews、コマンドと npm パッケージの名前は `jeview` です。
 
 大きなリポジトリを前にして「どこから読めばいいか」を決めたいときに使います。
+
+まだ実験段階です。コマンドや出力の形は予告なく変わることがあります。TypeSafe AI の公式ツールではありません。
 
 ## できること
 
@@ -108,6 +111,14 @@ npm にはまだ公開していません。それまでは clone して `pnpm in
 - Vercel AI Gateway の無料枠はレートリミットが厳しめです。大きなリポジトリでは `--concurrency` を下げるか TypeSafe 直結を使ってください
 - 判定は Jev の確率にもとづく目安です。最終的な判断は人が行う前提で作っています
 
+## 困ったときは
+
+質問や不具合は [GitHub の Issue](https://github.com/YuSa0-6/Jeviews/issues) に書いてください。誤検知や見逃しの報告は、どのファイルのどの観点がどう間違ったかを添えてもらえると助かります。
+
+## 貢献するには
+
+小さな修正や質問だけでも歓迎です。手順は [CONTRIBUTING.md](CONTRIBUTING.md) にあります。参加するすべての人に [行動規範](CODE_OF_CONDUCT.md) が適用されます。
+
 ## License
 
-MIT
+MIT License. Copyright (c) 2026 Yusa (YuSa0-6). 全文は [LICENSE](LICENSE) を参照してください。
