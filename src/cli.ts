@@ -3,9 +3,7 @@
 // stdout にバージョン付き JSON を一つ、進捗と診断は stderr。
 // 終了コード: 0 = 完了、1 = 失敗または部分結果。
 
-import type { Provider } from './adapters/providers/provider.js';
-import { createTypeSafeProvider } from './adapters/providers/typesafe.js';
-import { createVercelGatewayProvider } from './adapters/providers/vercel-gateway.js';
+import { createProviderFromEnv, detectProvider, isProviderId } from './adapters/providers/registry.js';
 import { createGitRepository } from './adapters/repository/git.js';
 import type { ProviderId, ReviewOutput } from './review/output.js';
 import { DEFAULT_MAX_STATE_BYTES, reviewAll } from './review/review.js';
@@ -53,23 +51,39 @@ interface CliOptions {
   concurrency?: number;
 }
 
+function positiveInt(flag: string, raw: string): number {
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 1) fail('config', `${flag} must be a positive integer, got "${raw}"`);
+  return n;
+}
+
+type OptionParser = (opts: CliOptions, value: string, flag: string) => void;
+
+const OPTIONS: Record<string, OptionParser> = {
+  '--provider': (o, v) => {
+    if (!isProviderId(v)) fail('config', `unknown provider "${v}"\n${USAGE}`);
+    o.provider = v;
+  },
+  '--model': (o, v) => {
+    o.model = v;
+  },
+  '--max-state-bytes': (o, v, flag) => {
+    o.maxStateBytes = positiveInt(flag, v);
+  },
+  '--concurrency': (o, v, flag) => {
+    o.concurrency = positiveInt(flag, v);
+  },
+};
+
 function parseArgs(argv: string[]): CliOptions {
   const opts: CliOptions = {};
-  for (let i = 0; i < argv.length; i++) {
-    const a = argv[i]!;
-    const next = () => {
-      const v = argv[++i];
-      if (v === undefined) fail('config', `missing value for ${a}`);
-      return v;
-    };
-    if (a === '--provider') {
-      const v = next();
-      if (v !== 'typesafe' && v !== 'vercel-gateway') fail('config', `unknown provider "${v}"\n${USAGE}`);
-      opts.provider = v;
-    } else if (a === '--model') opts.model = next();
-    else if (a === '--max-state-bytes') opts.maxStateBytes = Number(next());
-    else if (a === '--concurrency') opts.concurrency = Number(next());
-    else fail('config', `unknown option ${a}\n${USAGE}`);
+  for (let i = 0; i < argv.length; i += 2) {
+    const flag = argv[i]!;
+    const parse = OPTIONS[flag];
+    if (!parse) fail('config', `unknown option ${flag}\n${USAGE}`);
+    const value = argv[i + 1];
+    if (value === undefined) fail('config', `missing value for ${flag}`);
+    parse(opts, value, flag);
   }
   return opts;
 }
@@ -79,93 +93,91 @@ function loadEnvFiles(): void {
   for (const file of ['.env.local', '.env']) {
     try {
       process.loadEnvFile(file);
-    } catch {
-      // ファイルがなければ何もしない
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e;
     }
   }
 }
 
-/** 明示されないときの接続先。鍵がある方を使い、両方あれば TypeSafe 直結。 */
-function detectProvider(): ProviderId | undefined {
-  if (process.env['TYPESAFE_API_KEY']) return 'typesafe';
-  if (process.env['AI_GATEWAY_API_KEY']) return 'vercel-gateway';
-  return undefined;
+function providerOrFail(id: ProviderId, model: string | undefined) {
+  try {
+    return createProviderFromEnv(id, model, process.env);
+  } catch (e) {
+    return fail('config', (e as Error).message, id);
+  }
 }
 
-function createProvider(id: ProviderId, model: string | undefined): Provider {
-  const keyName = id === 'typesafe' ? 'TYPESAFE_API_KEY' : 'AI_GATEWAY_API_KEY';
-  const urlName = id === 'typesafe' ? 'TYPESAFE_BASE_URL' : 'AI_GATEWAY_BASE_URL';
-  const apiKey = process.env[keyName];
-  if (!apiKey) throw new Error(`${keyName} is not set`);
-  const providerOpts: { apiKey: string; model?: string; baseUrl?: string } = { apiKey };
-  if (model) providerOpts.model = model;
-  const baseUrl = process.env[urlName];
-  if (baseUrl) providerOpts.baseUrl = baseUrl;
-  return id === 'typesafe' ? createTypeSafeProvider(providerOpts) : createVercelGatewayProvider(providerOpts);
-}
-
-async function main(): Promise<void> {
-  loadEnvFiles();
-  const [cmd, ...rest] = process.argv.slice(2);
+function parseCommand(argv: string[]): string[] {
+  const [cmd, ...rest] = argv;
   if (cmd === '--help' || cmd === '-h' || cmd === undefined) {
     process.stderr.write(USAGE);
     process.exit(cmd === undefined ? 1 : 0);
   }
   if (cmd !== 'all') fail('config', `unsupported target "${cmd}". only "all" is implemented.\n${USAGE}`);
+  return rest;
+}
 
-  const opts = parseArgs(rest);
-  const providerId = opts.provider ?? detectProvider();
-  if (!providerId) fail('config', 'set TYPESAFE_API_KEY or AI_GATEWAY_API_KEY (see .env.example)');
-  let provider: Provider;
+async function listOrFail(repo: ReturnType<typeof createGitRepository>) {
   try {
-    provider = createProvider(providerId, opts.model);
-  } catch (e) {
-    return fail('config', (e as Error).message, providerId);
-  }
-
-  const repo = createGitRepository(process.cwd());
-  let snapshotId: string;
-  let listed: Awaited<ReturnType<typeof repo.listAll>>;
-  try {
-    snapshotId = await repo.snapshotId();
-    listed = await repo.listAll();
+    const snapshotId = await repo.snapshotId();
+    const { files, exclusions } = await repo.listAll();
+    return { snapshotId, files, exclusions };
   } catch (e) {
     return fail('repository', (e as Error).message);
   }
-  process.stderr.write(
-    `jeview all: ${listed.files.length} files, ${listed.exclusions.length} excluded, snapshot ${snapshotId}\n`,
-  );
+}
 
-  const deps: Parameters<typeof reviewAll>[0] = {
-    provider,
-    providerId,
-    model: provider.model,
-    snapshotId,
-    files: listed.files,
-    exclusions: listed.exclusions,
-    log: (line) => process.stderr.write(line + '\n'),
-  };
-  if (opts.maxStateBytes !== undefined && Number.isFinite(opts.maxStateBytes)) deps.maxStateBytes = opts.maxStateBytes;
-  if (opts.concurrency !== undefined && Number.isFinite(opts.concurrency)) deps.concurrency = opts.concurrency;
-
-  const out = await reviewAll(deps);
-  process.stdout.write(JSON.stringify(out, null, 2) + '\n');
-  const summary = out.files.reduce<Record<string, number>>((acc, f) => {
+function verdictCounts(out: ReviewOutput): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const f of out.files) {
     const k = f.verdict ?? 'null';
-    acc[k] = (acc[k] ?? 0) + 1;
-    return acc;
-  }, {});
-  process.stderr.write(
-    `jeview: status=${out.run.status} ${JSON.stringify(summary)} requests=${out.run.usage.requests} inputTokens=${out.run.usage.inputTokens} costUsd=${out.run.usage.costUsd}\n`,
-  );
-  // 失敗したファイルがあれば、理由の種類ごとに 1 行ずつ出す。同じ理由の繰り返しは件数にまとめる。
+    counts[k] = (counts[k] ?? 0) + 1;
+  }
+  return counts;
+}
+
+function failureCounts(out: ReviewOutput): Map<string, number> {
   const reasons = new Map<string, number>();
   for (const f of out.files) {
     if (!f.error) continue;
     const key = `${f.error.code}: ${f.error.message.split('\n')[0]?.slice(0, 300)}`;
     reasons.set(key, (reasons.get(key) ?? 0) + 1);
   }
-  for (const [key, n] of reasons) process.stderr.write(`jeview: ${n} file(s) failed with ${key}\n`);
+  return reasons;
+}
+
+function writeSummary(out: ReviewOutput): void {
+  const u = out.run.usage;
+  process.stderr.write(
+    `jeview: status=${out.run.status} ${JSON.stringify(verdictCounts(out))} requests=${u.requests} inputTokens=${u.inputTokens} costUsd=${u.costUsd}\n`,
+  );
+  for (const [key, n] of failureCounts(out)) process.stderr.write(`jeview: ${n} file(s) failed with ${key}\n`);
+}
+
+async function main(): Promise<void> {
+  loadEnvFiles();
+  const opts = parseArgs(parseCommand(process.argv.slice(2)));
+  const providerId = opts.provider ?? detectProvider(process.env);
+  if (!providerId) fail('config', 'set TYPESAFE_API_KEY or AI_GATEWAY_API_KEY (see .env.example)');
+  const provider = providerOrFail(providerId, opts.model);
+  const target = await listOrFail(createGitRepository(process.cwd()));
+  process.stderr.write(
+    `jeview all: ${target.files.length} files, ${target.exclusions.length} excluded, snapshot ${target.snapshotId}\n`,
+  );
+
+  const deps: Parameters<typeof reviewAll>[0] = {
+    provider,
+    providerId,
+    model: provider.model,
+    ...target,
+    log: (line) => process.stderr.write(line + '\n'),
+  };
+  if (opts.maxStateBytes !== undefined) deps.maxStateBytes = opts.maxStateBytes;
+  if (opts.concurrency !== undefined) deps.concurrency = opts.concurrency;
+
+  const out = await reviewAll(deps);
+  process.stdout.write(JSON.stringify(out, null, 2) + '\n');
+  writeSummary(out);
   process.exit(out.run.status === 'completed' ? 0 : 1);
 }
 

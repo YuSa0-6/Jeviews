@@ -14,7 +14,7 @@
 // 価格は Gateway 側の設定に依存し固定でないため usdPerInputToken は null。
 
 import { postJsonWithRetry, type HttpOptions } from './http.js';
-import { ProviderError, type NoulAnswer, type Provider, type Question, type SystemOneResponse } from './provider.js';
+import { ProviderError, type NoulAnswer, type Provider, type Question, type SystemOneResponse } from '../../review/ports.js';
 
 export interface VercelGatewayOptions extends HttpOptions {
   apiKey: string;

@@ -2,7 +2,7 @@
 // 出典: https://docs.typesafe.ai/api.md 、 https://docs.typesafe.ai/introduction/quickstart.md
 
 import { postJsonWithRetry, type HttpOptions } from './http.js';
-import { ProviderError, type NoulAnswer, type Provider, type SystemOneResponse } from './provider.js';
+import { ProviderError, type NoulAnswer, type Provider, type SystemOneResponse } from '../../review/ports.js';
 
 export interface TypeSafeOptions extends HttpOptions {
   apiKey: string;

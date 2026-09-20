@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ProviderError } from './provider.js';
+import { ProviderError } from '../../review/ports.js';
 import { createTypeSafeProvider } from './typesafe.js';
 import { createVercelGatewayProvider } from './vercel-gateway.js';
 
@@ -86,6 +86,19 @@ describe('createTypeSafeProvider', () => {
     expect(err).toBeInstanceOf(ProviderError);
     expect(err).toMatchObject({ code: 'rate_limit', attempts: 3 });
     expect(calls).toHaveLength(3);
+  });
+
+  it('retries when fetch itself rejects, then reports network with the attempt count', async () => {
+    let calls = 0;
+    const fetchImpl: typeof fetch = async () => {
+      calls += 1;
+      throw new Error('ECONNRESET');
+    };
+    const p = createTypeSafeProvider({ apiKey: 'k', fetchImpl, sleep: noSleep, maxAttempts: 2 });
+    const err = await p.ask({}, questions).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(ProviderError);
+    expect(err).toMatchObject({ code: 'network', message: 'ECONNRESET', attempts: 2 });
+    expect(calls).toBe(2);
   });
 
   it('does not retry on 401', async () => {

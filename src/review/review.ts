@@ -2,12 +2,10 @@
 // 依存は引数で渡す。
 
 import { createHash, randomUUID } from 'node:crypto';
-import type { Provider, Question } from '../adapters/providers/provider.js';
-import { ProviderError } from '../adapters/providers/provider.js';
-import type { Exclusion, TrackedFile } from '../adapters/repository/git.js';
 import { CHECKS, questionId, type Check } from './checks.js';
 import { fileKind } from './file-kind.js';
 import type { CheckResult, FileKind, FileResult, ProviderId, ReviewOutput, Thresholds, Usage } from './output.js';
+import { ProviderError, type Exclusion, type Provider, type Question, type SystemOneResponse, type TrackedFile } from './ports.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict, runStatus } from './verdict.js';
 
 export interface ReviewDeps {
@@ -44,73 +42,44 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     results[i] = await reviewFile(file, kind);
   });
 
+  function addTokens(u: SystemOneResponse['usage']): void {
+    if (typeof u?.input_tokens === 'number') {
+      usage.inputTokens! += u.input_tokens;
+      usage.outputTokens! += u.output_tokens ?? 0;
+    } else {
+      usageComplete = false;
+    }
+  }
+
   async function reviewFile(file: TrackedFile, kind: FileKind): Promise<FileResult> {
     const base = { path: file.path, revision: file.revision, bytes: file.bytes, kind };
     const applicable = checks.filter((c) => c.appliesTo.includes(kind));
     const skipped = checks.filter((c) => !c.appliesTo.includes(kind)).map((c) => notApplicable(c));
+    const withSkipped = (rest: CheckResult[]) => ordered(checks, [...skipped, ...rest]);
 
     if (applicable.length === 0) {
       return { ...base, verdict: fileVerdict(skipped), checks: ordered(checks, skipped) };
     }
-
     if (file.bytes > maxStateBytes) {
-      const cs = [...skipped, ...applicable.map((c) => emptyCheck(c, 'NEED_REVIEW', 'input_too_large'))];
-      return { ...base, verdict: fileVerdict(cs), checks: ordered(checks, cs) };
+      const cs = withSkipped(applicable.map((c) => emptyCheck(c, 'NEED_REVIEW', 'input_too_large')));
+      return { ...base, verdict: fileVerdict(cs), checks: cs };
     }
 
-    const state = { path: file.path, content: file.content };
-    const questions = buildQuestions(applicable);
     try {
-      const { response, attempts } = await deps.provider.ask(state, questions);
+      const state = { path: file.path, content: file.content };
+      const { response, attempts } = await deps.provider.ask(state, buildQuestions(applicable));
       usage.requests += attempts;
-      if (typeof response.usage?.input_tokens === 'number') {
-        usage.inputTokens! += response.usage.input_tokens;
-        usage.outputTokens! += response.usage.output_tokens ?? 0;
-      } else {
-        usageComplete = false;
-      }
-      const answered = applicable.map((c) => {
-        const p = response.answers[questionId(c.id, 'problem')]?.noul;
-        const n = response.answers[questionId(c.id, 'needsContext')]?.noul;
-        if (p === undefined || n === undefined) {
-          return emptyCheck(c, null, 'api_error');
-        }
-        const v = checkVerdict(p, n, thresholds);
-        const r: CheckResult = {
-          axisId: c.axisId,
-          group: c.group,
-          checkId: c.id,
-          questionVersion: c.questionVersion,
-          applicable: true,
-          problem: { probability: p },
-          needsContext: { probability: n },
-          verdict: v.verdict,
-        };
-        if (v.reason) r.reason = v.reason;
-        return r;
-      });
-      const cs = ordered(checks, [...skipped, ...answered]);
-      const missing = answered.some((c) => c.verdict === null);
+      addTokens(response.usage);
+      const cs = withSkipped(applicable.map((c) => answeredCheck(c, response.answers, thresholds)));
       const result: FileResult = { ...base, verdict: fileVerdict(cs), checks: cs };
-      if (missing) result.error = { code: 'invalid_response', message: 'answer missing for some questions' };
+      if (cs.some((c) => c.applicable && c.verdict === null)) {
+        result.error = { code: 'invalid_response', message: 'answer missing for some questions' };
+      }
       return result;
     } catch (e) {
       const err = e as ProviderError & { attempts?: number };
       usage.requests += err.attempts ?? 1;
-      if (err instanceof ProviderError && err.code === 'bad_request') {
-        const cs = ordered(checks, [...skipped, ...applicable.map((c) => emptyCheck(c, 'NEED_REVIEW', 'input_too_large'))]);
-        return { ...base, verdict: fileVerdict(cs), checks: cs, error: { code: err.code, message: err.message } };
-      }
-      const cs = ordered(checks, [...skipped, ...applicable.map((c) => emptyCheck(c, null, 'api_error'))]);
-      return {
-        ...base,
-        verdict: null,
-        checks: cs,
-        error: {
-          code: err instanceof ProviderError ? err.code : 'unknown',
-          message: err.message ?? String(e),
-        },
-      };
+      return failedResult(base, withSkipped, applicable, err);
     }
   }
 
@@ -148,7 +117,7 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
   };
 }
 
-export function buildQuestions(checks: readonly Check[]): Record<string, Question> {
+function buildQuestions(checks: readonly Check[]): Record<string, Question> {
   const q: Record<string, Question> = {};
   for (const c of checks) {
     q[questionId(c.id, 'problem')] = { type: 'noul', instructions: c.problem };
@@ -157,7 +126,7 @@ export function buildQuestions(checks: readonly Check[]): Record<string, Questio
   return q;
 }
 
-export function policyHash(checks: readonly Check[], thresholds: Thresholds, model: string): string {
+function policyHash(checks: readonly Check[], thresholds: Thresholds, model: string): string {
   return createHash('sha256')
     .update(JSON.stringify({ checks, thresholds, model }))
     .digest('hex')
@@ -202,4 +171,42 @@ async function runLimited<T>(
     }
   });
   await Promise.all(workers);
+}
+
+function answeredCheck(c: Check, answers: SystemOneResponse['answers'], thresholds: Thresholds): CheckResult {
+  const p = answers[questionId(c.id, 'problem')]?.noul;
+  const n = answers[questionId(c.id, 'needsContext')]?.noul;
+  if (p === undefined || n === undefined) return emptyCheck(c, null, 'api_error');
+  const v = checkVerdict(p, n, thresholds);
+  const r: CheckResult = {
+    axisId: c.axisId,
+    group: c.group,
+    checkId: c.id,
+    questionVersion: c.questionVersion,
+    applicable: true,
+    problem: { probability: p },
+    needsContext: { probability: n },
+    verdict: v.verdict,
+  };
+  if (v.reason) r.reason = v.reason;
+  return r;
+}
+
+function failedResult(
+  base: Omit<FileResult, 'verdict' | 'checks'>,
+  withSkipped: (rest: CheckResult[]) => CheckResult[],
+  applicable: readonly Check[],
+  err: Error,
+): FileResult {
+  if (err instanceof ProviderError && err.code === 'bad_request') {
+    const cs = withSkipped(applicable.map((c) => emptyCheck(c, 'NEED_REVIEW', 'input_too_large')));
+    return { ...base, verdict: fileVerdict(cs), checks: cs, error: { code: err.code, message: err.message } };
+  }
+  const cs = withSkipped(applicable.map((c) => emptyCheck(c, null, 'api_error')));
+  return {
+    ...base,
+    verdict: null,
+    checks: cs,
+    error: { code: err instanceof ProviderError ? err.code : 'unknown', message: err.message ?? String(err) },
+  };
 }

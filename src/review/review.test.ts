@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import type { Provider, Question } from '../adapters/providers/provider.js';
-import { ProviderError } from '../adapters/providers/provider.js';
 import { CHECKS, questionId } from './checks.js';
 import { fileKind } from './file-kind.js';
 import type { CheckResult } from './output.js';
+import { ProviderError, type Provider, type Question } from './ports.js';
 import { reviewAll } from './review.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict } from './verdict.js';
 
@@ -71,6 +70,9 @@ describe('fileKind', () => {
   it('classifies by extension and basename', () => {
     expect(fileKind('src/a.ts')).toBe('code');
     expect(fileKind('scripts/run.sh')).toBe('code');
+    expect(fileKind('src/a.test.ts')).toBe('test');
+    expect(fileKind('src/a.spec.js')).toBe('test');
+    expect(fileKind('src/test-utils.ts')).toBe('code');
     expect(fileKind('package.json')).toBe('config');
     expect(fileKind('.gitignore')).toBe('config');
     expect(fileKind('.env.example')).toBe('config');
@@ -124,7 +126,7 @@ describe('reviewAll', () => {
     expect(secret.verdict).toBe('NG');
     expect(secret.group).toBe('secret_exposure');
     expect(secret.problem).toEqual({ probability: 0.9 });
-    expect(f.checks.find((c) => c.checkId === 'lint_unused')!.verdict).toBe('GOOD');
+    expect(f.checks.find((c) => c.checkId === 'lint_unused_import')!.verdict).toBe('GOOD');
     expect(out.run.usage).toEqual({ requests: 1, inputTokens: 100, outputTokens: 10, costUsd: 0.0000042 });
   });
 

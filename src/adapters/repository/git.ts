@@ -5,20 +5,9 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
+import type { Exclusion, Repository, TrackedFile } from '../../review/ports.js';
 
 const execFileAsync = promisify(execFile);
-
-export interface TrackedFile {
-  path: string;
-  content: string;
-  bytes: number;
-  revision: string;
-}
-
-export interface Exclusion {
-  path: string;
-  reason: string;
-}
 
 const EXCLUDED_BASENAMES = new Set([
   'pnpm-lock.yaml',
@@ -30,16 +19,13 @@ const EXCLUDED_BASENAMES = new Set([
   'go.sum',
 ]);
 
-export function createGitRepository(cwd: string) {
+export function createGitRepository(cwd: string): Repository {
   async function git(args: string[]): Promise<string> {
     const { stdout } = await execFileAsync('git', args, { cwd, maxBuffer: 64 * 1024 * 1024 });
     return stdout;
   }
 
   return {
-    async root() {
-      return (await git(['rev-parse', '--show-toplevel'])).trim();
-    },
     async snapshotId() {
       const head = (await git(['rev-parse', 'HEAD'])).trim();
       const dirty = (await git(['status', '--porcelain', '--untracked-files=no'])).trim() !== '';
