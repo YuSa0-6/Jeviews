@@ -1,2 +1,96 @@
 # Jeviews
-お試しJev
+
+リポジトリの中身をまとめて [Jev](https://docs.typesafe.ai) に見てもらい、
+「気になるファイルはどれか」を JSON で返すコマンドです。
+
+大きなリポジトリを前にして「どこから読めばいいか」を決めたいときに使います。
+
+## できること
+
+- Git で追跡しているファイルを一通り scan する
+- ファイルごとに `GOOD` / `NG` / `NEED_REVIEW` の判定を付ける
+- 判定の根拠になった確率をそのまま残すので、あとから閾値を変えて読み直せる
+
+見ている観点は 5 つです。
+
+| 観点 | 何を見るか |
+| --- | --- |
+| input_validation | 外から受け取った値を確認せずに使っていないか |
+| error_handling | 失敗したときの扱いが抜けていないか |
+| secret_exposure | 鍵やトークンがファイルに書かれていないか |
+| formatting | 整形が崩れていないか |
+| lint | 明らかな書き方の問題がないか |
+
+コードでないファイル（設定・ドキュメント）には、当てはまる観点だけを使います。
+
+## はじめかた
+
+必要なのは Node.js 22 以上と、次のどちらかの API キーです。
+
+- TypeSafe のキー（`TYPESAFE_API_KEY`）
+- Vercel AI Gateway のキー（`AI_GATEWAY_API_KEY`）
+
+```sh
+pnpm install
+cp .env.example .env.local   # キーを 1 つ書く
+pnpm run build
+```
+
+## 使いかた
+
+見たいリポジトリの中で実行します。
+
+```sh
+node dist/cli.js all > result.json
+```
+
+結果は stdout に JSON で出ます。進捗とエラーは stderr に出るので、
+上のように stdout だけファイルへ落とせます。
+
+| 終了コード | 意味 |
+| --- | --- |
+| 0 | 全ファイルの判定が終わった |
+| 1 | 途中で失敗した、または一部のファイルが判定できなかった |
+
+### オプション
+
+| オプション | 用途 |
+| --- | --- |
+| `--provider typesafe` / `--provider vercel-gateway` | 接続先を指定する。省略時はキーがある方を使う |
+| `--model <name>` | モデルを変える。Vercel AI Gateway の既定は `typesafe-ai/jev` |
+| `--max-state-bytes <n>` | これより大きいファイルは送らずに `NEED_REVIEW` にする |
+| `--concurrency <n>` | 同時に送るリクエスト数 |
+
+## 結果の読みかた
+
+`files[]` の各要素がファイル 1 つに対応します。まず `verdict` を見てください。
+
+| verdict | 意味 | 次にすること |
+| --- | --- | --- |
+| `GOOD` | どの観点でも問題は見つからなかった | 後回しにしてよい |
+| `NG` | いずれかの観点で問題の確率が高い | 先に読む |
+| `NEED_REVIEW` | このファイルだけでは判断できない、または大きすぎて送っていない | 周辺ファイルと一緒に人が見る |
+| `null` | API エラーなどで判定できなかった | `error` を確認して再実行する |
+
+観点ごとの詳しい結果は `checks[]` にあります。
+`problem.probability` が「問題がある確率」、`needsContext.probability` が「他のファイルを見ないと判断できない確率」です。
+
+既定の閾値は `run.thresholds` に出力されます。
+
+| 値 | 既定 | 意味 |
+| --- | --- | --- |
+| problemHigh | 0.65 | これ以上で `NG` |
+| problemLow | 0.35 | これ未満で問題なし。間は `NEED_REVIEW` 相当として確率だけ残す |
+| needsContextHigh | 0.65 | これ以上で `NEED_REVIEW` |
+
+`run.usage` にリクエスト数とトークン数が出るので、コストの見当も付きます。
+
+## 知っておくと安心なこと
+
+- ファイルの中身は API キーで指定した接続先にそのまま送られます。送りたくないファイルがあるリポジトリでは使わないでください
+- Vercel AI Gateway の無料枠はレートリミットが厳しめです。大きなリポジトリでは `--concurrency` を下げるか TypeSafe 直結を使ってください
+- 判定は Jev の確率にもとづく目安です。最終的な判断は人が行う前提で作っています
+
+## License
+
+MIT
