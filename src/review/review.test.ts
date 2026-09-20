@@ -84,7 +84,10 @@ describe('fileKind', () => {
     expect(fileKind('app/services/testing_service.rb')).toBe('code');
     expect(fileKind('package.json')).toBe('config');
     expect(fileKind('.gitignore')).toBe('config');
-    expect(fileKind('.env.example')).toBe('config');
+    expect(fileKind('.env.example')).toBe('template');
+    expect(fileKind('.env.production.sample')).toBe('template');
+    expect(fileKind('config/database.yml.example')).toBe('template');
+    expect(fileKind('.env.production')).toBe('config');
     expect(fileKind('docs/README.md')).toBe('doc');
     expect(fileKind('LICENSE')).toBe('other');
   });
