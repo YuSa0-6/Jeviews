@@ -73,6 +73,15 @@ describe('fileKind', () => {
     expect(fileKind('src/a.test.ts')).toBe('test');
     expect(fileKind('src/a.spec.js')).toBe('test');
     expect(fileKind('src/test-utils.ts')).toBe('code');
+    expect(fileKind('spec/models/account_spec.rb')).toBe('test');
+    expect(fileKind('test/models/account_test.rb')).toBe('test');
+    expect(fileKind('spec/rails_helper.rb')).toBe('test');
+    expect(fileKind('spec/fixtures/user.json')).toBe('test');
+    expect(fileKind('pkg/handler_test.go')).toBe('test');
+    expect(fileKind('tests/test_api.py')).toBe('test');
+    expect(fileKind('src/__tests__/a.ts')).toBe('test');
+    expect(fileKind('app/models/contest.rb')).toBe('code');
+    expect(fileKind('app/services/testing_service.rb')).toBe('code');
     expect(fileKind('package.json')).toBe('config');
     expect(fileKind('.gitignore')).toBe('config');
     expect(fileKind('.env.example')).toBe('config');

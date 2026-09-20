@@ -19,7 +19,13 @@ const CONFIG_BASENAMES = new Set([
   'Dockerfile', 'Makefile', '.dockerignore',
 ]);
 
-const TEST_INFIX = /\.(test|spec)\.[^.]+$/;
+const TEST_BASENAME = /([._](test|spec)\.[^.]+|^test_[^/]+\.py)$/;
+const TEST_DIRS = new Set(['spec', 'test', 'tests', '__tests__']);
+
+function isTestPath(path: string, base: string): boolean {
+  if (TEST_BASENAME.test(base)) return true;
+  return path.split('/').slice(0, -1).some((dir) => TEST_DIRS.has(dir));
+}
 
 const DOC_EXT = new Set(['md', 'mdx', 'markdown', 'txt', 'rst', 'adoc', 'asciidoc']);
 
@@ -28,7 +34,8 @@ export function fileKind(path: string): FileKind {
   if (CONFIG_BASENAMES.has(base) || base.startsWith('.env')) return 'config';
   const dot = base.lastIndexOf('.');
   const ext = dot >= 0 ? base.slice(dot + 1).toLowerCase() : '';
-  if (CODE_EXT.has(ext)) return TEST_INFIX.test(base) ? 'test' : 'code';
+  if (isTestPath(path, base)) return 'test';
+  if (CODE_EXT.has(ext)) return 'code';
   if (CONFIG_EXT.has(ext)) return 'config';
   if (DOC_EXT.has(ext)) return 'doc';
   return 'other';
