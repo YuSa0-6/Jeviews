@@ -27,7 +27,8 @@
     "eval:sample": "node evals/scripts/sample.mjs",
     "eval:teacher": "node evals/scripts/teacher.mjs",
     "eval:scan": "node evals/scripts/scan.mjs",
-    "eval:score": "node evals/scripts/score.mjs"
+    "eval:score": "node evals/scripts/score.mjs",
+    "eval:diff": "node evals/scripts/diff.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.2",

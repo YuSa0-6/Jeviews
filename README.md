@@ -99,7 +99,7 @@ npm にはまだ公開していません。それまでは clone して `pnpm in
 
 | 値 | 既定 | 意味 |
 | --- | --- | --- |
-| problemHigh | 0.65 | これ以上で `NG` |
+| problemHigh | 0.65 | これ以上で `NG`。lint の観点だけ 0.80（大きなファイルで未使用コードの誤検知が多いため） |
 | problemLow | 0.35 | これ未満で問題なし。間は `NEED_REVIEW` 相当として確率だけ残す |
 | needsContextHigh | 0.65 | これ以上で `NEED_REVIEW` |
 

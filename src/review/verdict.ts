@@ -4,6 +4,7 @@ import type { CheckResult, FileResult, ReasonCode, Thresholds, Verdict } from '.
 
 export const DEFAULT_THRESHOLDS: Thresholds = {
   problemHigh: 0.65,
+  problemHighByGroup: { lint: 0.8 },
   problemLow: 0.35,
   needsContextHigh: 0.65,
 };
@@ -12,8 +13,10 @@ export function checkVerdict(
   problem: number,
   needsContext: number,
   t: Thresholds,
+  group?: string,
 ): { verdict: Verdict; reason?: ReasonCode } {
-  if (problem >= t.problemHigh) return { verdict: 'NG' };
+  const high = (group === undefined ? undefined : t.problemHighByGroup[group]) ?? t.problemHigh;
+  if (problem >= high) return { verdict: 'NG' };
   if (needsContext >= t.needsContextHigh) return { verdict: 'NEED_REVIEW', reason: 'needs_context' };
   if (problem > t.problemLow) return { verdict: 'NEED_REVIEW', reason: 'uncertain' };
   return { verdict: 'GOOD' };

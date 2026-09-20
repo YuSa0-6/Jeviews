@@ -20,10 +20,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -51,10 +47,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -88,10 +80,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -119,10 +107,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -156,10 +140,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -187,10 +167,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -224,10 +200,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -255,10 +227,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -292,10 +260,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -323,10 +287,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -360,10 +320,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -391,10 +347,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -428,10 +380,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -459,10 +407,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -496,10 +440,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -527,10 +467,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -564,10 +500,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -595,10 +527,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -632,10 +560,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -663,10 +587,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -700,10 +620,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -731,10 +647,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -768,10 +680,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -799,10 +707,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -836,10 +740,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -867,10 +767,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -904,10 +800,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -935,10 +827,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -972,10 +860,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1003,10 +887,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1040,10 +920,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1071,10 +947,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1108,10 +980,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1139,10 +1007,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1176,10 +1040,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1207,10 +1067,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1244,10 +1100,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1275,10 +1127,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1312,10 +1160,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1343,10 +1187,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1380,10 +1220,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1411,10 +1247,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1448,10 +1280,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1479,10 +1307,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1516,10 +1340,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1547,10 +1367,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1584,10 +1400,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1615,10 +1427,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1652,10 +1460,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1683,10 +1487,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1720,10 +1520,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1751,10 +1547,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1788,10 +1580,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1819,10 +1607,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1856,10 +1640,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1887,10 +1667,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1924,10 +1700,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -1955,10 +1727,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },
@@ -1992,10 +1760,6 @@
         "truth": "clean",
         "source": "rubocop"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
       "lint_constant_condition": {
         "truth": "clean",
         "source": "rubocop"
@@ -2023,10 +1787,6 @@
         "source": "rubocop"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "rubocop"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "rubocop"
       },

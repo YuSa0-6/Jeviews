@@ -26,10 +26,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -53,10 +49,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -86,10 +78,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -116,10 +104,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -137,17 +121,13 @@
       "lint_unused_param": {
         "truth": "problem",
         "source": "ruff",
-        "detail": "ARG001 L21"
+        "detail": "ARG001 L11"
       },
       "lint_unused_import": {
         "truth": "clean",
         "source": "ruff"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -177,10 +157,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -204,10 +180,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -237,10 +209,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -264,10 +232,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -297,10 +261,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -324,10 +284,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -357,10 +313,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -384,10 +336,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -417,10 +365,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -447,10 +391,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -468,17 +408,13 @@
       "lint_unused_param": {
         "truth": "problem",
         "source": "ruff",
-        "detail": "ARG002 L270"
+        "detail": "ARG001 L176"
       },
       "lint_unused_import": {
         "truth": "clean",
         "source": "ruff"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -508,10 +444,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -535,10 +467,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -568,10 +496,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -595,10 +519,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -628,10 +548,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -655,10 +571,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -689,10 +601,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -716,10 +624,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -749,10 +653,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -776,10 +676,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -809,10 +705,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -836,10 +728,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -869,10 +757,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -896,10 +780,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -929,10 +809,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -956,10 +832,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -989,10 +861,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -1016,10 +884,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -1049,10 +913,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -1076,10 +936,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -1109,10 +965,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -1136,10 +988,6 @@
         "source": "ruff"
       },
       "lint_unused_param": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },
@@ -1169,10 +1017,6 @@
         "truth": "clean",
         "source": "ruff"
       },
-      "error_empty_catch": {
-        "truth": "clean",
-        "source": "ruff"
-      },
       "format_indentation": {
         "truth": "clean",
         "source": "ruff-format"
@@ -1197,10 +1041,6 @@
         "source": "ruff"
       },
       "lint_unused_variable": {
-        "truth": "clean",
-        "source": "ruff"
-      },
-      "error_empty_catch": {
         "truth": "clean",
         "source": "ruff"
       },

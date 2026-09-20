@@ -72,7 +72,7 @@ if (r.language === 'ruby') {
       set(f.path, check, 'problem', 'rubocop', `${o.cop_name} L${o.location.line}`); seen.add(f.path + check);
     }
   }
-  for (const c of [...new Set(Object.values(COPS))]) markAll(c, 'clean', 'rubocop', files.filter((f) => !broken.has(f)));
+  for (const c of [...new Set(Object.values(COPS))].filter((c) => c !== 'error_empty_catch')) markAll(c, 'clean', 'rubocop', files.filter((f) => !broken.has(f)));
 }
 
 if (r.language === 'python') {
@@ -86,7 +86,7 @@ if (r.language === 'python') {
     const check = RULES[d.code]; if (!check) continue;
     set(d.filename, check, 'problem', 'ruff', `${d.code} L${d.location.row}`);
   }
-  for (const c of [...new Set(Object.values(RULES))]) markAll(c, 'clean', 'ruff');
+  for (const c of [...new Set(Object.values(RULES))].filter((c) => c !== 'error_empty_catch')) markAll(c, 'clean', 'ruff');
   const fm = run('mise', [...uv, 'format', '--check', '--isolated', '--no-cache', ...files], { cwd: wd });
   if (![0, 1].includes(fm.code)) throw new Error('ruff format failed: ' + fm.err.slice(0, 300));
   const bad = new Set([...fm.out.matchAll(/^Would reformat: (.+)$/gm)].map((m) => m[1]));

@@ -41,7 +41,7 @@ export interface Check {
 
 type CheckSeed = Pick<Check, 'id' | 'group' | 'axisId' | 'problem'>;
 
-const QUESTION_VERSION = '2026-09-21.1';
+const QUESTION_VERSION = '2026-09-21.2';
 
 const SEEDS: readonly CheckSeed[] = [
   // 入力の検証漏れ
