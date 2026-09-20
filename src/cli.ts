@@ -3,9 +3,7 @@
 // stdout にバージョン付き JSON を一つ、進捗と診断は stderr。
 // 終了コード: 0 = 完了、1 = 失敗または部分結果。
 
-import type { Provider } from './adapters/providers/provider.js';
-import { createTypeSafeProvider } from './adapters/providers/typesafe.js';
-import { createVercelGatewayProvider } from './adapters/providers/vercel-gateway.js';
+import { createProviderFromEnv, detectProvider, isProviderId } from './adapters/providers/registry.js';
 import { createGitRepository } from './adapters/repository/git.js';
 import type { ProviderId, ReviewOutput } from './review/output.js';
 import { DEFAULT_MAX_STATE_BYTES, reviewAll } from './review/review.js';
@@ -70,7 +68,7 @@ function parseArgs(argv: string[]): CliOptions {
     };
     if (a === '--provider') {
       const v = next();
-      if (v !== 'typesafe' && v !== 'vercel-gateway') fail('config', `unknown provider "${v}"\n${USAGE}`);
+      if (!isProviderId(v)) fail('config', `unknown provider "${v}"\n${USAGE}`);
       opts.provider = v;
     } else if (a === '--model') opts.model = next();
     else if (a === '--max-state-bytes') opts.maxStateBytes = positiveInt(a, next());
@@ -91,26 +89,12 @@ function loadEnvFiles(): void {
   }
 }
 
-/** 明示されないときの接続先。鍵がある方を使い、両方あれば TypeSafe 直結。 */
-function detectProvider(): ProviderId | undefined {
-  if (process.env['TYPESAFE_API_KEY']) return 'typesafe';
-  if (process.env['AI_GATEWAY_API_KEY']) return 'vercel-gateway';
-  return undefined;
-}
-
-function createProvider(id: ProviderId, model: string | undefined): Provider {
-  const keyName = id === 'typesafe' ? 'TYPESAFE_API_KEY' : 'AI_GATEWAY_API_KEY';
-  const urlName = id === 'typesafe' ? 'TYPESAFE_BASE_URL' : 'AI_GATEWAY_BASE_URL';
-  const apiKey = process.env[keyName];
-  if (!apiKey) throw new Error(`${keyName} is not set`);
-  const providerOpts: { apiKey: string; model?: string; baseUrl?: string } = { apiKey };
-  if (model) providerOpts.model = model;
-  const baseUrl = process.env[urlName];
-  if (baseUrl) {
-    if (!URL.canParse(baseUrl)) throw new Error(`${urlName} is not a valid URL: "${baseUrl}"`);
-    providerOpts.baseUrl = baseUrl;
+function providerOrFail(id: ProviderId, model: string | undefined) {
+  try {
+    return createProviderFromEnv(id, model, process.env);
+  } catch (e) {
+    return fail('config', (e as Error).message, id);
   }
-  return id === 'typesafe' ? createTypeSafeProvider(providerOpts) : createVercelGatewayProvider(providerOpts);
 }
 
 async function main(): Promise<void> {
@@ -123,14 +107,9 @@ async function main(): Promise<void> {
   if (cmd !== 'all') fail('config', `unsupported target "${cmd}". only "all" is implemented.\n${USAGE}`);
 
   const opts = parseArgs(rest);
-  const providerId = opts.provider ?? detectProvider();
+  const providerId = opts.provider ?? detectProvider(process.env);
   if (!providerId) fail('config', 'set TYPESAFE_API_KEY or AI_GATEWAY_API_KEY (see .env.example)');
-  let provider: Provider;
-  try {
-    provider = createProvider(providerId, opts.model);
-  } catch (e) {
-    return fail('config', (e as Error).message, providerId);
-  }
+  const provider = providerOrFail(providerId, opts.model);
 
   const repo = createGitRepository(process.cwd());
   let snapshotId: string;
