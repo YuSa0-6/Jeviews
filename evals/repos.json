@@ -1,0 +1,74 @@
+{
+  "ossRoot": "..",
+  "subsetSize": 60,
+  "repos": {
+    "jeviews": {
+      "language": "typescript",
+      "path": ".",
+      "include": [
+        "^src/.*\\.ts$",
+        "^(README\\.md|package\\.json|tsconfig\\.json|pnpm-workspace\\.yaml|\\.gitignore|\\.env\\.example)$"
+      ],
+      "subsets": {
+        "self": 99
+      },
+      "testShare": 0.15
+    },
+    "excalidraw": {
+      "language": "typescript",
+      "pin": "97c68dd",
+      "include": [
+        "^packages/(excalidraw|element|common|math)/.*\\.tsx?$",
+        "^excalidraw-app/.*\\.tsx?$"
+      ],
+      "exclude": [
+        "\\.d\\.ts$",
+        "/locales/"
+      ],
+      "testShare": 0.2
+    },
+    "mastodon": {
+      "language": "ruby",
+      "pin": "3cdcf93",
+      "include": [
+        "^app/(controllers|models|services|lib|workers)/.*\\.rb$",
+        "^lib/.*\\.rb$",
+        "^config/initializers/.*\\.rb$",
+        "^spec/(models|services|controllers)/.*_spec\\.rb$"
+      ],
+      "testShare": 0.2
+    },
+    "fastapi": {
+      "language": "python",
+      "pin": "50113da",
+      "include": [
+        "^fastapi/.*\\.py$",
+        "^tests/.*\\.py$"
+      ],
+      "exclude": [
+        "__init__\\.py$"
+      ],
+      "testShare": 0.5,
+      "subsets": {
+        "tune": 40,
+        "holdout": 40
+      }
+    },
+    "gin": {
+      "language": "go",
+      "pin": "3b08cd7",
+      "include": [
+        "\\.go$"
+      ],
+      "exclude": [
+        "^testdata/",
+        "^examples/"
+      ],
+      "testShare": 0.3,
+      "subsets": {
+        "tune": 45,
+        "holdout": 45
+      }
+    }
+  }
+}

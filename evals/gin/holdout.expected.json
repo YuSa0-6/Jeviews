@@ -1,0 +1,922 @@
+{
+  "repo": "gin",
+  "subset": "holdout",
+  "pin": "3b08cd7",
+  "tools": {
+    "gofmt": {
+      "unformatted": 0
+    },
+    "goVet": {
+      "code": 0
+    },
+    "staticcheck": {
+      "code": 1,
+      "lines": 7,
+      "err": "mise WARN  missing: colima@0.10.3\nexit status 1\n"
+    }
+  },
+  "files": {
+    "binding/binding.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/binding_msgpack_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/form.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/form_mapping.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/form_mapping_benchmark_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/header.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/json_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/msgpack.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/plain.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/query.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/toml.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/xml.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "codec/json/api.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "codec/json/go_json.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "context_appengine.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "deprecated.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "deprecated_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "errors.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "errors_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "fs.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "ginS/gins.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "gin_integration_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "internal/bytesconv/bytesconv.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "internal/fs/fs.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "internal/fs/fs_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "logger_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "path_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/html.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/json.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/msgpack.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/protobuf.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/reader_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/render_msgpack_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/render_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/text.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "routergroup.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "routes_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "test_helpers.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "tree.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "utils_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "version.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    }
+  }
+}

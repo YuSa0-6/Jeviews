@@ -1,0 +1,311 @@
+{
+  "repo": "jeviews",
+  "subset": "self",
+  "pin": null,
+  "tools": {
+    "tsc": {
+      "code": 1,
+      "diagnostics": 0
+    },
+    "prettier": {
+      "code": 1,
+      "unformatted": 15
+    }
+  },
+  "files": {
+    ".env.example": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    ".gitignore": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "README.md": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "package.json": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "pnpm-workspace.yaml": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "src/adapters/providers/http.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/adapters/providers/providers.test.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/adapters/providers/registry.test.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/adapters/providers/registry.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/adapters/providers/typesafe.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/adapters/providers/vercel-gateway.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/adapters/repository/git.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/cli.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/review/checks.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/review/file-kind.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/review/output.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/review/ports.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/review/review.test.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/review/review.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "src/review/verdict.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "tsconfig.json": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    }
+  }
+}
