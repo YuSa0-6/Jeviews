@@ -14,7 +14,7 @@ export type ReasonCode =
   | 'uncertain' // problem の確率が閾値の間にある。観点の結果に残すがファイル判定には上げない
   | 'api_error'; // Jev の呼び出しに失敗した
 
-export type FileKind = 'code' | 'config' | 'doc' | 'other';
+export type FileKind = 'code' | 'test' | 'config' | 'doc' | 'other';
 
 export interface Thresholds {
   /** これ以上なら NG */

@@ -22,8 +22,8 @@ export const GROUP_APPLIES_TO: Record<CheckGroup, readonly FileKind[]> = {
   input_validation: ['code'],
   error_handling: ['code'],
   lint: ['code'],
-  formatting: ['code', 'config'],
-  secret_exposure: ['code', 'config', 'doc', 'other'],
+  formatting: ['code', 'test', 'config'],
+  secret_exposure: ['code', 'test', 'config', 'doc', 'other'],
 };
 
 export interface Check {
@@ -41,7 +41,7 @@ export interface Check {
 
 type CheckSeed = Pick<Check, 'id' | 'group' | 'axisId' | 'problem'>;
 
-const QUESTION_VERSION = '2026-09-19.6';
+const QUESTION_VERSION = '2026-09-20.1';
 
 const SEEDS: readonly CheckSeed[] = [
   // 入力の検証漏れ
@@ -53,7 +53,7 @@ const SEEDS: readonly CheckSeed[] = [
     // 2026-09-19.6: 出所の列挙では file.content を扱うだけのモジュールも NG になった。
     // 「このファイル自身が直接読む」に絞り、I/O を行うファイルが検査の責任を負う意味にする。
     problem:
-      'Does `content` itself directly read a value from outside the program (for example by calling process.argv, process.env, fetch, a request handler, readFile, or stdin) and then use that value before checking its format or range?',
+      'Does `content` take a value read from outside the program (command-line arguments, environment variables, network responses, or file contents) and use it as a number, a URL, a file path, or a member of a fixed set of options, without first checking that it has that form? A value that is only passed through as an opaque string, such as an API key or a model name, does not count.',
   },
   {
     id: 'input_missing_unhandled',
@@ -121,10 +121,22 @@ const SEEDS: readonly CheckSeed[] = [
   },
   // Lint 相当
   {
-    id: 'lint_unused',
+    id: 'lint_unused_import',
     group: 'lint',
     axisId: 'E',
-    problem: 'Does `content` declare a variable, parameter, or import that is never used?',
+    problem: 'Is there an import statement in `content` that imports a name which is never referenced anywhere else in `content`?',
+  },
+  {
+    id: 'lint_unused_variable',
+    group: 'lint',
+    axisId: 'E',
+    problem: 'Is there a const, let, or var declaration in `content` whose name is never referenced anywhere else in `content`?',
+  },
+  {
+    id: 'lint_unused_param',
+    group: 'lint',
+    axisId: 'E',
+    problem: 'Is there a function parameter in `content` that is never referenced inside that function body?',
   },
   {
     id: 'lint_unreachable',
@@ -150,7 +162,8 @@ export function needsContextFor(problem: string): string {
   return (
     `Consider this yes/no judgment about \`content\`: "${problem}" ` +
     'To make that judgment with reasonable certainty, would you need to see other files in the same repository ' +
-    '(callers, tests, configuration, or documentation) that are not included in `content`?'
+    '(callers, tests, configuration, or documentation) that are not included in `content`? ' +
+    'If `content` contains no code that performs the operation the judgment is about, the answer is no.'
   );
 }
 
