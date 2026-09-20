@@ -30,19 +30,27 @@
 - TypeSafe のキー（`TYPESAFE_API_KEY`）
 - Vercel AI Gateway のキー（`AI_GATEWAY_API_KEY`）
 
-```sh
-pnpm install
-cp .env.example .env.local   # キーを 1 つ書く
-pnpm run build
-```
+キーは `.env.local` か環境変数で渡します（`.env.example` を参照）。
 
 ## 使いかた
 
-見たいリポジトリの中で実行します。
+見たいリポジトリの中で実行します。経路は 2 つあり、どちらも同じ `jeview` コマンドが動きます。
+
+**repo に固定して使う**（チーム・Git hook・CI 向け。全員が同じ version で判定できます）
 
 ```sh
-node dist/cli.js all > result.json
+pnpm add -D jeview
+pnpm jeview all > result.json
 ```
+
+**その場で試す**（install なし）
+
+```sh
+npx jeview all > result.json
+pnpm dlx jeview all > result.json
+```
+
+npm にはまだ公開していません。それまでは clone して `pnpm install && pnpm run build` のあと `node dist/cli.js all` で同じものが動きます。
 
 結果は stdout に JSON で出ます。進捗とエラーは stderr に出るので、
 上のように stdout だけファイルへ落とせます。
