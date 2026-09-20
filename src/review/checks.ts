@@ -18,7 +18,7 @@ export type CheckGroup = 'input_validation' | 'error_handling' | 'secret_exposur
  * 観点ごとの適用条件。2026-09-19 の初回実行で、否定形の問いがコードでないファイルに
  * 「はい」に寄ることがわかったため、ファイル種別で観点を外す。
  */
-export const GROUP_APPLIES_TO: Record<CheckGroup, readonly FileKind[]> = {
+const GROUP_APPLIES_TO: Record<CheckGroup, readonly FileKind[]> = {
   input_validation: ['code'],
   error_handling: ['code'],
   lint: ['code'],
@@ -158,7 +158,7 @@ const SEEDS: readonly CheckSeed[] = [
   },
 ];
 
-export function needsContextFor(problem: string): string {
+function needsContextFor(problem: string): string {
   return (
     `Consider this yes/no judgment about \`content\`: "${problem}" ` +
     'To make that judgment with reasonable certainty, would you need to see other files in the same repository ' +

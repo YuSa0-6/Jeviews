@@ -28,50 +28,57 @@ export async function postJsonWithRetry(
   const maxAttempts = opts.maxAttempts ?? 3;
   const fetchImpl = opts.fetchImpl ?? fetch;
   const sleep = opts.sleep ?? ((ms) => new Promise((r) => setTimeout(r, ms)));
+  const init = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...headers },
+    body: JSON.stringify(body),
+  };
 
-  let attempts = 0;
   let lastError: ProviderError | undefined;
-  while (attempts < maxAttempts) {
-    attempts += 1;
-    let res: Response;
-    try {
-      res = await fetchImpl(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...headers },
-        body: JSON.stringify(body),
-      });
-    } catch (e) {
-      lastError = new ProviderError('network', (e as Error).message);
+  for (let attempts = 1; attempts <= maxAttempts; attempts++) {
+    const res = await fetchImpl(url, init).catch((e: Error) => new ProviderError('network', e.message));
+    if (res instanceof ProviderError) {
+      lastError = res;
       await sleep(backoffMs(attempts));
       continue;
     }
-
     if (res.ok) {
-      let json: unknown;
-      try {
-        json = await res.json();
-      } catch (e) {
-        throw withAttempts(new ProviderError('invalid_response', `response is not JSON: ${(e as Error).message}`, res.status), attempts);
-      }
-      return { body: json, status: res.status, headers: res.headers, attempts };
+      return { body: await parseJson(res, attempts), status: res.status, headers: res.headers, attempts };
     }
-
-    const text = await res.text().catch(() => '');
-    if (res.status === 401 || res.status === 403) {
-      throw withAttempts(new ProviderError('auth', `authentication failed: ${text}`, res.status), attempts);
-    }
-    if (res.status === 400 || res.status === 404 || res.status === 422) {
-      throw withAttempts(new ProviderError('bad_request', `bad request: ${text}`, res.status), attempts);
-    }
-    if (res.status === 429) {
-      lastError = new ProviderError('rate_limit', `rate limited: ${text}`, res.status);
-      await sleep(retryAfterMs(res.headers.get('retry-after')) ?? backoffMs(attempts));
-      continue;
-    }
-    lastError = new ProviderError('server', `server error ${res.status}: ${text}`, res.status);
-    await sleep(backoffMs(attempts));
+    const failure = await classifyFailure(res);
+    if (!failure.retry) throw withAttempts(failure.error, attempts);
+    lastError = failure.error;
+    await sleep(failure.waitMs ?? backoffMs(attempts));
   }
-  throw withAttempts(lastError ?? new ProviderError('network', 'exhausted attempts'), attempts);
+  throw withAttempts(lastError ?? new ProviderError('network', 'exhausted attempts'), maxAttempts);
+}
+
+async function parseJson(res: Response, attempts: number): Promise<unknown> {
+  try {
+    return await res.json();
+  } catch (e) {
+    throw withAttempts(new ProviderError('invalid_response', `response is not JSON: ${(e as Error).message}`, res.status), attempts);
+  }
+}
+
+interface Failure {
+  error: ProviderError;
+  retry: boolean;
+  waitMs?: number;
+}
+
+async function classifyFailure(res: Response): Promise<Failure> {
+  const text = await res.text().catch(() => '');
+  const s = res.status;
+  if (s === 401 || s === 403) return { error: new ProviderError('auth', `authentication failed: ${text}`, s), retry: false };
+  if (s === 400 || s === 404 || s === 422) return { error: new ProviderError('bad_request', `bad request: ${text}`, s), retry: false };
+  if (s === 429) {
+    const f: Failure = { error: new ProviderError('rate_limit', `rate limited: ${text}`, s), retry: true };
+    const wait = retryAfterMs(res.headers.get('retry-after'));
+    if (wait !== undefined) f.waitMs = wait;
+    return f;
+  }
+  return { error: new ProviderError('server', `server error ${s}: ${text}`, s), retry: true };
 }
 
 function withAttempts(err: ProviderError, attempts: number): ProviderError {
