@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ProviderError } from './provider.js';
+import { ProviderError } from '../../review/ports.js';
 import { createTypeSafeProvider } from './typesafe.js';
 import { createVercelGatewayProvider } from './vercel-gateway.js';
 

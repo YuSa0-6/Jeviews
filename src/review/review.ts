@@ -2,12 +2,10 @@
 // 依存は引数で渡す。
 
 import { createHash, randomUUID } from 'node:crypto';
-import type { Provider, Question } from '../adapters/providers/provider.js';
-import { ProviderError } from '../adapters/providers/provider.js';
-import type { Exclusion, TrackedFile } from '../adapters/repository/git.js';
 import { CHECKS, questionId, type Check } from './checks.js';
 import { fileKind } from './file-kind.js';
 import type { CheckResult, FileKind, FileResult, ProviderId, ReviewOutput, Thresholds, Usage } from './output.js';
+import { ProviderError, type Exclusion, type Provider, type Question, type TrackedFile } from './ports.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict, runStatus } from './verdict.js';
 
 export interface ReviewDeps {

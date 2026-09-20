@@ -1,5 +1,7 @@
-// Provider の共通の型。Jev へ state と questions を送り、質問ごとの確率を受け取る。
-// 接続先 (TypeSafe 直結、Vercel AI Gateway) が違っても、review 側はこの形だけを見る。
+// review が外側に求める契約 (port)。実装は src/adapters/ に置き、ここへ合わせる。
+// review はこのファイルの型だけを見る。adapters から review への import はこの向きだけ。
+
+// ---- Provider: Jev へ state と questions を送り、質問ごとの確率を受け取る ----
 
 export interface NoulQuestion {
   type: 'noul';
@@ -47,4 +49,25 @@ export class ProviderError extends Error {
     super(message);
     this.name = 'ProviderError';
   }
+}
+
+// ---- Repository: レビュー対象のファイルを取り出す ----
+
+export interface TrackedFile {
+  path: string;
+  content: string;
+  bytes: number;
+  /** 実際に読んだ内容の sha256 */
+  revision: string;
+}
+
+export interface Exclusion {
+  path: string;
+  reason: string;
+}
+
+export interface Repository {
+  /** 対象全体を識別する ID。Git なら HEAD のコミット */
+  snapshotId(): Promise<string>;
+  listAll(): Promise<{ files: TrackedFile[]; exclusions: Exclusion[] }>;
 }
