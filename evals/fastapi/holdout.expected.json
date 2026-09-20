@@ -1,0 +1,1096 @@
+{
+  "repo": "fastapi",
+  "subset": "holdout",
+  "pin": "50113da",
+  "tools": {
+    "ruff": {
+      "code": 1,
+      "diagnostics": 7
+    },
+    "ruffFormat": {
+      "code": 0,
+      "wouldReformat": 0
+    }
+  },
+  "files": {
+    "fastapi/__main__.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/_compat/shared.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/datastructures.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/dependencies/models.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/exception_handlers.py": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "ruff",
+        "detail": "ARG001 L11"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/exceptions.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/logger.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/middleware/cors.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/middleware/trustedhost.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/openapi/constants.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/openapi/docs.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L356 OAuth の state 検証に失敗しても警告後に処理を続け、code があれば成功側の callback を呼び出します。"
+      }
+    },
+    "fastapi/openapi/models.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/param_functions.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/params.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/responses.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L29 ModuleNotFoundError を捕捉すると ujson に None を代入するだけで、記録・再送出・失敗の返却を行いません。"
+      }
+    },
+    "fastapi/routing.py": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "ruff",
+        "detail": "ARG001 L176"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L2029 float(q) の ValueError を捕捉するハンドラーは pass のみです。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L2031 q の数値変換に失敗しても、quality を既定値 1.0 として通常の結果を yield します。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L961 _populate_api_route_state には条件分岐、ループ、条件式、論理演算子による分岐点が15個以上あります。"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L594 while True のループ条件は常に真です。"
+      }
+    },
+    "fastapi/security/base.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/security/open_id_connect_url.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/staticfiles.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "fastapi/testclient.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_additional_responses_union_duplicate_anyof.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_annotated.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_filter_pydantic_sub_model_pv2.py": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "ruff",
+        "detail": "ARG002 L28"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "secret_hardcoded": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L34 ModelC の password に固定文字列 \"test-password\" を設定しています。"
+      }
+    },
+    "tests/test_params_repr.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_schema_extra_examples.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_tutorial/test_body/test_tutorial001.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_tutorial/test_body_fields/test_tutorial001.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_tutorial/test_cookie_params/test_tutorial001.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_tutorial/test_json_base64_bytes/test_tutorial001.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_tutorial/test_path_operation_advanced_configurations/test_tutorial003.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_tutorial/test_path_operation_configurations/test_tutorial002b.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_tutorial/test_python_types/test_tutorial009_tutorial009b.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_tutorial/test_query_params/test_tutorial001.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_tutorial/test_query_params_str_validations/test_tutorial007.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_tutorial/test_schema_extra_example/test_tutorial003.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_tutorial/test_server_sent_events/test_tutorial005.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_tutorial/test_testing/test_tutorial003.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_tutorial/test_wsgi/test_tutorial001.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_union_body.py": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    },
+    "tests/test_union_body_discriminator.py": {
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "ruff",
+        "detail": "ARG001 L30"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "ruff"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "ruff-format"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "ruff-format"
+      }
+    }
+  }
+}

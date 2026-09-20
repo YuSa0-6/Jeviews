@@ -177,7 +177,7 @@ function answeredCheck(c: Check, answers: SystemOneResponse['answers'], threshol
   const p = answers[questionId(c.id, 'problem')]?.noul;
   const n = answers[questionId(c.id, 'needsContext')]?.noul;
   if (p === undefined || n === undefined) return emptyCheck(c, null, 'api_error');
-  const v = checkVerdict(p, n, thresholds);
+  const v = checkVerdict(p, n, thresholds, c.group);
   const r: CheckResult = {
     axisId: c.axisId,
     group: c.group,

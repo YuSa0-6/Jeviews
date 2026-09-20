@@ -1,0 +1,1880 @@
+{
+  "repo": "mastodon",
+  "subset": "tune",
+  "pin": "3cdcf93",
+  "tools": {
+    "rubocop": {
+      "code": 0,
+      "inspected": 60,
+      "offenses": 0,
+      "syntaxErrors": 0
+    }
+  },
+  "files": {
+    "app/controllers/admin/invites_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/controllers/admin/webhooks/secrets_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/controllers/api/v1/accounts/base_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/controllers/api/v1/accounts/relationships_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L20 リクエストの id を数値形式か検証せず to_i で整数に変換しています。"
+      }
+    },
+    "app/controllers/api/v1/admin/tags_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/controllers/api/v1/statuses_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L126 リクエストの id を数値形式か検証せず to_i で整数に変換しています。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L85 StatusPin の destroy が false を返しても処理を続け、通常の JSON レスポンスを返します。"
+      }
+    },
+    "app/controllers/api/v1/tags_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/controllers/api/v1/timelines/list_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/controllers/api/v1/timelines/public_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/controllers/concerns/auth/registration_spam_concern.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/controllers/concerns/session_tracking_concern.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/controllers/disputes/base_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/controllers/settings/base_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/controllers/settings/exports/muted_accounts_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/controllers/settings/migration/redirects_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/controllers/unsubscriptions_controller.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/lib/activitypub/activity/flag.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/lib/admin/metrics/dimension/instance_accounts_dimension.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/lib/admin/metrics/dimension/languages_dimension.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/lib/admin/metrics/measure/instance_accounts_measure.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/lib/rss/builder.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/lib/translation_service/libre_translate.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L51 ネットワーク応答に translatedText が存在するか確認せず map を呼び出しています。"
+      }
+    },
+    "app/lib/vacuum/imports_vacuum.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/lib/vacuum/media_attachments_vacuum.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/models/account_suggestions/global_source.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/models/admin/collection_batch_action.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/models/announcement_mute.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/models/backup.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/models/block.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/models/custom_emoji.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/models/keypair.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/models/poll_vote.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/models/trends/tag_filter.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/models/user_settings/setting.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/services/activitypub/fetch_remote_actor_service.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L12 call メソッドには条件分岐、論理演算子、rescue を合わせて約15個の分岐点があります。"
+      }
+    },
+    "app/services/delete_account_service.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L161 アカウントの destroy が false を返しても、呼び出し元は fulfill_deletion_request! に進みます。"
+      }
+    },
+    "app/services/update_media_attachments_permissions_service.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L4 call メソッドにはループ、条件分岐、case、rescue、三項演算子など約15個の分岐点があります。"
+      }
+    },
+    "app/workers/activitypub/fetch_all_replies_worker.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/workers/refollow_worker.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L24 フォロー処理の例外を捕捉すると、ログ出力、再送出、失敗の返却をせず next で次へ進みます。"
+      }
+    },
+    "app/workers/scheduler/pghero_scheduler.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "app/workers/thread_resolve_worker.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L22 ActiveRecord::RecordNotFound を捕捉し、ログ出力や再送出をせず true を返します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L23 レコード検索などが ActiveRecord::RecordNotFound で失敗しても true を返します。"
+      }
+    },
+    "app/workers/verify_account_links_worker.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L16 ActiveRecord::RecordNotFound を捕捉し、ログ出力や再送出をせず true を返します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L17 レコード検索などが ActiveRecord::RecordNotFound で失敗しても true を返します。"
+      }
+    },
+    "config/initializers/deprecations.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "config/initializers/email_domains_lists.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "lib/action_dispatch/remote_ip_extensions.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "lib/mastodon/cli/main.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "lib/mastodon/snowflake.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L91 埋め込み SQL の duplicate_table 例外ハンドラーは、ログ出力、再送出、失敗の返却をせず例外を無視します。"
+      }
+    },
+    "lib/vite/dev_server.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "spec/controllers/authorize_interactions_controller_spec.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "spec/models/account_warning_preset_spec.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "spec/models/admin/action_log_spec.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "spec/models/email_subscription_spec.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "spec/models/form/custom_emoji_batch_spec.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "spec/models/instance_moderation_note_spec.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "spec/models/public_feed_spec.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "spec/models/software_update_spec.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "spec/services/activitypub/fetch_featured_tags_collection_service_spec.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "spec/services/activitypub/verify_featured_item_service_spec.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "spec/services/appeal_service_spec.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    },
+    "spec/services/fetch_oembed_service_spec.rb": {
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_constant_condition": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "lint_unreachable": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "rubocop"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "rubocop"
+      }
+    }
+  }
+}

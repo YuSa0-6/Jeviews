@@ -3,6 +3,7 @@
 // stdout にバージョン付き JSON を一つ、進捗と診断は stderr。
 // 終了コード: 0 = 完了、1 = 失敗または部分結果。
 
+import { writeSync } from 'node:fs';
 import { createProviderFromEnv, detectProvider, isProviderId } from './adapters/providers/registry.js';
 import { createGitRepository } from './adapters/repository/git.js';
 import type { ProviderId, ReviewOutput } from './review/output.js';
@@ -40,7 +41,7 @@ function fail(code: string, message: string, provider: ProviderId | null = null)
     exclusions: [],
   };
   process.stderr.write(`jeview: ${message}\n`);
-  process.stdout.write(JSON.stringify(out, null, 2) + '\n');
+  writeSync(1, JSON.stringify(out, null, 2) + '\n');
   process.exit(1);
 }
 
@@ -107,11 +108,17 @@ function providerOrFail(id: ProviderId, model: string | undefined) {
   }
 }
 
+const HELP_FLAGS = new Set(['--help', '-h']);
+
 function parseCommand(argv: string[]): string[] {
   const [cmd, ...rest] = argv;
-  if (cmd === '--help' || cmd === '-h' || cmd === undefined) {
+  if (cmd === undefined) {
     process.stderr.write(USAGE);
-    process.exit(cmd === undefined ? 1 : 0);
+    process.exit(1);
+  }
+  if (HELP_FLAGS.has(cmd)) {
+    process.stderr.write(USAGE);
+    process.exit(0);
   }
   if (cmd !== 'all') fail('config', `unsupported target "${cmd}". only "all" is implemented.\n${USAGE}`);
   return rest;
@@ -154,6 +161,24 @@ function writeSummary(out: ReviewOutput): void {
   for (const [key, n] of failureCounts(out)) process.stderr.write(`jeview: ${n} file(s) failed with ${key}\n`);
 }
 
+function toDeps(
+  opts: CliOptions,
+  provider: ReturnType<typeof providerOrFail>,
+  providerId: ProviderId,
+  target: Awaited<ReturnType<typeof listOrFail>>,
+): Parameters<typeof reviewAll>[0] {
+  const deps: Parameters<typeof reviewAll>[0] = {
+    provider,
+    providerId,
+    model: provider.model,
+    ...target,
+    log: (line) => process.stderr.write(line + '\n'),
+  };
+  if (opts.maxStateBytes !== undefined) deps.maxStateBytes = opts.maxStateBytes;
+  if (opts.concurrency !== undefined) deps.concurrency = opts.concurrency;
+  return deps;
+}
+
 async function main(): Promise<void> {
   loadEnvFiles();
   const opts = parseArgs(parseCommand(process.argv.slice(2)));
@@ -165,18 +190,8 @@ async function main(): Promise<void> {
     `jeview all: ${target.files.length} files, ${target.exclusions.length} excluded, snapshot ${target.snapshotId}\n`,
   );
 
-  const deps: Parameters<typeof reviewAll>[0] = {
-    provider,
-    providerId,
-    model: provider.model,
-    ...target,
-    log: (line) => process.stderr.write(line + '\n'),
-  };
-  if (opts.maxStateBytes !== undefined) deps.maxStateBytes = opts.maxStateBytes;
-  if (opts.concurrency !== undefined) deps.concurrency = opts.concurrency;
-
-  const out = await reviewAll(deps);
-  process.stdout.write(JSON.stringify(out, null, 2) + '\n');
+  const out = await reviewAll(toDeps(opts, provider, providerId, target));
+  writeSync(1, JSON.stringify(out, null, 2) + '\n');
   writeSummary(out);
   process.exit(out.run.status === 'completed' ? 0 : 1);
 }

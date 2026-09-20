@@ -1,0 +1,119 @@
+{
+  "repo": "mastodon",
+  "subset": "holdout",
+  "model": "gpt-6-astra",
+  "findings": {
+    "app/controllers/admin/trends/links_controller.rb": {
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L16 @form.save が false を返しても結果を確認せず、通常のリダイレクトを実行します。"
+      }
+    },
+    "app/controllers/api/v1/collections_controller.rb": {
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L113 params[:offset] の数値形式を検証せずに to_i で整数へ変換して使用します。"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L34 Mastodon::NotPermittedError を捕捉してもログ出力や再送出、失敗応答を行わず、空のコレクションを返します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L35 認可が失敗した後に、空のコレクションを通常の成功ステータスで返します。"
+      }
+    },
+    "app/controllers/api/web/push_subscriptions_controller.rb": {
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L79 subscription 内の keys が欠落している場合でも、存在確認なしに [:auth] を呼び出します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L26 push_subscription.destroy が false を返しても、HTTP 200 を返します。"
+      }
+    },
+    "app/models/account_statuses_cleanup_policy.rb": {
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L98 Redis から取得した文字列の数値形式を検証せずに to_i で整数へ変換します。"
+      }
+    },
+    "app/models/trends/links.rb": {
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L104 calculate_scores は反復処理、条件分岐、論理演算子を合わせて約15個以上の分岐点を含みます。"
+      }
+    },
+    "app/models/user.rb": {
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L360 パスワードの update が false を返しても、セッション削除とアクセス権の取り消しを続行します。"
+      }
+    },
+    "app/services/activitypub/fetch_featured_collections_collection_service.rb": {
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L25 取得したコレクション項目を文字列かどうかだけ確認し、URL形式を検証せずリモート取得サービスへ渡します。"
+      }
+    },
+    "app/workers/activitypub/process_featured_item_worker.rb": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L13 ActiveRecord::RecordNotFound をログ出力や再送出なしに捕捉し、true を返します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L14 レコード検索などが ActiveRecord::RecordNotFound で失敗した後に true を返します。"
+      }
+    },
+    "app/workers/activitypub/update_distribution_worker.rb": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L15 ActiveRecord::RecordNotFound をログ出力や再送出なしに捕捉し、true を返します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L16 レコード検索などが ActiveRecord::RecordNotFound で失敗した後に true を返します。"
+      }
+    },
+    "app/workers/publish_announcement_reaction_worker.rb": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L19 ActiveRecord::RecordNotFound をログ出力や再送出なしに捕捉し、true を返します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L20 レコード検索などが ActiveRecord::RecordNotFound で失敗した後に true を返します。"
+      }
+    },
+    "lib/paperclip/color_extractor.rb": {
+      "lint_unused_import": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L3 mime/types/columnar を require していますが、ファイル内では MIME ライブラリの名前を参照していません。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L11 make は反復処理、条件分岐、論理演算子、例外処理を合わせて約15個以上の分岐点を含みます。"
+      }
+    }
+  }
+}

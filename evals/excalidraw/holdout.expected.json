@@ -1,0 +1,1801 @@
+{
+  "repo": "excalidraw",
+  "subset": "holdout",
+  "pin": "97c68dd",
+  "tools": {
+    "tsc": {
+      "code": 1,
+      "diagnostics": 5
+    },
+    "fallow": {
+      "code": 1,
+      "findings": 66
+    },
+    "prettier": {
+      "code": 1,
+      "unformatted": 7
+    }
+  },
+  "files": {
+    "excalidraw-app/components/AI.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 18"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L55 環境変数 VITE_APP_AI_BACKEND の形式を検証せず、fetch の URL に使用しています。"
+      },
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L55 VITE_APP_AI_BACKEND が未設定または空でも、その値を補間してリクエストを送信します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L80 HTTP エラーの statusCode が 429 の場合、例外や失敗結果ではなく html を持つ通常の結果を返します。"
+      }
+    },
+    "excalidraw-app/components/TopErrorBoundary.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "tsc",
+        "detail": "TS6133 state L40"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L31 JSON.parse の例外を記録・再送出せず、元の文字列を保存して処理を続けます。"
+      }
+    },
+    "excalidraw-app/data/TTDStorage.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L35 IndexedDB の読み込みが失敗しても、正常に空の履歴を読み込んだ場合と同じ空配列を返します。"
+      }
+    },
+    "excalidraw-app/share/ShareDialog.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L100 navigator.share の catch ブロックはコメントだけで、エラーを破棄します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L80 クリップボードへのコピーが失敗しても、setJustCopied(true) を実行します。"
+      }
+    },
+    "packages/common/src/binary-heap.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L27 bubbleUp の while 条件はリテラル true で常に真です。"
+      }
+    },
+    "packages/common/src/emitter.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/element/src/arrows/helpers.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/element/src/duplicate.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 25"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L667 objectType が「[object Object]」の場合は先に return するため、この不等比較は到達時に常に真です。"
+      }
+    },
+    "packages/element/src/embeddable.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 30"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L66 URL 解析の例外を記録・再送出せず、正規表現による代替解析へ進みます。"
+      }
+    },
+    "packages/element/src/renderElement.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 38"
+      }
+    },
+    "packages/element/src/showSelectedShapeActions.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "packages/element/src/stickyNote.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 21"
+      }
+    },
+    "packages/element/src/zindex.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "tsc",
+        "detail": "TS6133 i L379"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 18"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/element/tests/delta.test.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/element/tests/distribute.test.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/element/tests/duplicate.test.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/actions/actionDeleteSelected.test.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/actions/actionFlip.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/actions/actionToggleStats.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "tsc",
+        "detail": "TS6133 elements L16"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/animatedTrail.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/appState.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      }
+    },
+    "packages/excalidraw/charts/charts.line.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/charts/index.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/Button.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "tsc",
+        "detail": "TS6133 event L36"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      }
+    },
+    "packages/excalidraw/components/ColorPicker/PickerColorList.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "lint_constant_condition": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L117 color は空の値なら「transparent」に置換済みなので、この三項演算の条件は常に真です。"
+      }
+    },
+    "packages/excalidraw/components/ColorPicker/keyboardNavHandlers.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "problem",
+        "source": "tsc",
+        "detail": "TS6133 updateData L146"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 29"
+      }
+    },
+    "packages/excalidraw/components/ConfirmDialog.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/ElementCanvasButtons.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/EyeDropper.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/LibraryMenuBrowseButton.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L21 環境変数 VITE_APP_LIBRARY_URL の形式を検証せず、リンクの href に使用しています。"
+      },
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L21 VITE_APP_LIBRARY_URL が未設定または空でも、その値を補間したリンクを生成します。"
+      }
+    },
+    "packages/excalidraw/components/MobileMenu.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 17"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/SVGLayer.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/Sidebar/SidebarTabTrigger.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/Spinner.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/Stats/MultiAngle.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/Stats/MultiPosition.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 16"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/TTDDialog/Chat/index.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/TTDDialog/TTDDialog.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "error_unhandled_promise": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L81 非同期関数 fn を await も catch もせず呼び出しており、動的 import の拒否が未処理になります。"
+      }
+    },
+    "packages/excalidraw/components/TTDDialog/TTDPreviewPanel.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/TTDDialog/hooks/useChatManagement.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/Tools.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      }
+    },
+    "packages/excalidraw/components/UnlockPopup.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/ViewportStatusFrame/ViewportStatusFrame.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/dropdownMenu/DropdownMenuContent.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/components/dropdownMenu/dropdownMenuUtils.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/context/tunnels.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/deburr.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/fonts/Helvetica/index.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/history.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/hooks/useCopiedIndicator.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/hooks/useOutsideClick.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/scene/index.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/tests/App.test.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/tests/clients.test.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/tests/colorTopPicks.test.ts": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/tests/created.test.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/tests/eyeDropper.test.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/tests/packages/events.test.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/tests/scroll.test.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    },
+    "packages/excalidraw/tests/wheel.test.tsx": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "lint_unused_param": {
+        "truth": "clean",
+        "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "format_indentation": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "prettier"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "prettier"
+      }
+    }
+  }
+}

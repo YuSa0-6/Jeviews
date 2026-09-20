@@ -12,6 +12,9 @@ describe('checkVerdict', () => {
   it('problem at or above high is NG regardless of needsContext', () => {
     expect(checkVerdict(0.65, 0.99, T).verdict).toBe('NG');
     expect(checkVerdict(0.9, 0.0, T).verdict).toBe('NG');
+    expect(checkVerdict(0.7, 0.0, T, 'lint').verdict).not.toBe('NG');
+    expect(checkVerdict(0.8, 0.0, T, 'lint').verdict).toBe('NG');
+    expect(checkVerdict(0.7, 0.0, T, 'formatting').verdict).toBe('NG');
   });
   it('needsContext at or above high is NEED_REVIEW when problem is below high', () => {
     expect(checkVerdict(0.1, 0.65, T)).toEqual({ verdict: 'NEED_REVIEW', reason: 'needs_context' });

@@ -12,7 +12,7 @@ import type { FileKind } from './file-kind.js';
 import type { AxisId } from './output.js';
 
 /** 観点。設計文書の初版 5 観点。 */
-export type CheckGroup = 'input_validation' | 'error_handling' | 'secret_exposure' | 'formatting' | 'lint';
+export type CheckGroup = 'input_validation' | 'error_handling' | 'secret_exposure' | 'formatting' | 'lint' | 'complexity';
 
 /**
  * 観点ごとの適用条件。2026-09-19 の初回実行で、否定形の問いがコードでないファイルに
@@ -22,6 +22,7 @@ const GROUP_APPLIES_TO: Record<CheckGroup, readonly FileKind[]> = {
   input_validation: ['code'],
   error_handling: ['code'],
   lint: ['code'],
+  complexity: ['code'],
   formatting: ['code', 'test', 'config', 'template'],
   secret_exposure: ['code', 'test', 'config', 'doc', 'other'],
 };
@@ -41,7 +42,7 @@ export interface Check {
 
 type CheckSeed = Pick<Check, 'id' | 'group' | 'axisId' | 'problem'>;
 
-const QUESTION_VERSION = '2026-09-21.1';
+const QUESTION_VERSION = '2026-09-21.4';
 
 const SEEDS: readonly CheckSeed[] = [
   // 入力の検証漏れ
@@ -152,6 +153,13 @@ const SEEDS: readonly CheckSeed[] = [
     group: 'lint',
     axisId: 'E',
     problem: 'Does `content` repeat the same condition in an if/else chain or switch so that a later branch can never be reached?',
+  },
+  {
+    id: 'complexity_branchy_function',
+    group: 'complexity',
+    axisId: 'E',
+    problem:
+      'Does `content` contain a single function or method whose body has roughly 15 or more independent branch points (if, else if, loops, case, catch, ternaries, and && / || operators counted together), the kind a cyclomatic-complexity linter would flag?',
   },
   {
     id: 'lint_constant_condition',

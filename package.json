@@ -23,7 +23,13 @@
     "dev": "tsx src/cli.ts",
     "prepublishOnly": "pnpm run build",
     "test": "vitest run",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "eval:sample": "node evals/scripts/sample.mjs",
+    "eval:teacher": "node evals/scripts/teacher.mjs",
+    "eval:scan": "node evals/scripts/scan.mjs",
+    "eval:score": "node evals/scripts/score.mjs",
+    "eval:diff": "node evals/scripts/diff.mjs",
+    "eval:codex": "node evals/scripts/codex.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.2",

@@ -1,0 +1,35 @@
+{
+  "repo": "jeviews",
+  "subset": "self",
+  "model": "gpt-6-astra",
+  "findings": {
+    "src/adapters/providers/http.ts": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L71 `res.text()` の失敗を `.catch(() => '')` で空文字に置き換え、そのエラーを記録・再送出していません。"
+      }
+    },
+    "src/adapters/repository/git.ts": {
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L48 Git の標準出力から取得した `root` と `path` を、パス形式の検証なしで `join` と `readFile` に渡しています。"
+      }
+    },
+    "src/cli.ts": {
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L97 環境ファイルの読み込みで発生した `ENOENT` を、記録・再送出・失敗の返却なしで握りつぶしています。"
+      }
+    },
+    "src/review/review.ts": {
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L48 API 応答由来の `u.output_tokens` を、数値型か確認せず `usage.outputTokens` に加算しています。"
+      }
+    }
+  }
+}

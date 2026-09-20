@@ -1,0 +1,43 @@
+{
+  "repo": "gin",
+  "subset": "holdout",
+  "model": "gpt-6-astra",
+  "findings": {
+    "binding/form_mapping.go": {
+      "input_missing_unhandled": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L546 フォーム値のスライス v が空か確認せず、v[len(v)-1] を参照しています。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L469 time_utc の ParseBool が失敗してもエラーを破棄し、ローカル時刻で処理を続行します。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L245 setByForm は条件分岐、case、論理演算子を合わせて15個以上の分岐点を含みます。"
+      }
+    },
+    "routergroup.go": {
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L267 リクエストの filepath パラメータをパスとして検証せず、そのまま fs.Open に渡しています。"
+      }
+    },
+    "tree.go": {
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L522 QueryUnescape が失敗してもエラーを通知せず、未変換の値をパラメータに格納してルート検索を続行します。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L418 getValue は条件分岐、ループ、case、論理演算子を合わせて15個以上の分岐点を含みます。"
+      }
+    }
+  }
+}

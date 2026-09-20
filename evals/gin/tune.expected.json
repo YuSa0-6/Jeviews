@@ -1,0 +1,1088 @@
+{
+  "repo": "gin",
+  "subset": "tune",
+  "pin": "3b08cd7",
+  "tools": {
+    "gofmt": {
+      "unformatted": 1
+    },
+    "goVet": {
+      "code": 0
+    },
+    "staticcheck": {
+      "code": 1,
+      "lines": 7,
+      "err": "mise WARN  missing: colima@0.10.3\nexit status 1\n"
+    }
+  },
+  "files": {
+    "auth.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "auth_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "secret_hardcoded": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L85 Basic認証用アカウントのパスワードを文字列リテラルで固定しています。"
+      }
+    },
+    "benchmarks_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L16 登録するハンドラーの引数 c は空の関数本体で参照されません。"
+      }
+    },
+    "binding/binding_nomsgpack.go": {
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/binding_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L858 testFormBindingEmbeddedStruct の引数 badPath と badBody は関数本体で参照されません。"
+      }
+    },
+    "binding/bson.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/default_validator.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/default_validator_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/json.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/multipart_form_mapping.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/multipart_form_mapping_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/protobuf.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/toml_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/uri.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/validate_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "binding/yaml.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "codec/json/json.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "codec/json/jsoniter.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "codec/json/sonic.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "context.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1083 X-Forwarded-Proto ヘッダーの値を http または https か検証せずHTTPスキームとして返しています。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L1197 Cookie値の QueryUnescape が失敗してもエラーを捨てて nil エラーを返します。"
+      }
+    },
+    "context_file_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "debug.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "debug_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L71 HandlersChain 内の無名関数は引数 c を参照しません。"
+      }
+    },
+    "doc.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "fs_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L24 mockFS の open 関数は引数 name を参照しません。"
+      }
+    },
+    "gin.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L719 handleHTTPRequest には条件分岐、ループ、論理演算子を合わせて15個以上の分岐点があります。"
+      }
+    },
+    "gin_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L81 http.Get が失敗しても t.Error の後で処理を続け、成功時と同様に res.Body を読み取ります。"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L108 DialTLS の引数 cfg は関数本体で参照されません。"
+      }
+    },
+    "logger.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "mode.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "mode_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "path.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L23 cleanPath には条件分岐、case、ループ、論理演算子を合わせて15個以上の分岐点があります。"
+      }
+    },
+    "recovery.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L137 readNthLine のエラーを受けた分岐は記録も伝播もせず continue で破棄します。"
+      },
+      "error_success_after_failure": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L165 scanner.Scan が読み取りエラーで失敗しても scanner.Err を確認せず nil エラーを返します。"
+      },
+      "secret_logged": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L72 Authorization だけをマスクしたリクエストをログに出すため、Proxy-Authorization の認証情報はそのまま出力されます。"
+      }
+    },
+    "render/bson.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/data.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/pdf.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/reader.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/redirect.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/render.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/toml.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/xml.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "render/yaml.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "response_writer.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      }
+    },
+    "response_writer_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L44 WriteHeader の引数 code は空のメソッド本体で参照されません。"
+      }
+    },
+    "tree_test.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_param": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L19 fakeHandler が返す無名関数は引数 c を参照しません。"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L714 TestTreeFindCaseInsensitivePath にはループ、条件分岐、論理演算子を合わせて15個以上の分岐点があります。"
+      }
+    },
+    "utils.go": {
+      "format_indentation": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_quotes": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "format_spacing": {
+        "truth": "clean",
+        "source": "gofmt"
+      },
+      "lint_unused_import": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "lint_unused_variable": {
+        "truth": "clean",
+        "source": "go-compiler"
+      },
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L153 環境変数 PORT の値がポート番号の形式か検証せず、待ち受けアドレスのポート部分に使用します。"
+      }
+    }
+  }
+}

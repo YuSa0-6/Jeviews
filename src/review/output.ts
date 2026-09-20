@@ -19,6 +19,8 @@ export type FileKind = 'code' | 'test' | 'config' | 'template' | 'doc' | 'other'
 export interface Thresholds {
   /** これ以上なら NG */
   problemHigh: number;
+  /** 観点グループごとの problemHigh の上書き。書かれていないグループは problemHigh を使う */
+  problemHighByGroup: Record<string, number>;
   /** これ未満なら問題なし。problemHigh との間は NEED_REVIEW */
   problemLow: number;
   /** needsContext がこれ以上なら NEED_REVIEW */
