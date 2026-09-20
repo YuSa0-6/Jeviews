@@ -16,7 +16,7 @@ interface ProviderEntry {
   create(opts: ProviderOptions): Provider;
 }
 
-export const PROVIDERS: ReadonlyArray<readonly [ProviderId, ProviderEntry]> = [
+const PROVIDERS: ReadonlyArray<readonly [ProviderId, ProviderEntry]> = [
   ['typesafe', { keyEnv: 'TYPESAFE_API_KEY', baseUrlEnv: 'TYPESAFE_BASE_URL', create: createTypeSafeProvider }],
   ['vercel-gateway', { keyEnv: 'AI_GATEWAY_API_KEY', baseUrlEnv: 'AI_GATEWAY_BASE_URL', create: createVercelGatewayProvider }],
 ];
