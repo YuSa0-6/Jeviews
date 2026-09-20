@@ -1,5 +1,3 @@
-// Provider の共通の型。Jev へ state と questions を送り、質問ごとの確率を受け取る。
-// 接続先 (TypeSafe 直結、Vercel AI Gateway) が違っても、review 側はこの形だけを見る。
 
 export interface NoulQuestion {
   type: 'noul';
@@ -47,4 +45,21 @@ export class ProviderError extends Error {
     super(message);
     this.name = 'ProviderError';
   }
+}
+
+export interface TrackedFile {
+  path: string;
+  content: string;
+  bytes: number;
+  revision: string;
+}
+
+export interface Exclusion {
+  path: string;
+  reason: string;
+}
+
+export interface Repository {
+  snapshotId(): Promise<string>;
+  listAll(): Promise<{ files: TrackedFile[]; exclusions: Exclusion[] }>;
 }

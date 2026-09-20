@@ -1,9 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import type { Provider, Question } from '../adapters/providers/provider.js';
-import { ProviderError } from '../adapters/providers/provider.js';
 import { CHECKS, questionId } from './checks.js';
 import { fileKind } from './file-kind.js';
 import type { CheckResult } from './output.js';
+import { ProviderError, type Provider, type Question } from './ports.js';
 import { reviewAll } from './review.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict } from './verdict.js';
 

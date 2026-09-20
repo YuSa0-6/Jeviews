@@ -3,7 +3,7 @@
 //   401/403: auth、400/404/422: bad_request として即座に失敗
 // 投げる ProviderError には attempts を載せ、呼び出し側が usage.requests に数えられるようにする。
 
-import { ProviderError } from './provider.js';
+import { ProviderError } from '../../review/ports.js';
 
 export interface HttpOptions {
   maxAttempts?: number;
