@@ -7,6 +7,10 @@
       "code": 1,
       "diagnostics": 0
     },
+    "fallow": {
+      "code": 1,
+      "findings": 3
+    },
     "prettier": {
       "code": 1,
       "unformatted": 15
@@ -95,6 +99,15 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L71 `res.text()` の失敗を `.catch(() => '')` で空文字に置き換え、そのエラーを記録・再送出していません。"
       }
     },
     "src/adapters/providers/providers.test.ts": {
@@ -109,6 +122,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       }
     },
     "src/adapters/providers/registry.test.ts": {
@@ -123,6 +140,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       }
     },
     "src/adapters/providers/registry.ts": {
@@ -137,6 +158,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       }
     },
     "src/adapters/providers/typesafe.ts": {
@@ -151,6 +176,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       }
     },
     "src/adapters/providers/vercel-gateway.ts": {
@@ -165,6 +194,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       }
     },
     "src/adapters/repository/git.ts": {
@@ -179,6 +212,15 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L48 Git の標準出力から取得した `root` と `path` を、パス形式の検証なしで `join` と `readFile` に渡しています。"
       }
     },
     "src/cli.ts": {
@@ -193,6 +235,15 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "error_empty_catch": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L97 環境ファイルの読み込みで発生した `ENOENT` を、記録・再送出・失敗の返却なしで握りつぶしています。"
       }
     },
     "src/review/checks.ts": {
@@ -207,6 +258,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       }
     },
     "src/review/file-kind.ts": {
@@ -221,6 +276,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       }
     },
     "src/review/output.ts": {
@@ -235,6 +294,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       }
     },
     "src/review/ports.ts": {
@@ -249,6 +312,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       }
     },
     "src/review/review.test.ts": {
@@ -263,6 +330,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       }
     },
     "src/review/review.ts": {
@@ -277,6 +348,15 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
+      "input_unchecked_use": {
+        "truth": "problem",
+        "source": "codex",
+        "detail": "L48 API 応答由来の `u.output_tokens` を、数値型か確認せず `usage.outputTokens` に加算しています。"
       }
     },
     "src/review/verdict.ts": {
@@ -291,6 +371,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       }
     },
     "tsconfig.json": {

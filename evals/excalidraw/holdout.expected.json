@@ -7,6 +7,10 @@
       "code": 1,
       "diagnostics": 5
     },
+    "fallow": {
+      "code": 1,
+      "findings": 66
+    },
     "prettier": {
       "code": 1,
       "unformatted": 7
@@ -25,6 +29,11 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 18"
       },
       "format_indentation": {
         "truth": "clean",
@@ -53,6 +62,10 @@
         "source": "tsc",
         "detail": "TS6133 state L40"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -78,6 +91,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -105,6 +122,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -130,6 +151,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -157,6 +182,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -182,6 +211,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -209,6 +242,11 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 25"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -235,6 +273,11 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 30"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -260,6 +303,11 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 38"
       }
     },
     "packages/element/src/showSelectedShapeActions.ts": {
@@ -288,6 +336,11 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 21"
       }
     },
     "packages/element/src/zindex.ts": {
@@ -303,6 +356,11 @@
         "truth": "problem",
         "source": "tsc",
         "detail": "TS6133 i L379"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 18"
       },
       "format_indentation": {
         "truth": "clean",
@@ -330,6 +388,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -355,6 +417,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -382,6 +448,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -408,6 +478,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -433,6 +507,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -461,6 +539,10 @@
         "source": "tsc",
         "detail": "TS6133 elements L16"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -487,6 +569,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -512,6 +598,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       }
     },
     "packages/excalidraw/charts/charts.line.ts": {
@@ -526,6 +616,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -553,6 +647,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -579,6 +677,10 @@
         "truth": "problem",
         "source": "tsc",
         "detail": "TS6133 event L36"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       }
     },
     "packages/excalidraw/components/ColorPicker/PickerColorList.tsx": {
@@ -620,6 +722,11 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 29"
       }
     },
     "packages/excalidraw/components/ConfirmDialog.tsx": {
@@ -634,6 +741,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -661,6 +772,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -686,6 +801,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -713,6 +832,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -738,6 +861,11 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 17"
       },
       "format_indentation": {
         "truth": "clean",
@@ -765,6 +893,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -791,6 +923,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -816,6 +952,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -869,6 +1009,11 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "problem",
+        "source": "fallow",
+        "detail": "max cyclomatic 16"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -894,6 +1039,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -921,6 +1070,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -947,6 +1100,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -972,6 +1129,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -1013,6 +1174,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -1038,6 +1203,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -1065,6 +1234,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -1090,6 +1263,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -1117,6 +1294,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -1142,6 +1323,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -1169,6 +1354,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -1195,6 +1384,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -1220,6 +1413,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -1273,6 +1470,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -1298,6 +1499,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -1325,6 +1530,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -1350,6 +1559,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -1377,6 +1590,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -1402,6 +1619,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",
@@ -1429,6 +1650,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -1455,6 +1680,10 @@
         "truth": "clean",
         "source": "tsc"
       },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
+      },
       "format_indentation": {
         "truth": "clean",
         "source": "prettier"
@@ -1480,6 +1709,10 @@
       "lint_unused_param": {
         "truth": "clean",
         "source": "tsc"
+      },
+      "complexity_branchy_function": {
+        "truth": "clean",
+        "source": "fallow"
       },
       "format_indentation": {
         "truth": "clean",

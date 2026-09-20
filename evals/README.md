@@ -11,6 +11,7 @@ Jev の判定精度を、言語ごとの大きめの OSS に対して測り、�
 | `<repo>/<subset>.files.txt` | 抽出したファイル一覧。再抽出しなくても同じ集合で scan できる | する |
 | `<repo>/<subset>.expected.json` | 観点ごとの期待値（problem / clean）と出所（tsc / rubocop / ruff / gofmt / human） | する |
 | `<repo>/<subset>.human.json` | 人が付けた期待値。`teacher.mjs` を再実行しても消えない | する |
+| `<repo>/<subset>.codex.json` | Codex（gpt-6-astra）のレビューから写した期待値。problem だけ。`codex.mjs` が作る | する |
 | `<repo>/results/<subset>.<questionVersion>.r<N>.json` | scan の生の結果 | する |
 | `history.jsonl` | 採点結果の履歴（1 行 1 scan） | する |
 | `.work/<repo>-<subset>/` | 部分集合を単独の git repo にしたもの。`jeview all` の入力 | しない |
@@ -24,7 +25,8 @@ pnpm eval:sample [repo...]              # 部分集合を作る（clone が pin 
 pnpm eval:teacher <repo> <subset>       # linter / formatter から期待値を作る
 pnpm eval:scan <repo> <subset>          # jeview で scan して results に残す
 pnpm eval:score <repo> <subset> [latest|all] [record|dry]   # 採点して history に追記
-node evals/scripts/diff.mjs <repo> <subset>                 # 食い違い (fp / fn) を一覧する
+pnpm eval:diff <repo> <subset>          # 食い違い (fp / fn) を一覧する
+pnpm eval:codex <repo> <subset> <file>  # codex exec の出力を期待値 (problem のみ) に写す
 ```
 
 ## 部分集合
@@ -40,14 +42,14 @@ repo ごとに `tune` と `holdout` の 2 つを、ファイルパスのハッ�
 
 | 言語 | 道具 | 写せる観点 |
 | --- | --- | --- |
-| TypeScript | tsc `--noUnusedLocals --noUnusedParameters`（TS6133 の行を見て import / 変数 / 引数に分ける）、prettier | lint_unused_*、format_*（prettier が通るファイルは clean） |
+| TypeScript | tsc `--noUnusedLocals --noUnusedParameters`（TS6133 の行を見て import / 変数 / 引数に分ける）、prettier、fallow health | lint_unused_*、format_*（prettier が通るファイルは clean）、complexity_branchy_function（関数の cyclomatic が 15 以上なら problem、8 以下なら clean） |
 | Ruby | rubocop（Lint/UnusedMethodArgument、UselessAssignment、SuppressedException、LiteralAsCondition、UnreachableCode、Layout/*、Style/StringLiterals） | lint_unused_param / variable、error_empty_catch、lint_constant_condition、lint_unreachable、format_* |
 | Python | ruff check（F401、F841、ARG00x、S110、E101、W191）、ruff format | lint_unused_*、error_empty_catch、format_* |
 | Go | gofmt、go vet（通れば未使用 import / 変数は無い）、staticcheck | format_*、lint_unused_import / variable |
 
 error_empty_catch は道具が「問題あり」と言ったものだけを使います。rubocop / ruff の「空の rescue / except」は Jeviews の問い（握りつぶし）より狭いので、道具の clean を clean とは扱いません。
 
-入力検証、エラー処理の大半、秘密情報の観点には道具の正解がありません。`human.json` に人が書いたものだけを使います。
+入力検証、エラー処理の大半、秘密情報の観点には道具の正解がありません。Codex（gpt-6-astra）に Jeviews と同じ質問を投げたレビュー結果を `codex.json` に写し、「問題あり」だけを正解にします。レビューは網羅的ではないので、書かれていないファイルを clean とは扱いません。`human.json` に人が書いたものは最優先です。
 
 ## 採点
 

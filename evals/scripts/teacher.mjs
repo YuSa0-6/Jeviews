@@ -39,6 +39,16 @@ if (r.language === 'typescript') {
   for (const c of ['.prettierrc', '.prettierrc.json', '.prettierrc.js', '.prettierrc.cjs', 'prettier.config.js', '.prettierignore']) {
     const src = join(repoDir(name), c); if (existsSync(src)) copyFileSync(src, join(wd, c));
   }
+  const fh = run('npx', ['-y', 'fallow', 'health', '--format', 'json'], { cwd: wd });
+  const health = JSON.parse(fh.out || '{"findings":[]}');
+  const maxCyc = {};
+  for (const d of health.findings) maxCyc[d.path] = Math.max(maxCyc[d.path] ?? 0, d.cyclomatic ?? 0);
+  tools.fallow = { code: fh.code, findings: health.findings.length };
+  for (const f of tsFiles) {
+    const m = maxCyc[f] ?? 0;
+    if (m >= 15) set(f, 'complexity_branchy_function', 'problem', 'fallow', `max cyclomatic ${m}`);
+    else if (m <= 8) set(f, 'complexity_branchy_function', 'clean', 'fallow');
+  }
   const pr = run('npx', ['-y', 'prettier@3', '--check', ...tsFiles], { cwd: wd });
   const bad = new Set([...pr.err.matchAll(/^\[warn\] (.+)$/gm)].map((m) => m[1]).filter((f) => truth[f]));
   tools.prettier = { code: pr.code, unformatted: bad.size };
@@ -115,6 +125,9 @@ if (r.language === 'go') {
     if (d.code === 'SA4004') set(rel, 'lint_constant_condition', 'problem', 'staticcheck', `${d.code} L${d.location.line}`);
   }
 }
+
+const codex = readJson(join(evalDir(name), `${subset}.codex.json`), { findings: {} }).findings;
+for (const [f, checks] of Object.entries(codex)) for (const [c, v] of Object.entries(checks)) if (truth[f] && truth[f][c]?.truth !== 'problem') truth[f][c] = v;
 
 const human = readJson(join(evalDir(name), `${subset}.human.json`), {});
 for (const [f, checks] of Object.entries(human)) for (const [c, v] of Object.entries(checks)) if (truth[f]) truth[f][c] = { ...v, source: v.source ?? 'human' };
