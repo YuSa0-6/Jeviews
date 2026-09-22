@@ -12,7 +12,13 @@ import type { FileKind } from './file-kind.js';
 import type { AxisId } from './output.js';
 
 /** 観点。設計文書の初版 5 観点。 */
-export type CheckGroup = 'input_validation' | 'error_handling' | 'secret_exposure' | 'formatting' | 'lint' | 'complexity';
+export type CheckGroup =
+  | 'input_validation'
+  | 'error_handling'
+  | 'secret_exposure'
+  | 'formatting'
+  | 'lint'
+  | 'complexity';
 
 /**
  * 観点ごとの適用条件。2026-09-19 の初回実行で、否定形の問いがコードでないファイルに
@@ -106,7 +112,8 @@ const SEEDS: readonly CheckSeed[] = [
     id: 'format_indentation',
     group: 'formatting',
     axisId: 'E',
-    problem: 'Does `content` mix indentation styles, such as tabs and spaces or different indent widths, within the file?',
+    problem:
+      'Does `content` mix indentation styles, such as tabs and spaces or different indent widths, within the file?',
   },
   {
     id: 'format_quotes',
@@ -133,7 +140,8 @@ const SEEDS: readonly CheckSeed[] = [
     id: 'lint_unused_variable',
     group: 'lint',
     axisId: 'E',
-    problem: 'Is there a local variable assigned in `content` (for example with const, let, var, or a plain assignment) whose name is never read afterwards?',
+    problem:
+      'Is there a local variable assigned in `content` (for example with const, let, var, or a plain assignment) whose name is never read afterwards?',
   },
   {
     id: 'lint_unused_param',
@@ -152,7 +160,8 @@ const SEEDS: readonly CheckSeed[] = [
     id: 'lint_duplicate_condition',
     group: 'lint',
     axisId: 'E',
-    problem: 'Does `content` repeat the same condition in an if/else chain or switch so that a later branch can never be reached?',
+    problem:
+      'Does `content` repeat the same condition in an if/else chain or switch so that a later branch can never be reached?',
   },
   {
     id: 'complexity_branchy_function',

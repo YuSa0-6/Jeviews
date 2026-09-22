@@ -33,7 +33,13 @@ const questions = { q1__problem: { type: 'noul' as const, instructions: 'Is it b
 describe('createVercelGatewayProvider', () => {
   it('posts to /evaluation-model with the gateway headers and boolean questions', async () => {
     const { calls, fetchImpl } = fakeFetch([
-      { status: 200, body: { answers: { q1__problem: { type: 'boolean', probability: 0.42 } }, usage: { inputTokens: 120, outputTokens: 0 } } },
+      {
+        status: 200,
+        body: {
+          answers: { q1__problem: { type: 'boolean', probability: 0.42 } },
+          usage: { inputTokens: 120, outputTokens: 0 },
+        },
+      },
     ]);
     const p = createVercelGatewayProvider({ apiKey: 'k', fetchImpl, sleep: noSleep });
     const { response, attempts } = await p.ask({ path: 'a.ts', content: 'x' }, questions);
@@ -59,7 +65,9 @@ describe('createVercelGatewayProvider', () => {
   });
 
   it('rejects answers that are not boolean probabilities', async () => {
-    const { fetchImpl } = fakeFetch([{ status: 200, body: { answers: { q1__problem: { type: 'choice', choice: 'a' } } } }]);
+    const { fetchImpl } = fakeFetch([
+      { status: 200, body: { answers: { q1__problem: { type: 'choice', choice: 'a' } } } },
+    ]);
     const p = createVercelGatewayProvider({ apiKey: 'k', fetchImpl, sleep: noSleep });
     await expect(p.ask({}, questions)).rejects.toMatchObject({ code: 'invalid_response', attempts: 1 });
   });
@@ -80,7 +88,9 @@ describe('createTypeSafeProvider', () => {
   });
 
   it('retries on 429 and reports the attempt count on the error', async () => {
-    const { calls, fetchImpl } = fakeFetch([{ status: 429, body: { error: 'slow down' }, headers: { 'retry-after': '0' } }]);
+    const { calls, fetchImpl } = fakeFetch([
+      { status: 429, body: { error: 'slow down' }, headers: { 'retry-after': '0' } },
+    ]);
     const p = createTypeSafeProvider({ apiKey: 'k', fetchImpl, sleep: noSleep, maxAttempts: 3 });
     const err = await p.ask({}, questions).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(ProviderError);

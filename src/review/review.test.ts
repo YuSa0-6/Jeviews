@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { CHECKS, questionId } from './checks.js';
 import { fileKind } from './file-kind.js';
 import type { CheckResult } from './output.js';
-import { ProviderError, type Provider, type Question } from './ports.js';
+import { type Provider, ProviderError, type Question } from './ports.js';
 import { reviewAll } from './review.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict } from './verdict.js';
 
@@ -103,7 +103,11 @@ function fakeProvider(answer: (q: string) => number, opts: { attempts?: number; 
     async ask(_state: unknown, questions: Record<string, Question>) {
       const answers: Record<string, { type: 'noul'; noul: number }> = {};
       for (const id of Object.keys(questions)) answers[id] = { type: 'noul', noul: answer(id) };
-      const response: { model: string; answers: typeof answers; usage?: { input_tokens: number; output_tokens: number } } = {
+      const response: {
+        model: string;
+        answers: typeof answers;
+        usage?: { input_tokens: number; output_tokens: number };
+      } = {
         model: 'fake',
         answers,
       };
@@ -212,7 +216,9 @@ describe('reviewAll', () => {
     expect(calls).toBe(0);
     const f = out.files[0]!;
     expect(f.verdict).toBe('NEED_REVIEW');
-    expect(f.checks.filter((c) => c.applicable).every((c) => c.reason === 'input_too_large' && c.problem === null)).toBe(true);
+    expect(
+      f.checks.filter((c) => c.applicable).every((c) => c.reason === 'input_too_large' && c.problem === null),
+    ).toBe(true);
     expect(out.run.status).toBe('completed');
   });
 

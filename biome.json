@@ -6,11 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": [
-      "src/**/*.ts",
-      "package.json",
-      "tsconfig.json"
-    ]
+    "includes": ["src/**/*.ts", "evals/**/*.mjs", "package.json", "tsconfig.json"]
   },
   "formatter": {
     "enabled": true,
@@ -30,6 +26,12 @@
     }
   },
   "overrides": [
+    {
+      "includes": ["evals/**"],
+      "linter": {
+        "enabled": false
+      }
+    },
     {
       "includes": ["**/*.test.ts"],
       "linter": {

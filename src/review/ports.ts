@@ -1,4 +1,3 @@
-
 export interface NoulQuestion {
   type: 'noul';
   instructions: string;

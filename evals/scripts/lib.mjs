@@ -36,6 +36,9 @@ export function run(cmd, args, opts = {}) {
 }
 export function hash32(s) {
   let h = 2166136261;
-  for (const ch of s) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; }
+  for (const ch of s) {
+    h ^= ch.charCodeAt(0);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
   return h;
 }

@@ -13,8 +13,14 @@
 // review 側は TypeSafe 直結と同じ形 (noul) だけを見るので、ここで読み替える。
 // 価格は Gateway 側の設定に依存し固定でないため usdPerInputToken は null。
 
-import { postJsonWithRetry, type HttpOptions } from './http.js';
-import { ProviderError, type NoulAnswer, type Provider, type Question, type SystemOneResponse } from '../../review/ports.js';
+import {
+  type NoulAnswer,
+  type Provider,
+  ProviderError,
+  type Question,
+  type SystemOneResponse,
+} from '../../review/ports.js';
+import { type HttpOptions, postJsonWithRetry } from './http.js';
 
 export interface VercelGatewayOptions extends HttpOptions {
   apiKey: string;
@@ -80,7 +86,9 @@ export function createVercelGatewayProvider(opts: VercelGatewayOptions): Provide
   };
 }
 
-function toGatewayQuestions(questions: Record<string, Question>): Record<string, { type: 'boolean'; instructions: string }> {
+function toGatewayQuestions(
+  questions: Record<string, Question>,
+): Record<string, { type: 'boolean'; instructions: string }> {
   const out: Record<string, { type: 'boolean'; instructions: string }> = {};
   for (const [id, q] of Object.entries(questions)) out[id] = { type: 'boolean', instructions: q.instructions };
   return out;

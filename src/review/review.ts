@@ -2,10 +2,17 @@
 // 依存は引数で渡す。
 
 import { createHash, randomUUID } from 'node:crypto';
-import { CHECKS, questionId, type Check } from './checks.js';
+import { CHECKS, type Check, questionId } from './checks.js';
 import { fileKind } from './file-kind.js';
 import type { CheckResult, FileKind, FileResult, ProviderId, ReviewOutput, Thresholds, Usage } from './output.js';
-import { ProviderError, type Exclusion, type Provider, type Question, type SystemOneResponse, type TrackedFile } from './ports.js';
+import {
+  type Exclusion,
+  type Provider,
+  ProviderError,
+  type Question,
+  type SystemOneResponse,
+  type TrackedFile,
+} from './ports.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict, runStatus } from './verdict.js';
 
 export interface ReviewDeps {
@@ -127,10 +134,7 @@ function buildQuestions(checks: readonly Check[]): Record<string, Question> {
 }
 
 function policyHash(checks: readonly Check[], thresholds: Thresholds, model: string): string {
-  return createHash('sha256')
-    .update(JSON.stringify({ checks, thresholds, model }))
-    .digest('hex')
-    .slice(0, 16);
+  return createHash('sha256').update(JSON.stringify({ checks, thresholds, model })).digest('hex').slice(0, 16);
 }
 
 /** 公開 JSON では判断基準の定義順に並べる。 */
