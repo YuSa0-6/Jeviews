@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CHECKS, questionId } from './checks.js';
-import { fileKind } from './file-kind.js';
+import { fileKind, sourceLanguage } from './file-kind.js';
 import type { CheckResult } from './output.js';
 import { type Provider, ProviderError, type Question, type StaticAnalyzer } from './ports.js';
 import { reviewAll } from './review.js';
@@ -15,6 +15,8 @@ describe('checkVerdict', () => {
     expect(checkVerdict(0.7, 0.0, T, 'lint').verdict).not.toBe('NG');
     expect(checkVerdict(0.8, 0.0, T, 'lint').verdict).toBe('NG');
     expect(checkVerdict(0.7, 0.0, T, 'formatting').verdict).toBe('NG');
+    expect(checkVerdict(0.26, 0, T, 'complexity', 'complexity_branchy_function', 'ruby').verdict).toBe('NG');
+    expect(checkVerdict(0.25, 0, T, 'complexity', 'complexity_branchy_function', 'ruby').verdict).toBe('GOOD');
   });
   it('needsContext at or above high is NEED_REVIEW when problem is below high', () => {
     expect(checkVerdict(0.1, 0.65, T)).toEqual({
@@ -96,6 +98,12 @@ describe('fileKind', () => {
     expect(fileKind('.env.production')).toBe('config');
     expect(fileKind('docs/README.md')).toBe('doc');
     expect(fileKind('LICENSE')).toBe('other');
+  });
+
+  it('detects the calibrated source languages', () => {
+    expect(sourceLanguage('src/a.ts')).toBe('typescript');
+    expect(sourceLanguage('app/models/a.rb')).toBe('ruby');
+    expect(sourceLanguage('README.md')).toBe('other');
   });
 });
 
@@ -224,10 +232,23 @@ describe('reviewAll', () => {
       snapshotId: 'snap',
       files: [file('a.ts', 'x')],
       exclusions: [],
+      thresholds: { ...T, problemHighByCheck: {}, problemHighByLanguageAndCheck: {} },
     });
     const f = out.files[0]!;
     expect(f.checks.every((c) => c.reason === 'uncertain')).toBe(true);
     expect(f.verdict).toBe('GOOD');
+  });
+
+  it('applies the Ruby threshold selected from the file extension', async () => {
+    const out = await reviewAll({
+      providerId: 'typesafe',
+      provider: fakeProvider((id) => (id === questionId('complexity_branchy_function', 'problem') ? 0.26 : 0)),
+      model: 'fake',
+      snapshotId: 'snap',
+      files: [file('app/models/account.rb', 'class Account; end')],
+      exclusions: [],
+    });
+    expect(out.files[0]!.checks.find((check) => check.checkId === 'complexity_branchy_function')?.verdict).toBe('NG');
   });
 
   it('does not send oversized files and marks applicable checks NEED_REVIEW with input_too_large', async () => {

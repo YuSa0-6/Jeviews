@@ -3,7 +3,7 @@
 
 import { createHash, randomUUID } from 'node:crypto';
 import { CHECKS, type Check, questionId } from './checks.js';
-import { fileKind } from './file-kind.js';
+import { fileKind, sourceLanguage } from './file-kind.js';
 import type { CheckResult, FileKind, FileResult, ProviderId, ReviewOutput, Thresholds, Usage } from './output.js';
 import { type Exclusion, type Provider, ProviderError, type Question, type StaticAnalysis, type StaticAnalyzer, type StaticCheckResult, type SystemOneResponse, type TrackedFile } from './ports.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict, runStatus } from './verdict.js';
@@ -89,6 +89,7 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     const skipped = checks.filter((c) => !c.appliesTo.includes(kind)).map((c) => notApplicable(c));
     const withSkipped = (rest: CheckResult[]) => ordered(checks, [...skipped, ...rest]);
     const analyzed = staticAnalysis[file.path] ?? {};
+    const language = sourceLanguage(file.path);
     const resolved = applicable.filter((c) => analyzed[c.id]).map((c) => analyzedCheck(c, analyzed[c.id]!));
     const pending = applicable.filter((c) => !analyzed[c.id]);
 
@@ -111,7 +112,7 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     try {
       const state = { path: file.path, content: file.content };
       const answers = await askByAxis(state, pending);
-      const cs = withSkipped([...resolved, ...pending.map((c) => answeredCheck(c, answers, thresholds))]);
+      const cs = withSkipped([...resolved, ...pending.map((c) => answeredCheck(c, answers, thresholds, language))]);
       const result: FileResult = {
         ...base,
         verdict: fileVerdict(cs),
@@ -227,11 +228,16 @@ async function runLimited<T>(limit: number, items: readonly T[], fn: (item: T, i
   await Promise.all(workers);
 }
 
-function answeredCheck(c: Check, answers: SystemOneResponse['answers'], thresholds: Thresholds): CheckResult {
+function answeredCheck(
+  c: Check,
+  answers: SystemOneResponse['answers'],
+  thresholds: Thresholds,
+  language?: string,
+): CheckResult {
   const p = answers[questionId(c.id, 'problem')]?.noul;
   const n = answers[questionId(c.id, 'needsContext')]?.noul;
   if (p === undefined || n === undefined) return emptyCheck(c, null, 'api_error');
-  const v = checkVerdict(p, n, thresholds, c.group);
+  const v = checkVerdict(p, n, thresholds, c.group, c.id, language);
   const r: CheckResult = {
     axisId: c.axisId,
     group: c.group,

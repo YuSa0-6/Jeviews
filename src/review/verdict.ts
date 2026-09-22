@@ -4,7 +4,19 @@ import type { CheckResult, FileResult, ReasonCode, Thresholds, Verdict } from '.
 
 export const DEFAULT_THRESHOLDS: Thresholds = {
   problemHigh: 0.65,
-  problemHighByGroup: { lint: 0.8 },
+  problemHighByCheck: {
+    error_empty_catch: 0.06,
+    error_success_after_failure: 0.08,
+    error_unhandled_promise: 0.09,
+    input_missing_unhandled: 0.15,
+    input_unchecked_use: 0.14,
+    secret_hardcoded: 0.72,
+    secret_logged: 0.06,
+  },
+  problemHighByLanguageAndCheck: {
+    'ruby:complexity_branchy_function': 0.26,
+  },
+  problemHighByGroup: { lint: 0.8, complexity: 0.6 },
   problemLow: 0.35,
   needsContextHigh: 0.65,
 };
@@ -14,8 +26,15 @@ export function checkVerdict(
   needsContext: number,
   t: Thresholds,
   group?: string,
+  checkId?: string,
+  language?: string,
 ): { verdict: Verdict; reason?: ReasonCode } {
-  const high = (group === undefined ? undefined : t.problemHighByGroup[group]) ?? t.problemHigh;
+  const languageCheck = language === undefined || checkId === undefined ? undefined : `${language}:${checkId}`;
+  const high =
+    (languageCheck === undefined ? undefined : t.problemHighByLanguageAndCheck?.[languageCheck]) ??
+    (checkId === undefined ? undefined : t.problemHighByCheck?.[checkId]) ??
+    (group === undefined ? undefined : t.problemHighByGroup[group]) ??
+    t.problemHigh;
   if (problem >= high) return { verdict: 'NG' };
   if (needsContext >= t.needsContextHigh) return { verdict: 'NEED_REVIEW', reason: 'needs_context' };
   if (problem > t.problemLow) return { verdict: 'NEED_REVIEW', reason: 'uncertain' };

@@ -42,7 +42,7 @@ export interface Check {
 
 type CheckSeed = Pick<Check, 'id' | 'group' | 'axisId' | 'problem'>;
 
-const QUESTION_VERSION = '2026-09-21.4';
+const QUESTION_VERSION = '2026-09-22.11';
 
 const SEEDS: readonly CheckSeed[] = [
   // 入力の検証漏れ
@@ -54,7 +54,7 @@ const SEEDS: readonly CheckSeed[] = [
     // 2026-09-19.6: 出所の列挙では file.content を扱うだけのモジュールも NG になった。
     // 「このファイル自身が直接読む」に絞り、I/O を行うファイルが検査の責任を負う意味にする。
     problem:
-      'Does `content` take a value read from outside the program (command-line arguments, environment variables, network responses, or file contents) and use it as a number, a URL, a file path, or a member of a fixed set of options, without first checking that it has that form? A value that is only passed through as an opaque string, such as an API key or a model name, does not count.',
+      'Does `content` take a non-empty value read from outside the program (command-line arguments, environment variables, network responses, or file contents) and use it as a number, a URL, a file path, or a member of a fixed set of options, without first checking that it has that form? A missing or empty value alone does not count for this question. A value that is only passed through as an opaque string, such as an API key or a model name, does not count.',
   },
   {
     id: 'input_missing_unhandled',
@@ -62,7 +62,7 @@ const SEEDS: readonly CheckSeed[] = [
     axisId: 'A',
     // 2026-09-19.5: 「怠っているか」の否定形は処理が無いだけで「はい」に寄った。具体的な失敗の形で問う。
     problem:
-      'When `content` reads a value from outside the program (command-line arguments, environment variables, network responses, or file contents) and that value is absent or empty, does the code proceed as if the value were present?',
+      'Does `content` read a value from outside the program (command-line arguments, environment variables, network responses, or file contents) and, when the value is absent or empty, continue to use that missing value as though it were present in an operation performed by this file? Merely returning or passing an opaque value to another layer does not count. Explicitly substituting a default, returning a failure, or raising an error counts as handling absence and does not count.',
   },
   // エラーの握りつぶし
   {
@@ -133,14 +133,15 @@ const SEEDS: readonly CheckSeed[] = [
     id: 'lint_unused_variable',
     group: 'lint',
     axisId: 'E',
-    problem: 'Is there a local variable assigned in `content` (for example with const, let, var, or a plain assignment) whose name is never read afterwards?',
+    problem:
+      'Is there a specific local variable binding declared in `content` whose name has no read reference after that declaration within its lexical scope? Answer yes only if you can identify the exact binding and check the whole scope. A reference in a nested closure, JSX expression, template, shorthand property, computed property, decorator, or type expression counts as a read. Do not count imports, parameters, object or class fields, assignment to an existing nonlocal name, or names starting with an underscore. If any possible reference or scope boundary is unclear, answer no.',
   },
   {
     id: 'lint_unused_param',
     group: 'lint',
     axisId: 'E',
     problem:
-      'Is there a function or method parameter in `content` that is never referenced inside that function or method body? A parameter whose name starts with an underscore does not count. A parameter that is passed on to another call, including super, counts as referenced.',
+      'Is there a specific parameter of a function, method, lambda, or callback in `content` whose name has no reference anywhere in that function body? Answer yes only if you can identify the exact parameter name and inspect the complete corresponding body; otherwise answer no. A reference in a nested closure, JSX expression, template, shorthand property, decorator, type expression, or forwarding call such as super counts as a reference. A parameter kept only for callback, hook, override, or public API compatibility is still unused. Do not count a declaration or overload signature without a body, a receiver or this parameter, a Python double-underscore method parameter, or a name starting with an underscore.',
   },
   {
     id: 'lint_unreachable',
@@ -159,7 +160,7 @@ const SEEDS: readonly CheckSeed[] = [
     group: 'complexity',
     axisId: 'E',
     problem:
-      'Does `content` contain a single function or method whose body has roughly 15 or more independent branch points (if, else if, loops, case, catch, ternaries, and && / || operators counted together), the kind a cyclomatic-complexity linter would flag?',
+      'Does `content` contain a single function or method with at least 15 branch points? Count each if, else if, loop, case, catch, ternary, and && or || operator in that one body, including JSX expressions. Answer from the count rather than the function length or an overall impression.',
   },
   {
     id: 'lint_constant_condition',

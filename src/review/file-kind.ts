@@ -2,6 +2,19 @@
 
 import type { FileKind } from './output.js';
 export type { FileKind };
+export type SourceLanguage = 'typescript' | 'ruby' | 'other';
+
+const LANGUAGE_BY_EXTENSION: Readonly<Record<string, SourceLanguage>> = {
+  ts: 'typescript',
+  tsx: 'typescript',
+  mts: 'typescript',
+  cts: 'typescript',
+  js: 'typescript',
+  jsx: 'typescript',
+  mjs: 'typescript',
+  cjs: 'typescript',
+  rb: 'ruby',
+};
 
 const CODE_EXT = new Set([
   'ts', 'tsx', 'mts', 'cts', 'js', 'jsx', 'mjs', 'cjs',
@@ -41,4 +54,11 @@ export function fileKind(path: string): FileKind {
   if (CONFIG_EXT.has(ext)) return 'config';
   if (DOC_EXT.has(ext)) return 'doc';
   return 'other';
+}
+
+export function sourceLanguage(path: string): SourceLanguage {
+  const base = path.slice(path.lastIndexOf('/') + 1);
+  const dot = base.lastIndexOf('.');
+  const ext = dot >= 0 ? base.slice(dot + 1).toLowerCase() : '';
+  return LANGUAGE_BY_EXTENSION[ext] ?? 'other';
 }
