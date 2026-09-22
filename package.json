@@ -32,6 +32,7 @@
     "eval:codex": "node evals/scripts/codex.mjs"
   },
   "dependencies": {
+    "fallow": "3.27.0",
     "typescript": "^7.0.2"
   },
   "devDependencies": {
