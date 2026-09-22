@@ -1,4 +1,3 @@
-
 export interface NoulQuestion {
   type: 'noul';
   instructions: string;
@@ -52,6 +51,19 @@ export interface TrackedFile {
   content: string;
   bytes: number;
   revision: string;
+}
+
+export interface StaticCheckResult {
+  verdict: 'GOOD' | 'NG';
+  source: string;
+  detail?: string;
+}
+
+export type StaticAnalysis = Record<string, Record<string, StaticCheckResult>>;
+
+export interface StaticAnalyzer {
+  id: string;
+  analyze(files: readonly TrackedFile[]): Promise<StaticAnalysis>;
 }
 
 export interface Exclusion {

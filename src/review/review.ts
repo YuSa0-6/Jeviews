@@ -2,10 +2,10 @@
 // 依存は引数で渡す。
 
 import { createHash, randomUUID } from 'node:crypto';
-import { CHECKS, questionId, type Check } from './checks.js';
+import { CHECKS, type Check, questionId } from './checks.js';
 import { fileKind } from './file-kind.js';
 import type { CheckResult, FileKind, FileResult, ProviderId, ReviewOutput, Thresholds, Usage } from './output.js';
-import { ProviderError, type Exclusion, type Provider, type Question, type SystemOneResponse, type TrackedFile } from './ports.js';
+import { type Exclusion, type Provider, ProviderError, type Question, type StaticAnalysis, type StaticAnalyzer, type StaticCheckResult, type SystemOneResponse, type TrackedFile } from './ports.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict, runStatus } from './verdict.js';
 
 export interface ReviewDeps {
@@ -20,6 +20,7 @@ export interface ReviewDeps {
   maxStateBytes?: number;
   concurrency?: number;
   checks?: readonly Check[];
+  analyzers?: readonly StaticAnalyzer[];
   log?: (line: string) => void;
 }
 
@@ -32,8 +33,15 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
   const checks = deps.checks ?? CHECKS;
   const log = deps.log ?? (() => {});
   const startedAt = new Date().toISOString();
-  const usage: Usage = { requests: 0, inputTokens: 0, outputTokens: 0, costUsd: 0 };
+  const usage: Usage = {
+    requests: 0,
+    inputTokens: 0,
+    outputTokens: 0,
+    costUsd: 0,
+  };
   let usageComplete = true;
+  const analyzers = deps.analyzers ?? [];
+  const staticAnalysis = await runAnalyzers(analyzers, deps.files, log);
 
   const results: FileResult[] = new Array(deps.files.length);
   await runLimited(deps.concurrency ?? 4, deps.files, async (file, i) => {
@@ -52,34 +60,57 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
   }
 
   async function reviewFile(file: TrackedFile, kind: FileKind): Promise<FileResult> {
-    const base = { path: file.path, revision: file.revision, bytes: file.bytes, kind };
+    const base = {
+      path: file.path,
+      revision: file.revision,
+      bytes: file.bytes,
+      kind,
+    };
     const applicable = checks.filter((c) => c.appliesTo.includes(kind));
     const skipped = checks.filter((c) => !c.appliesTo.includes(kind)).map((c) => notApplicable(c));
     const withSkipped = (rest: CheckResult[]) => ordered(checks, [...skipped, ...rest]);
+    const analyzed = staticAnalysis[file.path] ?? {};
+    const resolved = applicable.filter((c) => analyzed[c.id]).map((c) => analyzedCheck(c, analyzed[c.id]!));
+    const pending = applicable.filter((c) => !analyzed[c.id]);
 
     if (applicable.length === 0) {
-      return { ...base, verdict: fileVerdict(skipped), checks: ordered(checks, skipped) };
+      return {
+        ...base,
+        verdict: fileVerdict(skipped),
+        checks: ordered(checks, skipped),
+      };
+    }
+    if (pending.length === 0) {
+      const cs = withSkipped(resolved);
+      return { ...base, verdict: fileVerdict(cs), checks: cs };
     }
     if (file.bytes > maxStateBytes) {
-      const cs = withSkipped(applicable.map((c) => emptyCheck(c, 'NEED_REVIEW', 'input_too_large')));
+      const cs = withSkipped([...resolved, ...pending.map((c) => emptyCheck(c, 'NEED_REVIEW', 'input_too_large'))]);
       return { ...base, verdict: fileVerdict(cs), checks: cs };
     }
 
     try {
       const state = { path: file.path, content: file.content };
-      const { response, attempts } = await deps.provider.ask(state, buildQuestions(applicable));
+      const { response, attempts } = await deps.provider.ask(state, buildQuestions(pending));
       usage.requests += attempts;
       addTokens(response.usage);
-      const cs = withSkipped(applicable.map((c) => answeredCheck(c, response.answers, thresholds)));
-      const result: FileResult = { ...base, verdict: fileVerdict(cs), checks: cs };
+      const cs = withSkipped([...resolved, ...pending.map((c) => answeredCheck(c, response.answers, thresholds))]);
+      const result: FileResult = {
+        ...base,
+        verdict: fileVerdict(cs),
+        checks: cs,
+      };
       if (cs.some((c) => c.applicable && c.verdict === null)) {
-        result.error = { code: 'invalid_response', message: 'answer missing for some questions' };
+        result.error = {
+          code: 'invalid_response',
+          message: 'answer missing for some questions',
+        };
       }
       return result;
     } catch (e) {
       const err = e as ProviderError & { attempts?: number };
       usage.requests += err.attempts ?? 1;
-      return failedResult(base, withSkipped, applicable, err);
+      return failedResult(base, withSkipped, pending, err, resolved);
     }
   }
 
@@ -104,7 +135,7 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
       provider: deps.providerId,
       model: deps.model,
       snapshotId: deps.snapshotId,
-      policyHash: policyHash(checks, thresholds, deps.model),
+      policyHash: policyHash(checks, thresholds, deps.model, analyzers),
       thresholds,
       maxStateBytes,
       status,
@@ -121,14 +152,24 @@ function buildQuestions(checks: readonly Check[]): Record<string, Question> {
   const q: Record<string, Question> = {};
   for (const c of checks) {
     q[questionId(c.id, 'problem')] = { type: 'noul', instructions: c.problem };
-    q[questionId(c.id, 'needsContext')] = { type: 'noul', instructions: c.needsContext };
+    q[questionId(c.id, 'needsContext')] = {
+      type: 'noul',
+      instructions: c.needsContext,
+    };
   }
   return q;
 }
 
-function policyHash(checks: readonly Check[], thresholds: Thresholds, model: string): string {
+function policyHash(checks: readonly Check[], thresholds: Thresholds, model: string, analyzers: readonly StaticAnalyzer[]): string {
   return createHash('sha256')
-    .update(JSON.stringify({ checks, thresholds, model }))
+    .update(
+      JSON.stringify({
+        checks,
+        thresholds,
+        model,
+        analyzers: analyzers.map((analyzer) => analyzer.id),
+      }),
+    )
     .digest('hex')
     .slice(0, 16);
 }
@@ -158,11 +199,7 @@ function emptyCheck(c: Check, verdict: 'NEED_REVIEW' | null, reason: CheckResult
   return r;
 }
 
-async function runLimited<T>(
-  limit: number,
-  items: readonly T[],
-  fn: (item: T, index: number) => Promise<void>,
-): Promise<void> {
+async function runLimited<T>(limit: number, items: readonly T[], fn: (item: T, index: number) => Promise<void>): Promise<void> {
   let next = 0;
   const workers = Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, async () => {
     while (next < items.length) {
@@ -192,21 +229,57 @@ function answeredCheck(c: Check, answers: SystemOneResponse['answers'], threshol
   return r;
 }
 
-function failedResult(
-  base: Omit<FileResult, 'verdict' | 'checks'>,
-  withSkipped: (rest: CheckResult[]) => CheckResult[],
-  applicable: readonly Check[],
-  err: Error,
-): FileResult {
-  if (err instanceof ProviderError && err.code === 'bad_request') {
-    const cs = withSkipped(applicable.map((c) => emptyCheck(c, 'NEED_REVIEW', 'input_too_large')));
-    return { ...base, verdict: fileVerdict(cs), checks: cs, error: { code: err.code, message: err.message } };
+function analyzedCheck(c: Check, result: StaticCheckResult): CheckResult {
+  const evidence: NonNullable<CheckResult['evidence']> = {
+    source: result.source,
+  };
+  if (result.detail) evidence.detail = result.detail;
+  return {
+    axisId: c.axisId,
+    group: c.group,
+    checkId: c.id,
+    questionVersion: c.questionVersion,
+    applicable: true,
+    problem: { probability: result.verdict === 'NG' ? 1 : 0 },
+    needsContext: { probability: 0 },
+    verdict: result.verdict,
+    evidence,
+  };
+}
+
+async function runAnalyzers(analyzers: readonly StaticAnalyzer[], files: readonly TrackedFile[], log: (line: string) => void): Promise<StaticAnalysis> {
+  const merged: StaticAnalysis = {};
+  for (const analyzer of analyzers) {
+    try {
+      const analysis = await analyzer.analyze(files);
+      for (const [path, checks] of Object.entries(analysis)) {
+        merged[path] = { ...merged[path], ...checks };
+      }
+    } catch (error) {
+      log(`analyzer ${analyzer.id}: ${error instanceof Error ? error.message : String(error)}`);
+    }
   }
-  const cs = withSkipped(applicable.map((c) => emptyCheck(c, null, 'api_error')));
+  return merged;
+}
+
+function failedResult(base: Omit<FileResult, 'verdict' | 'checks'>, withSkipped: (rest: CheckResult[]) => CheckResult[], applicable: readonly Check[], err: Error, resolved: readonly CheckResult[] = []): FileResult {
+  if (err instanceof ProviderError && err.code === 'bad_request') {
+    const cs = withSkipped([...resolved, ...applicable.map((c) => emptyCheck(c, 'NEED_REVIEW', 'input_too_large'))]);
+    return {
+      ...base,
+      verdict: fileVerdict(cs),
+      checks: cs,
+      error: { code: err.code, message: err.message },
+    };
+  }
+  const cs = withSkipped([...resolved, ...applicable.map((c) => emptyCheck(c, null, 'api_error'))]);
   return {
     ...base,
-    verdict: null,
+    verdict: fileVerdict(cs),
     checks: cs,
-    error: { code: err instanceof ProviderError ? err.code : 'unknown', message: err.message ?? String(err) },
+    error: {
+      code: err instanceof ProviderError ? err.code : 'unknown',
+      message: err.message ?? String(err),
+    },
   };
 }
