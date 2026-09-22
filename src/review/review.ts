@@ -59,6 +59,25 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     }
   }
 
+  async function ask(state: unknown, requestedChecks: readonly Check[]): Promise<SystemOneResponse['answers']> {
+    const { response, attempts } = await deps.provider.ask(state, buildQuestions(requestedChecks));
+    usage.requests += attempts;
+    addTokens(response.usage);
+    return response.answers;
+  }
+
+  async function askByAxis(state: unknown, requestedChecks: readonly Check[]): Promise<SystemOneResponse['answers']> {
+    const grouped = new Map<string, Check[]>();
+    for (const check of requestedChecks) {
+      const checksForAxis = grouped.get(check.axisId) ?? [];
+      checksForAxis.push(check);
+      grouped.set(check.axisId, checksForAxis);
+    }
+    const answers: SystemOneResponse['answers'] = {};
+    for (const checksForAxis of grouped.values()) Object.assign(answers, await ask(state, checksForAxis));
+    return answers;
+  }
+
   async function reviewFile(file: TrackedFile, kind: FileKind): Promise<FileResult> {
     const base = {
       path: file.path,
@@ -91,10 +110,8 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
 
     try {
       const state = { path: file.path, content: file.content };
-      const { response, attempts } = await deps.provider.ask(state, buildQuestions(pending));
-      usage.requests += attempts;
-      addTokens(response.usage);
-      const cs = withSkipped([...resolved, ...pending.map((c) => answeredCheck(c, response.answers, thresholds))]);
+      const answers = await askByAxis(state, pending);
+      const cs = withSkipped([...resolved, ...pending.map((c) => answeredCheck(c, answers, thresholds))]);
       const result: FileResult = {
         ...base,
         verdict: fileVerdict(cs),

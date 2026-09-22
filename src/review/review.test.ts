@@ -149,12 +149,40 @@ describe('reviewAll', () => {
     expect(secret.group).toBe('secret_exposure');
     expect(secret.problem).toEqual({ probability: 0.9 });
     expect(f.checks.find((c) => c.checkId === 'lint_unused_import')!.verdict).toBe('GOOD');
+    const axes = new Set(CHECKS.map((check) => check.axisId)).size;
     expect(out.run.usage).toEqual({
-      requests: 1,
-      inputTokens: 100,
-      outputTokens: 10,
-      costUsd: 0.0000042,
+      requests: axes,
+      inputTokens: axes * 100,
+      outputTokens: axes * 10,
+      costUsd: axes * 0.0000042,
     });
+  });
+
+  it('asks one judgment axis at a time', async () => {
+    const batches: string[][] = [];
+    const inner = fakeProvider(() => 0);
+    const provider: Provider = {
+      ...inner,
+      async ask(state, questions) {
+        batches.push(Object.keys(questions));
+        return inner.ask(state, questions);
+      },
+    };
+    await reviewAll({
+      providerId: 'typesafe',
+      provider,
+      model: 'fake',
+      snapshotId: 'snap',
+      files: [file('a.ts', 'x')],
+      exclusions: [],
+    });
+
+    const axisByCheck = new Map(CHECKS.map((check) => [check.id, check.axisId]));
+    expect(batches).toHaveLength(new Set(CHECKS.map((check) => check.axisId)).size);
+    for (const batch of batches) {
+      const axes = new Set(batch.map((id) => axisByCheck.get(id.split('__')[0]!)));
+      expect(axes.size).toBe(1);
+    }
   });
 
   it('sends only applicable questions for config files and marks the rest not_applicable', async () => {
@@ -164,7 +192,7 @@ describe('reviewAll', () => {
       model: 'fake',
       usdPerInputToken: 0.042 / 1_000_000,
       async ask(state, questions) {
-        sent = Object.keys(questions);
+        sent.push(...Object.keys(questions));
         return inner.ask(state, questions);
       },
     };
@@ -253,14 +281,14 @@ describe('reviewAll', () => {
       exclusions: [{ path: 'img.png', reason: 'binary' }],
       concurrency: 1,
     });
-    expect(n).toBe(2);
+    expect(n).toBe(5);
     expect(out.run.status).toBe('partial');
     const bad = out.files.find((f) => f.path === 'bad.ts')!;
     expect(bad.verdict).toBe(null);
     expect(bad.error?.code).toBe('server');
     expect(bad.checks.filter((c) => c.applicable).every((c) => c.reason === 'api_error')).toBe(true);
     expect(out.files.find((f) => f.path === 'ok.ts')!.verdict).toBe('GOOD');
-    expect(out.run.usage.requests).toBe(4);
+    expect(out.run.usage.requests).toBe(7);
     expect(out.exclusions).toEqual([{ path: 'img.png', reason: 'binary' }]);
   });
 
@@ -275,7 +303,7 @@ describe('reviewAll', () => {
     });
     expect(out.run.usage.inputTokens).toBe(null);
     expect(out.run.usage.costUsd).toBe(null);
-    expect(out.run.usage.requests).toBe(1);
+    expect(out.run.usage.requests).toBe(new Set(CHECKS.map((check) => check.axisId)).size);
   });
 
   it('uses static results and sends only unresolved checks to the provider', async () => {
@@ -284,7 +312,7 @@ describe('reviewAll', () => {
     const provider: Provider = {
       ...inner,
       async ask(state, questions) {
-        sent = Object.keys(questions);
+        sent.push(...Object.keys(questions));
         return inner.ask(state, questions);
       },
     };
@@ -339,7 +367,7 @@ describe('reviewAll', () => {
       log: (line) => logs.push(line),
     });
     expect(out.files[0]!.verdict).toBe('GOOD');
-    expect(out.run.usage.requests).toBe(1);
+    expect(out.run.usage.requests).toBe(new Set(CHECKS.map((check) => check.axisId)).size);
     expect(logs).toContain('analyzer broken: unavailable');
   });
 });
