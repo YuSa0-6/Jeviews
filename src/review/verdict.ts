@@ -15,6 +15,9 @@ export const DEFAULT_THRESHOLDS: Thresholds = {
   },
   problemHighByLanguageAndCheck: {
     'ruby:complexity_branchy_function': 0.26,
+    'typescript:complexity_branchy_function': 0.38,
+    'typescript:lint_constant_condition': 0.2,
+    'typescript:lint_unreachable': 0.05,
   },
   problemHighByGroup: { lint: 0.8, complexity: 0.6 },
   problemLow: 0.35,

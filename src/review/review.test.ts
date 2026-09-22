@@ -17,6 +17,9 @@ describe('checkVerdict', () => {
     expect(checkVerdict(0.7, 0.0, T, 'formatting').verdict).toBe('NG');
     expect(checkVerdict(0.26, 0, T, 'complexity', 'complexity_branchy_function', 'ruby').verdict).toBe('NG');
     expect(checkVerdict(0.25, 0, T, 'complexity', 'complexity_branchy_function', 'ruby').verdict).toBe('GOOD');
+    expect(checkVerdict(0.38, 0, T, 'complexity', 'complexity_branchy_function', 'typescript').verdict).toBe('NG');
+    expect(checkVerdict(0.2, 0, T, 'lint', 'lint_constant_condition', 'typescript').verdict).toBe('NG');
+    expect(checkVerdict(0.05, 0, T, 'lint', 'lint_unreachable', 'typescript').verdict).toBe('NG');
   });
   it('needsContext at or above high is NEED_REVIEW when problem is below high', () => {
     expect(checkVerdict(0.1, 0.65, T)).toEqual({
