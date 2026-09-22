@@ -3,7 +3,7 @@
 
 import { createHash, randomUUID } from 'node:crypto';
 import { CHECKS, type Check, questionId } from './checks.js';
-import { fileKind, sourceLanguage } from './file-kind.js';
+import { fileKind, type SourceLanguage, sourceLanguage } from './file-kind.js';
 import type { CheckResult, FileKind, FileResult, ProviderId, ReviewOutput, Thresholds, Usage } from './output.js';
 import { type Exclusion, type Provider, ProviderError, type Question, type StaticAnalysis, type StaticAnalyzer, type StaticCheckResult, type SystemOneResponse, type TrackedFile } from './ports.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict, runStatus } from './verdict.js';
@@ -232,7 +232,7 @@ function answeredCheck(
   c: Check,
   answers: SystemOneResponse['answers'],
   thresholds: Thresholds,
-  language?: string,
+  language?: SourceLanguage,
 ): CheckResult {
   const p = answers[questionId(c.id, 'problem')]?.noul;
   const n = answers[questionId(c.id, 'needsContext')]?.noul;
