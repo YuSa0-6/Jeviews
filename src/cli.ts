@@ -4,6 +4,7 @@
 // 終了コード: 0 = 完了、1 = 失敗または部分結果。
 
 import { writeSync } from 'node:fs';
+import { createTypeScriptAnalyzer } from './adapters/analyzers/typescript.js';
 import { createProviderFromEnv, detectProvider, isProviderId } from './adapters/providers/registry.js';
 import { createGitRepository } from './adapters/repository/git.js';
 import type { ProviderId, ReviewOutput } from './review/output.js';
@@ -172,6 +173,7 @@ function toDeps(
     providerId,
     model: provider.model,
     ...target,
+    analyzers: [createTypeScriptAnalyzer({ cwd: process.cwd() })],
     log: (line) => process.stderr.write(line + '\n'),
   };
   if (opts.maxStateBytes !== undefined) deps.maxStateBytes = opts.maxStateBytes;

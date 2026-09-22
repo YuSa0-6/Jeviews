@@ -31,10 +31,12 @@
     "eval:diff": "node evals/scripts/diff.mjs",
     "eval:codex": "node evals/scripts/codex.mjs"
   },
+  "dependencies": {
+    "typescript": "^7.0.2"
+  },
   "devDependencies": {
     "@types/node": "^26.6.2",
     "tsx": "^4.23.13",
-    "typescript": "^7.0.2",
     "vitest": "^5.0.1"
   }
 }
