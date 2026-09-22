@@ -44,8 +44,8 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
 
   function addTokens(u: SystemOneResponse['usage']): void {
     if (typeof u?.input_tokens === 'number') {
-      usage.inputTokens! += u.input_tokens;
-      usage.outputTokens! += u.output_tokens ?? 0;
+      usage.inputTokens = (usage.inputTokens ?? 0) + u.input_tokens;
+      usage.outputTokens = (usage.outputTokens ?? 0) + (u.output_tokens ?? 0);
     } else {
       usageComplete = false;
     }
@@ -136,7 +136,7 @@ function policyHash(checks: readonly Check[], thresholds: Thresholds, model: str
 /** 公開 JSON では判断基準の定義順に並べる。 */
 function ordered(checks: readonly Check[], results: readonly CheckResult[]): CheckResult[] {
   const byId = new Map(results.map((r) => [r.checkId, r]));
-  return checks.map((c) => byId.get(c.id)!).filter((r) => r !== undefined);
+  return checks.map((c) => byId.get(c.id)).filter((result): result is CheckResult => result !== undefined);
 }
 
 function notApplicable(c: Check): CheckResult {
@@ -167,7 +167,7 @@ async function runLimited<T>(
   const workers = Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, async () => {
     while (next < items.length) {
       const i = next++;
-      await fn(items[i]!, i);
+      await fn(items[i] as T, i);
     }
   });
   await Promise.all(workers);

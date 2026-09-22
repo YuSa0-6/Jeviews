@@ -79,7 +79,7 @@ const OPTIONS: Record<string, OptionParser> = {
 function parseArgs(argv: string[]): CliOptions {
   const opts: CliOptions = {};
   for (let i = 0; i < argv.length; i += 2) {
-    const flag = argv[i]!;
+    const flag = argv[i] as string;
     const parse = OPTIONS[flag];
     if (!parse) fail('config', `unknown option ${flag}\n${USAGE}`);
     const value = argv[i + 1];

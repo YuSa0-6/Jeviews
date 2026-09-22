@@ -30,7 +30,8 @@ export function detectProvider(env: NodeJS.ProcessEnv): ProviderId | undefined {
 }
 
 export function createProviderFromEnv(id: ProviderId, model: string | undefined, env: NodeJS.ProcessEnv): Provider {
-  const entry = PROVIDERS.find(([pid]) => pid === id)![1];
+  const entry = PROVIDERS.find(([pid]) => pid === id)?.[1];
+  if (!entry) throw new Error(`unsupported provider: ${id}`);
   const apiKey = env[entry.keyEnv];
   if (!apiKey) throw new Error(`${entry.keyEnv} is not set`);
   const opts: ProviderOptions = { apiKey };
