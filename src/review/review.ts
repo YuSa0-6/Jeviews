@@ -42,6 +42,23 @@ interface AxisAnswers {
 }
 
 /** 失敗するまでに送った HTTP リクエスト数。報告が無ければ 1 回とみなす。 */
+/**
+ * 回答の組み立て後に FileResult.error へ載せる内容。
+ * 一部の軸が失敗したときは、その軸の観点を answeredCheck が api_error にしているので、
+ * 部分失敗を JSON から読めるよう失敗した軸を書く。
+ */
+function answerError(failures: readonly AxisFailure[], cs: readonly CheckResult[]): FileResult['error'] {
+  const first = failures[0]?.error;
+  if (first !== undefined) {
+    const code = first instanceof ProviderError ? first.code : 'unknown';
+    return { code, message: `axis ${failures.map((f) => f.axisId).join(', ')}: ${first.message}` };
+  }
+  if (cs.some((c) => c.applicable && c.verdict === null)) {
+    return { code: 'invalid_response', message: 'answer missing for some questions' };
+  }
+  return undefined;
+}
+
 function attemptsOf(error: Error): number {
   return (error as ProviderError & { attempts?: number }).attempts ?? 1;
 }
@@ -107,6 +124,19 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     return { answers, failures, axes: grouped.size };
   }
 
+  /**
+   * 軸ごとに問い合わせ、失敗した軸の分もリクエスト数に数える。
+   * 全軸が失敗したときは先頭のエラーを投げ、呼び出し側の catch と failedResult に任せる
+   * (先頭のエラーの attempts はその catch が数えるので、ここでは残りの軸の分だけ数える)。
+   */
+  async function answerPending(state: unknown, pending: readonly Check[]): Promise<Omit<AxisAnswers, 'axes'>> {
+    const { answers, failures, axes } = await askByAxis(state, pending);
+    const allFailed = failures.length === axes;
+    for (const f of allFailed ? failures.slice(1) : failures) usage.requests += attemptsOf(f.error);
+    if (allFailed) throw failures[0]!.error;
+    return { answers, failures };
+  }
+
   async function reviewFile(file: TrackedFile, kind: FileKind): Promise<FileResult> {
     const base = {
       path: file.path,
@@ -140,34 +170,15 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
 
     try {
       const state = { path: file.path, content: file.content };
-      const { answers, failures, axes } = await askByAxis(state, pending);
-      if (failures.length === axes) {
-        // 全軸が失敗したときは従来どおり最初のエラーを投げ、catch と failedResult に任せる。
-        // 先頭のエラーの attempts は catch が数えるので、ここでは残りの軸の分だけ数える。
-        for (const f of failures.slice(1)) usage.requests += attemptsOf(f.error);
-        throw failures[0]!.error;
-      }
-      // 一部の軸だけ失敗した場合。失敗した軸の分もリクエスト数には数える。
-      for (const f of failures) usage.requests += attemptsOf(f.error);
+      const { answers, failures } = await answerPending(state, pending);
       const cs = withSkipped([...resolved, ...pending.map((c) => answeredCheck(c, answers, thresholds, language))]);
       const result: FileResult = {
         ...base,
         verdict: fileVerdict(cs),
         checks: cs,
       };
-      if (failures.length > 0) {
-        // 回答が無い観点は answeredCheck が api_error にしている。部分失敗を JSON から読めるよう error を立てる。
-        const first = failures[0]!.error;
-        result.error = {
-          code: first instanceof ProviderError ? first.code : 'unknown',
-          message: `axis ${failures.map((f) => f.axisId).join(', ')}: ${first.message ?? String(first)}`,
-        };
-      } else if (cs.some((c) => c.applicable && c.verdict === null)) {
-        result.error = {
-          code: 'invalid_response',
-          message: 'answer missing for some questions',
-        };
-      }
+      const error = answerError(failures, cs);
+      if (error) result.error = error;
       return result;
     } catch (e) {
       const err = e as ProviderError & { attempts?: number };
