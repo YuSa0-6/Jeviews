@@ -63,6 +63,8 @@ export type StaticAnalysis = Record<string, Record<string, StaticCheckResult>>;
 
 export interface StaticAnalyzer {
   id: string;
+  /** 解析器と外部ツールの版。policyHash に含め、ツールを上げたら別ポリシーとして扱う */
+  version?: string;
   analyze(files: readonly TrackedFile[]): Promise<StaticAnalysis>;
 }
 

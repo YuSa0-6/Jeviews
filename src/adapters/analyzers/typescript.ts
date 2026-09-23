@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
-import { dirname, join, relative } from 'node:path';
+import { dirname, isAbsolute, join, relative } from 'node:path';
 import { promisify } from 'node:util';
 import type { StaticAnalysis, StaticAnalyzer, StaticCheckResult, TrackedFile } from '../../review/ports.js';
 
@@ -30,12 +30,12 @@ interface TypeScriptAnalyzerOptions {
 
 export function createTypeScriptAnalyzer(options: TypeScriptAnalyzerOptions): StaticAnalyzer {
   const log = options.log ?? ((line: string) => void process.stderr.write(`${line}\n`));
-  return {
+  const analyzer: StaticAnalyzer = {
     id: 'typescript',
     async analyze(files) {
       const selected = files.filter((file) => TYPESCRIPT_FILE.test(file.path));
       if (selected.length === 0) return {};
-      const tscPath = options.tscPath ?? bundledTscPath();
+      const tscPath = options.tscPath ?? packageBin('typescript', 'tsc');
       const [{ code, output }, complexity] = await Promise.all([
         runTsc(
           tscPath,
@@ -55,16 +55,32 @@ export function createTypeScriptAnalyzer(options: TypeScriptAnalyzerOptions): St
       return analysis;
     },
   };
+  // 差し替えたツールは同梱版の番号が当てにならないので、その版は名乗らない。
+  const tsc = options.tscPath === undefined ? packageVersion('typescript') : undefined;
+  const fallow = options.fallowPath === undefined ? packageVersion('fallow') : undefined;
+  const parts = [tsc && `tsc@${tsc}`, fallow && `fallow@${fallow}`].filter((part): part is string => Boolean(part));
+  if (parts.length > 0) analyzer.version = parts.join('+');
+  return analyzer;
 }
 
-function bundledTscPath(): string {
+/** パッケージの bin フィールドから実行ファイルのパスを引く。配置が変わっても追従できる。 */
+function packageBin(pkg: string, name: string): string {
   const require = createRequire(import.meta.url);
-  return join(dirname(require.resolve('typescript/package.json')), 'bin', 'tsc');
+  const manifestPath = require.resolve(`${pkg}/package.json`);
+  const { bin } = require(manifestPath) as { bin?: string | Record<string, string> };
+  const entry = typeof bin === 'string' ? bin : bin?.[name];
+  if (entry === undefined) throw new Error(`${pkg} の package.json に bin.${name} がありません`);
+  return join(dirname(manifestPath), entry);
 }
 
-function bundledFallowPath(): string {
-  const require = createRequire(import.meta.url);
-  return join(dirname(require.resolve('fallow/package.json')), 'bin', 'fallow');
+/** 同梱パッケージの版。入っていなければ undefined (解析器はその場合 provider に戻る)。 */
+function packageVersion(pkg: string): string | undefined {
+  try {
+    const require = createRequire(import.meta.url);
+    return (require(`${pkg}/package.json`) as { version?: string }).version;
+  } catch {
+    return undefined;
+  }
 }
 
 async function complexityResults(
@@ -77,7 +93,9 @@ async function complexityResults(
     const { stdout } = await execFileAsync(
       process.execPath,
       [
-        fallowPath ?? bundledFallowPath(),
+        fallowPath ?? packageBin('fallow', 'fallow'),
+        // health が受け取る解析範囲は単一の PATH だけで、ファイル一覧は渡せない。
+        // cwd 全体を解析させ、結果を selected に絞る。
         'health',
         '--complexity',
         '--file-scores',
@@ -91,6 +109,8 @@ async function complexityResults(
         'json',
         '--report-only',
         '--quiet',
+        // キャッシュを有効にすると、fallow はレビュー対象の repo に .fallow/ を書き込む。
+        // jeview は対象を書き換えない前提なので、毎回作り直すコストを払ってでも無効にする。
         '--no-cache',
         '--no-production',
       ],
@@ -254,9 +274,10 @@ function applyDiagnostic(
   };
 }
 
-function normalizePath(path: string, cwd: string): string {
-  const normalized = path.replaceAll('\\', '/').replace(/^\.\//, '');
-  return normalized.startsWith('/') ? relative(cwd, normalized).replaceAll('\\', '/') : normalized;
+/** 診断のパスを cwd からの相対パスにそろえる。絶対パスの判定は実行環境の規則に任せる (Windows なら C:\\... も絶対)。 */
+export function normalizePath(path: string, cwd: string): string {
+  const relativePath = isAbsolute(path) ? relative(cwd, path) : path;
+  return relativePath.replaceAll('\\', '/').replace(/^\.\//, '');
 }
 
 /** 直前の非空行。引数リストを複数行に分けた `function f(` のような行を拾う。 */

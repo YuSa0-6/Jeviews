@@ -2,7 +2,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { createTypeScriptAnalyzer } from './typescript.js';
+import { createTypeScriptAnalyzer, normalizePath } from './typescript.js';
 
 describe('createTypeScriptAnalyzer', () => {
   it('maps compiler unused diagnostics to Jeviews checks', async () => {
@@ -152,5 +152,20 @@ ${Array.from({ length: 9 }, (_, index) => `  if (value === ${index}) return ${in
     } finally {
       await rm(cwd, { recursive: true, force: true });
     }
+  });
+
+  it('normalizes diagnostic paths against cwd', () => {
+    expect(normalizePath('./src/a.ts', '/repo')).toBe('src/a.ts');
+    expect(normalizePath('/repo/src/a.ts', '/repo')).toBe('src/a.ts');
+    expect(normalizePath('src\\a.ts', '/repo')).toBe('src/a.ts');
+  });
+
+  it('reports the bundled tool versions and omits the ones that are overridden', () => {
+    expect(createTypeScriptAnalyzer({ cwd: '/repo' }).version).toMatch(/^tsc@\d+\.\d+\.\d+\+fallow@\d+\.\d+\.\d+$/);
+    expect(createTypeScriptAnalyzer({ cwd: '/repo', tscPath: '/custom/tsc' }).version).toMatch(/^fallow@/);
+    expect(createTypeScriptAnalyzer({ cwd: '/repo', fallowPath: '/custom/fallow' }).version).toMatch(/^tsc@[^+]+$/);
+    expect(
+      createTypeScriptAnalyzer({ cwd: '/repo', tscPath: '/custom/tsc', fallowPath: '/custom/fallow' }).version,
+    ).toBeUndefined();
   });
 });
