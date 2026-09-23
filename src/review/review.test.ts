@@ -104,6 +104,8 @@ describe('fileKind', () => {
     expect(sourceLanguage('src/a.ts')).toBe('typescript');
     expect(sourceLanguage('app/models/a.rb')).toBe('ruby');
     expect(sourceLanguage('README.md')).toBe('other');
+    expect(sourceLanguage('web/App.JSX')).toBe('typescript');
+    expect(sourceLanguage('bin/jeview')).toBe('other');
   });
 });
 
@@ -480,6 +482,57 @@ describe('reviewAll', () => {
     expect(logs.filter((line) => line.startsWith('analyzer second:'))).toEqual([
       'analyzer second: a.ts/secret_hardcoded は first-source の判定を優先します',
     ]);
+  });
+
+  it('ignores unknown check ids from an analyzer and logs them once', async () => {
+    const logs: string[] = [];
+    const analyzer: StaticAnalyzer = {
+      id: 'typo',
+      async analyze() {
+        return {
+          'a.ts': {
+            secret_hardcoded: { verdict: 'NG' as const, source: 'typo' },
+            lint_unused_params: { verdict: 'NG' as const, source: 'typo' },
+          },
+          'b.ts': { lint_unused_params: { verdict: 'NG' as const, source: 'typo' } },
+        };
+      },
+    };
+    const out = await reviewAll({
+      providerId: 'typesafe',
+      provider: fakeProvider(() => 0),
+      model: 'fake',
+      snapshotId: 'snap',
+      files: [file('a.ts', 'x'), file('b.ts', 'y')],
+      exclusions: [],
+      analyzers: [analyzer],
+      log: (line) => logs.push(line),
+    });
+    const a = out.files.find((f) => f.path === 'a.ts')!;
+    expect(a.checks.find((check) => check.checkId === 'secret_hardcoded')!.evidence).toEqual({ source: 'typo' });
+    expect(logs.filter((line) => line.startsWith('analyzer typo:'))).toEqual([
+      'analyzer typo: 未知の checkId を無視します: lint_unused_params',
+    ]);
+  });
+
+  it('includes analyzer versions in the policy hash', async () => {
+    const run = (version?: string) => {
+      const analyzer: StaticAnalyzer = { id: 'fixture', async analyze() { return {}; } };
+      if (version !== undefined) analyzer.version = version;
+      return reviewAll({
+        providerId: 'typesafe',
+        provider: fakeProvider(() => 0),
+        model: 'fake',
+        snapshotId: 'snap',
+        files: [file('a.ts', 'x')],
+        exclusions: [],
+        analyzers: [analyzer],
+      });
+    };
+    const [none, v1, v1again, v2] = await Promise.all([run(), run('1.0.0'), run('1.0.0'), run('2.0.0')]);
+    expect(v1.run.policyHash).toBe(v1again.run.policyHash);
+    expect(v1.run.policyHash).not.toBe(v2.run.policyHash);
+    expect(v1.run.policyHash).not.toBe(none.run.policyHash);
   });
 
   it('keeps the static NG on the file verdict when the provider call fails', async () => {
