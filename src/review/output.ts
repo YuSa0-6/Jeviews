@@ -39,6 +39,7 @@ export interface CheckResult {
   needsContext: { probability: number } | null;
   verdict: Verdict | null;
   reason?: ReasonCode;
+  evidence?: { source: string; detail?: string };
 }
 
 export interface FileResult {

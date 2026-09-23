@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { CHECKS, questionId } from './checks.js';
 import { fileKind } from './file-kind.js';
 import type { CheckResult } from './output.js';
-import { type Provider, ProviderError, type Question } from './ports.js';
+import { type Provider, ProviderError, type Question, type StaticAnalyzer } from './ports.js';
 import { reviewAll } from './review.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict } from './verdict.js';
 
@@ -17,10 +17,16 @@ describe('checkVerdict', () => {
     expect(checkVerdict(0.7, 0.0, T, 'formatting').verdict).toBe('NG');
   });
   it('needsContext at or above high is NEED_REVIEW when problem is below high', () => {
-    expect(checkVerdict(0.1, 0.65, T)).toEqual({ verdict: 'NEED_REVIEW', reason: 'needs_context' });
+    expect(checkVerdict(0.1, 0.65, T)).toEqual({
+      verdict: 'NEED_REVIEW',
+      reason: 'needs_context',
+    });
   });
   it('problem between low and high is NEED_REVIEW as uncertain', () => {
-    expect(checkVerdict(0.5, 0.1, T)).toEqual({ verdict: 'NEED_REVIEW', reason: 'uncertain' });
+    expect(checkVerdict(0.5, 0.1, T)).toEqual({
+      verdict: 'NEED_REVIEW',
+      reason: 'uncertain',
+    });
     expect(checkVerdict(0.36, 0.1, T).reason).toBe('uncertain');
   });
   it('problem at or below low with low needsContext is GOOD', () => {
@@ -146,7 +152,12 @@ describe('reviewAll', () => {
     expect(secret.group).toBe('secret_exposure');
     expect(secret.problem).toEqual({ probability: 0.9 });
     expect(f.checks.find((c) => c.checkId === 'lint_unused_import')!.verdict).toBe('GOOD');
-    expect(out.run.usage).toEqual({ requests: 1, inputTokens: 100, outputTokens: 10, costUsd: 0.0000042 });
+    expect(out.run.usage).toEqual({
+      requests: 1,
+      inputTokens: 100,
+      outputTokens: 10,
+      costUsd: 0.0000042,
+    });
   });
 
   it('sends only applicable questions for config files and marks the rest not_applicable', async () => {
@@ -270,5 +281,194 @@ describe('reviewAll', () => {
     expect(out.run.usage.inputTokens).toBe(null);
     expect(out.run.usage.costUsd).toBe(null);
     expect(out.run.usage.requests).toBe(1);
+  });
+
+  it('uses static results and sends only unresolved checks to the provider', async () => {
+    let sent: string[] = [];
+    const inner = fakeProvider(() => 0);
+    const provider: Provider = {
+      ...inner,
+      async ask(state, questions) {
+        sent = Object.keys(questions);
+        return inner.ask(state, questions);
+      },
+    };
+    const analyzer: StaticAnalyzer = {
+      id: 'fixture',
+      async analyze() {
+        return {
+          'a.ts': {
+            secret_hardcoded: {
+              verdict: 'NG',
+              source: 'fixture',
+              detail: 'line 1',
+            },
+          },
+        };
+      },
+    };
+    const out = await reviewAll({
+      providerId: 'typesafe',
+      provider,
+      model: 'fake',
+      snapshotId: 'snap',
+      files: [file('a.ts', 'x')],
+      exclusions: [],
+      analyzers: [analyzer],
+    });
+    const result = out.files[0]!.checks.find((check) => check.checkId === 'secret_hardcoded')!;
+    expect(sent.some((id) => id.startsWith('secret_hardcoded__'))).toBe(false);
+    expect(result).toMatchObject({
+      verdict: 'NG',
+      problem: null,
+      needsContext: null,
+      evidence: { source: 'fixture' },
+    });
+  });
+
+  it('keeps the first analyzer result and logs the duplicate', async () => {
+    const logs: string[] = [];
+    const mkAnalyzer = (id: string, source: string): StaticAnalyzer => ({
+      id,
+      async analyze() {
+        return {
+          'a.ts': {
+            secret_hardcoded: { verdict: 'NG' as const, source },
+          },
+        };
+      },
+    });
+    const out = await reviewAll({
+      providerId: 'typesafe',
+      provider: fakeProvider(() => 0),
+      model: 'fake',
+      snapshotId: 'snap',
+      files: [file('a.ts', 'x')],
+      exclusions: [],
+      analyzers: [mkAnalyzer('first', 'first-source'), mkAnalyzer('second', 'second-source')],
+      log: (line) => logs.push(line),
+    });
+    const result = out.files[0]!.checks.find((check) => check.checkId === 'secret_hardcoded')!;
+    expect(result.evidence).toEqual({ source: 'first-source' });
+    expect(logs.filter((line) => line.startsWith('analyzer second:'))).toEqual([
+      'analyzer second: a.ts/secret_hardcoded は first-source の判定を優先します',
+    ]);
+  });
+
+  it('ignores unknown check ids from an analyzer and logs them once', async () => {
+    const logs: string[] = [];
+    const analyzer: StaticAnalyzer = {
+      id: 'typo',
+      async analyze() {
+        return {
+          'a.ts': {
+            secret_hardcoded: { verdict: 'NG' as const, source: 'typo' },
+            lint_unused_params: { verdict: 'NG' as const, source: 'typo' },
+          },
+          'b.ts': { lint_unused_params: { verdict: 'NG' as const, source: 'typo' } },
+        };
+      },
+    };
+    const out = await reviewAll({
+      providerId: 'typesafe',
+      provider: fakeProvider(() => 0),
+      model: 'fake',
+      snapshotId: 'snap',
+      files: [file('a.ts', 'x'), file('b.ts', 'y')],
+      exclusions: [],
+      analyzers: [analyzer],
+      log: (line) => logs.push(line),
+    });
+    const a = out.files.find((f) => f.path === 'a.ts')!;
+    expect(a.checks.find((check) => check.checkId === 'secret_hardcoded')!.evidence).toEqual({ source: 'typo' });
+    expect(logs.filter((line) => line.startsWith('analyzer typo:'))).toEqual([
+      'analyzer typo: 未知の checkId を無視します: lint_unused_params',
+    ]);
+  });
+
+  it('includes analyzer versions in the policy hash', async () => {
+    const run = (version?: string) => {
+      const analyzer: StaticAnalyzer = {
+        id: 'fixture',
+        async analyze() {
+          return {};
+        },
+      };
+      if (version !== undefined) analyzer.version = version;
+      return reviewAll({
+        providerId: 'typesafe',
+        provider: fakeProvider(() => 0),
+        model: 'fake',
+        snapshotId: 'snap',
+        files: [file('a.ts', 'x')],
+        exclusions: [],
+        analyzers: [analyzer],
+      });
+    };
+    const [none, v1, v1again, v2] = await Promise.all([run(), run('1.0.0'), run('1.0.0'), run('2.0.0')]);
+    expect(v1.run.policyHash).toBe(v1again.run.policyHash);
+    expect(v1.run.policyHash).not.toBe(v2.run.policyHash);
+    expect(v1.run.policyHash).not.toBe(none.run.policyHash);
+  });
+
+  it('keeps the static NG on the file verdict when the provider call fails', async () => {
+    const analyzer: StaticAnalyzer = {
+      id: 'fixture',
+      async analyze() {
+        return {
+          'a.ts': {
+            secret_hardcoded: { verdict: 'NG' as const, source: 'fixture' },
+          },
+        };
+      },
+    };
+    const provider: Provider = {
+      model: 'fake',
+      usdPerInputToken: 0.042 / 1_000_000,
+      async ask() {
+        throw new ProviderError('server', 'boom', 500);
+      },
+    };
+    const out = await reviewAll({
+      providerId: 'typesafe',
+      provider,
+      model: 'fake',
+      snapshotId: 'snap',
+      files: [file('a.ts', 'x'), file('b.ts', 'y')],
+      exclusions: [],
+      analyzers: [analyzer],
+      concurrency: 1,
+    });
+    expect(out.run.status).toBe('partial');
+    const withStatic = out.files.find((f) => f.path === 'a.ts')!;
+    expect(withStatic.verdict).toBe('NG');
+    expect(withStatic.error?.code).toBe('server');
+    // 静的解析の結果が無いファイルは従来どおり判定しない。
+    const withoutStatic = out.files.find((f) => f.path === 'b.ts')!;
+    expect(withoutStatic.verdict).toBe(null);
+    expect(withoutStatic.error?.code).toBe('server');
+  });
+
+  it('falls back to the provider when an analyzer fails', async () => {
+    const logs: string[] = [];
+    const analyzer: StaticAnalyzer = {
+      id: 'broken',
+      async analyze() {
+        throw new Error('unavailable');
+      },
+    };
+    const out = await reviewAll({
+      providerId: 'typesafe',
+      provider: fakeProvider(() => 0),
+      model: 'fake',
+      snapshotId: 'snap',
+      files: [file('a.ts', 'x')],
+      exclusions: [],
+      analyzers: [analyzer],
+      log: (line) => logs.push(line),
+    });
+    expect(out.files[0]!.verdict).toBe('GOOD');
+    expect(out.run.usage.requests).toBe(1);
+    expect(logs).toContain('analyzer broken: unavailable');
   });
 });
