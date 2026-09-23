@@ -4,7 +4,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { CHECKS, type Check, questionId } from './checks.js';
 import { fileKind } from './file-kind.js';
-import type { CheckResult, FileKind, FileResult, ProviderId, ReviewOutput, Thresholds, Usage } from './output.js';
+import type { AxisId, CheckResult, FileKind, FileResult, ProviderId, ReviewOutput, Thresholds, Usage } from './output.js';
 import { type Exclusion, type Provider, ProviderError, type Question, type StaticAnalysis, type StaticAnalyzer, type StaticCheckResult, type SystemOneResponse, type TrackedFile } from './ports.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict, runStatus } from './verdict.js';
 
@@ -29,7 +29,7 @@ export const DEFAULT_MAX_STATE_BYTES = 60_000;
 
 /** 失敗した判断軸と、そのときのエラー。 */
 interface AxisFailure {
-  axisId: string;
+  axisId: AxisId;
   error: Error;
 }
 
@@ -88,7 +88,7 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
   // 判断軸ごとに質問を分けるので、1 ファイルあたりのリクエスト数は軸の数だけ増える。
   // 軸は逐次に問い合わせる。並列にすると同時リクエスト数が concurrency x 軸数になり、rate limit の設計判断が要るため。
   async function askByAxis(state: unknown, requestedChecks: readonly Check[]): Promise<AxisAnswers> {
-    const grouped = new Map<string, Check[]>();
+    const grouped = new Map<AxisId, Check[]>();
     for (const check of requestedChecks) {
       const checksForAxis = grouped.get(check.axisId) ?? [];
       checksForAxis.push(check);
