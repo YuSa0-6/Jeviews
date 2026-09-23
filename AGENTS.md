@@ -1,3 +1,19 @@
+# Jeviews
+
+Jev だけでリポジトリ全体をコードレビューする CLI です。
+
+## 開発
+
+| したいこと | コマンド |
+|---|---|
+| 依存を入れる | `pnpm install` |
+| テスト | `pnpm test` |
+| 型検査 | `pnpm run typecheck` |
+| ビルド | `pnpm run build` |
+| 手元で動かす | `pnpm dev all` |
+
+CI は `typecheck` / `test` / `build` の 3 つを実行します。commit 前にこの 3 つを通してください。
+
 <!-- fallow:setup-hooks:start -->
 ## Fallow local gate
 

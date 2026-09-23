@@ -26,8 +26,13 @@ if ! command -v jq >/dev/null 2>&1; then
   exit 0
 fi
 
-INPUT="$(cat)"
-CMD="$(jq -r '.tool_input.command // empty' <<<"$INPUT")"
+# set -e の下でも fail open を守る。入力が読めない・JSON でないときは通知して通す。
+INPUT="$(cat || true)"
+CMD="$(jq -r '.tool_input.command // empty' <<<"$INPUT" 2>/dev/null || true)"
+if [ -z "$CMD" ]; then
+  echo "fallow-gate: could not read the command from the hook input, skipping audit." >&2
+  exit 0
+fi
 
 # Tokenize instead of matching one regex so git-level options between `git`
 # and the subcommand (git -c k=v commit, git -C dir push, git --no-pager
@@ -151,7 +156,21 @@ IS_ERROR="$(jq -r '.error // false' <"$TMP_JSON" 2>/dev/null || echo false)"
 
 if [ "$VERDICT" = "fail" ]; then
   echo "fallow-gate: blocked by fallow ${VERSION:-unknown} at $BIN_DESC" >&2
-  cat "$TMP_JSON" >&2
+  # 監査 JSON の全文は長く、コード片も含むため、会話には件数と新規の指摘の先頭 5 件だけを出す。
+  # 形が想定と違って要約できないときは、情報を落とさないよう全文を出す。
+  if ! jq -r '
+    "fallow-gate: new findings: dead_code=\(.attribution.dead_code_introduced // 0) complexity=\(.attribution.complexity_introduced // 0) duplication=\(.attribution.duplication_introduced // 0)",
+    ((
+      [ (.complexity.findings // [])[] | select(.introduced == true)
+          | "fallow-gate:   \(.path):\(.line) \(.name) (complexity: \(.exceeded))" ]
+      + [ (.dead_code // {}) | to_entries[] | select(.value | type == "array") | .key as $kind
+          | .value[] | select(type == "object" and .introduced == true)
+          | "fallow-gate:   \(.path // "?"):\(.line // "?") \(.export_name // .name // "") (\($kind))" ]
+    ) | .[:5][])
+  ' <"$TMP_JSON" >&2 2>/dev/null; then
+    cat "$TMP_JSON" >&2
+  fi
+  echo "fallow-gate: run \`fallow audit --explain\` for the full report." >&2
   exit 2
 fi
 
