@@ -107,8 +107,8 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
 
   function addTokens(u: SystemOneResponse['usage']): void {
     if (typeof u?.input_tokens === 'number') {
-      usage.inputTokens! += u.input_tokens;
-      usage.outputTokens! += u.output_tokens ?? 0;
+      usage.inputTokens = (usage.inputTokens ?? 0) + u.input_tokens;
+      usage.outputTokens = (usage.outputTokens ?? 0) + (u.output_tokens ?? 0);
     } else {
       usageComplete = false;
     }
@@ -152,7 +152,8 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     const { answers, failures, axes } = await askByAxis(state, pending);
     const allFailed = failures.length === axes;
     for (const f of allFailed ? failures.slice(1) : failures) usage.requests += attemptsOf(f.error);
-    if (allFailed) throw failures[0]!.error;
+    const [first] = failures;
+    if (allFailed && first) throw first.error;
     return { answers, failures };
   }
 
@@ -168,7 +169,10 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     const withSkipped = (rest: CheckResult[]) => ordered(checks, [...skipped, ...rest]);
     const analyzed = staticAnalysis[file.path] ?? {};
     const language = sourceLanguage(file.path);
-    const resolved = applicable.filter((c) => analyzed[c.id]).map((c) => analyzedCheck(c, analyzed[c.id]!));
+    const resolved = applicable.flatMap((c) => {
+      const result = analyzed[c.id];
+      return result === undefined ? [] : [analyzedCheck(c, result)];
+    });
     const pending = applicable.filter((c) => !analyzed[c.id]);
 
     if (applicable.length === 0) {
@@ -276,7 +280,7 @@ function policyHash(
 /** 公開 JSON では判断基準の定義順に並べる。 */
 function ordered(checks: readonly Check[], results: readonly CheckResult[]): CheckResult[] {
   const byId = new Map(results.map((r) => [r.checkId, r]));
-  return checks.map((c) => byId.get(c.id)!).filter((r) => r !== undefined);
+  return checks.map((c) => byId.get(c.id)).filter((result): result is CheckResult => result !== undefined);
 }
 
 function notApplicable(c: Check): CheckResult {
@@ -303,12 +307,10 @@ async function runLimited<T>(
   items: readonly T[],
   fn: (item: T, index: number) => Promise<void>,
 ): Promise<void> {
-  let next = 0;
+  // 全ワーカーで 1 つのイテレータを共有し、手の空いたワーカーから次の要素を取る。
+  const queue = items.entries();
   const workers = Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, async () => {
-    while (next < items.length) {
-      const i = next++;
-      await fn(items[i]!, i);
-    }
+    for (const [i, item] of queue) await fn(item, i);
   });
   await Promise.all(workers);
 }
