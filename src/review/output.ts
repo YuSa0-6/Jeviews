@@ -19,6 +19,10 @@ export type FileKind = 'code' | 'test' | 'config' | 'template' | 'doc' | 'other'
 export interface Thresholds {
   /** これ以上なら NG */
   problemHigh: number;
+  /** 確認項目ごとの problemHigh の上書き。group より優先する */
+  problemHighByCheck: Record<string, number>;
+  /** 言語と確認項目の組み合わせによる上書き。check 単位より優先する */
+  problemHighByLanguageAndCheck: Record<string, number>;
   /** 観点グループごとの problemHigh の上書き。書かれていないグループは problemHigh を使う */
   problemHighByGroup: Record<string, number>;
   /** これ未満なら問題なし。problemHigh との間は NEED_REVIEW */
