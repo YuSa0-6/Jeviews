@@ -17,6 +17,18 @@ describe('checkVerdict', () => {
     expect(checkVerdict(0.7, 0.0, T, 'formatting').verdict).toBe('NG');
     expect(checkVerdict(0.26, 0, T, 'complexity', 'complexity_branchy_function', 'ruby').verdict).toBe('NG');
     expect(checkVerdict(0.25, 0, T, 'complexity', 'complexity_branchy_function', 'ruby').verdict).toBe('GOOD');
+    expect(checkVerdict(0.38, 0, T, 'complexity', 'complexity_branchy_function', 'typescript').verdict).toBe('NG');
+    expect(checkVerdict(0.2, 0, T, 'lint', 'lint_constant_condition', 'typescript').verdict).toBe('NG');
+    expect(checkVerdict(0.05, 0, T, 'lint', 'lint_unreachable', 'typescript').verdict).toBe('NG');
+    // 閾値のすぐ下。閾値が下がる方向の書き間違いを検出する。
+    expect(checkVerdict(0.37, 0, T, 'complexity', 'complexity_branchy_function', 'typescript')).toEqual({
+      verdict: 'NEED_REVIEW',
+      reason: 'uncertain',
+    });
+    expect(checkVerdict(0.19, 0, T, 'lint', 'lint_constant_condition', 'typescript').verdict).toBe('GOOD');
+    expect(checkVerdict(0.04, 0, T, 'lint', 'lint_unreachable', 'typescript').verdict).toBe('GOOD');
+    // TypeScript の閾値は他の言語に効かない。
+    expect(checkVerdict(0.05, 0, T, 'lint', 'lint_unreachable', 'ruby').verdict).toBe('GOOD');
   });
   it('needsContext at or above high is NEED_REVIEW when problem is below high', () => {
     expect(checkVerdict(0.1, 0.65, T)).toEqual({
