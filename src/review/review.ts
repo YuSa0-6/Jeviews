@@ -41,7 +41,7 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
   };
   let usageComplete = true;
   const analyzers = deps.analyzers ?? [];
-  const staticAnalysis = await runAnalyzers(analyzers, deps.files, log);
+  const staticAnalysis = await runAnalyzers(analyzers, deps.files, new Set(checks.map((c) => c.id)), log);
 
   const results: FileResult[] = new Array(deps.files.length);
   await runLimited(deps.concurrency ?? 4, deps.files, async (file, i) => {
@@ -167,7 +167,7 @@ function policyHash(checks: readonly Check[], thresholds: Thresholds, model: str
         checks,
         thresholds,
         model,
-        analyzers: analyzers.map((analyzer) => analyzer.id),
+        analyzers: analyzers.map((analyzer) => (analyzer.version === undefined ? analyzer.id : `${analyzer.id}@${analyzer.version}`)),
       }),
     )
     .digest('hex')
@@ -248,13 +248,19 @@ function analyzedCheck(c: Check, result: StaticCheckResult): CheckResult {
   };
 }
 
-async function runAnalyzers(analyzers: readonly StaticAnalyzer[], files: readonly TrackedFile[], log: (line: string) => void): Promise<StaticAnalysis> {
+async function runAnalyzers(analyzers: readonly StaticAnalyzer[], files: readonly TrackedFile[], knownIds: ReadonlySet<string>, log: (line: string) => void): Promise<StaticAnalysis> {
   const merged: StaticAnalysis = {};
   for (const analyzer of analyzers) {
     try {
       const analysis = await analyzer.analyze(files);
+      // 未知の checkId は判定に使われないまま静かに消えるので、analyzer ごとに 1 行で知らせる。
+      const unknown = new Set<string>();
       for (const [path, checks] of Object.entries(analysis)) {
         for (const [checkId, result] of Object.entries(checks)) {
+          if (!knownIds.has(checkId)) {
+            unknown.add(checkId);
+            continue;
+          }
           // 先に判定した analyzer を優先する。後勝ちで静かに上書きしない。
           const existing = merged[path]?.[checkId];
           if (existing !== undefined) {
@@ -264,6 +270,7 @@ async function runAnalyzers(analyzers: readonly StaticAnalyzer[], files: readonl
           merged[path] = { ...merged[path], [checkId]: result };
         }
       }
+      if (unknown.size > 0) log(`analyzer ${analyzer.id}: 未知の checkId を無視します: ${[...unknown].sort().join(', ')}`);
     } catch (error) {
       log(`analyzer ${analyzer.id}: ${error instanceof Error ? error.message : String(error)}`);
     }
