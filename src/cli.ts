@@ -78,11 +78,12 @@ const OPTIONS: Record<string, OptionParser> = {
 
 function parseArgs(argv: string[]): CliOptions {
   const opts: CliOptions = {};
-  for (let i = 0; i < argv.length; i += 2) {
-    const flag = argv[i] as string;
+  // フラグを 1 つ取り、続けてその値を取る。
+  const args = argv[Symbol.iterator]();
+  for (const flag of args) {
     const parse = OPTIONS[flag];
     if (!parse) fail('config', `unknown option ${flag}\n${USAGE}`);
-    const value = argv[i + 1];
+    const { value } = args.next();
     if (value === undefined) fail('config', `missing value for ${flag}`);
     parse(opts, value, flag);
   }
