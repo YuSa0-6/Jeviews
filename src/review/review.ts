@@ -324,30 +324,33 @@ async function runAnalyzers(analyzers: readonly StaticAnalyzer[], files: readonl
   const merged: StaticAnalysis = {};
   for (const analyzer of analyzers) {
     try {
-      const analysis = await analyzer.analyze(files);
-      // 未知の checkId は判定に使われないまま静かに消えるので、analyzer ごとに 1 行で知らせる。
-      const unknown = new Set<string>();
-      for (const [path, checks] of Object.entries(analysis)) {
-        for (const [checkId, result] of Object.entries(checks)) {
-          if (!knownIds.has(checkId)) {
-            unknown.add(checkId);
-            continue;
-          }
-          // 先に判定した analyzer を優先する。後勝ちで静かに上書きしない。
-          const existing = merged[path]?.[checkId];
-          if (existing !== undefined) {
-            log(`analyzer ${analyzer.id}: ${path}/${checkId} は ${existing.source} の判定を優先します`);
-            continue;
-          }
-          merged[path] = { ...merged[path], [checkId]: result };
-        }
-      }
-      if (unknown.size > 0) log(`analyzer ${analyzer.id}: 未知の checkId を無視します: ${[...unknown].sort().join(', ')}`);
+      mergeAnalysis(merged, await analyzer.analyze(files), analyzer.id, knownIds, log);
     } catch (error) {
       log(`analyzer ${analyzer.id}: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
   return merged;
+}
+
+/**
+ * 1 つの analyzer の結果を merged へ足す。先に判定した analyzer を優先し、後勝ちで静かに上書きしない。
+ * 未知の checkId は判定に使われないまま静かに消えるので、analyzer ごとに 1 行で知らせる。
+ */
+function mergeAnalysis(merged: StaticAnalysis, analysis: StaticAnalysis, analyzerId: string, knownIds: ReadonlySet<string>, log: (line: string) => void): void {
+  const unknown = new Set<string>();
+  for (const [path, checks] of Object.entries(analysis)) {
+    for (const [checkId, result] of Object.entries(checks)) {
+      const existing = merged[path]?.[checkId];
+      if (!knownIds.has(checkId)) {
+        unknown.add(checkId);
+      } else if (existing !== undefined) {
+        log(`analyzer ${analyzerId}: ${path}/${checkId} は ${existing.source} の判定を優先します`);
+      } else {
+        merged[path] = { ...merged[path], [checkId]: result };
+      }
+    }
+  }
+  if (unknown.size > 0) log(`analyzer ${analyzerId}: 未知の checkId を無視します: ${[...unknown].sort().join(', ')}`);
 }
 
 function failedResult(base: Omit<FileResult, 'verdict' | 'checks'>, withSkipped: (rest: CheckResult[]) => CheckResult[], applicable: readonly Check[], err: Error, resolved: readonly CheckResult[] = []): FileResult {
