@@ -1,9 +1,15 @@
 // 確率から判定を導く純粋関数。平均しない。対象外を GOOD に数えない。
 
+import type { CheckGroup } from './checks.js';
+import type { SourceLanguage } from './file-kind.js';
 import type { CheckResult, FileResult, ReasonCode, Thresholds, Verdict } from './output.js';
 
 export const DEFAULT_THRESHOLDS: Thresholds = {
   problemHigh: 0.65,
+  // 2026-09-22: 下の high のうち secret_hardcoded (0.72) 以外の 6 件は problemLow (0.35) を下回る。
+  // checkVerdict は上から順に見るため、high < problemLow の観点では high 未満の problem が
+  // 必ず problemLow も下回り、uncertain の NEED_REVIEW が出なくなる (NG か GOOD の二択になる)。
+  // 値自体は評価に基づく意図。帯を戻すなら problemLowByCheck の新設が要る (今後の検討事項)。
   problemHighByCheck: {
     error_empty_catch: 0.06,
     error_success_after_failure: 0.08,
@@ -28,14 +34,14 @@ export function checkVerdict(
   problem: number,
   needsContext: number,
   t: Thresholds,
-  group?: string,
+  group?: CheckGroup,
   checkId?: string,
-  language?: string,
+  language?: SourceLanguage,
 ): { verdict: Verdict; reason?: ReasonCode } {
   const languageCheck = language === undefined || checkId === undefined ? undefined : `${language}:${checkId}`;
   const high =
-    (languageCheck === undefined ? undefined : t.problemHighByLanguageAndCheck?.[languageCheck]) ??
-    (checkId === undefined ? undefined : t.problemHighByCheck?.[checkId]) ??
+    (languageCheck === undefined ? undefined : t.problemHighByLanguageAndCheck[languageCheck]) ??
+    (checkId === undefined ? undefined : t.problemHighByCheck[checkId]) ??
     (group === undefined ? undefined : t.problemHighByGroup[group]) ??
     t.problemHigh;
   if (problem >= high) return { verdict: 'NG' };
