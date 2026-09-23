@@ -55,9 +55,11 @@ export function createTypeScriptAnalyzer(options: TypeScriptAnalyzerOptions): St
       return analysis;
     },
   };
-  // tsc を差し替えたときは同梱版の番号が当てにならないので、版を名乗らない。
-  const version = options.tscPath === undefined ? packageVersion('typescript') : undefined;
-  if (version !== undefined) analyzer.version = `tsc@${version}`;
+  // 差し替えたツールは同梱版の番号が当てにならないので、その版は名乗らない。
+  const tsc = options.tscPath === undefined ? packageVersion('typescript') : undefined;
+  const fallow = options.fallowPath === undefined ? packageVersion('fallow') : undefined;
+  const parts = [tsc && `tsc@${tsc}`, fallow && `fallow@${fallow}`].filter((part): part is string => Boolean(part));
+  if (parts.length > 0) analyzer.version = parts.join('+');
   return analyzer;
 }
 
@@ -81,11 +83,6 @@ function packageVersion(pkg: string): string | undefined {
   }
 }
 
-function bundledFallowPath(): string {
-  const require = createRequire(import.meta.url);
-  return join(dirname(require.resolve('fallow/package.json')), 'bin', 'fallow');
-}
-
 async function complexityResults(
   cwd: string,
   files: readonly TrackedFile[],
@@ -96,7 +93,9 @@ async function complexityResults(
     const { stdout } = await execFileAsync(
       process.execPath,
       [
-        fallowPath ?? bundledFallowPath(),
+        fallowPath ?? packageBin('fallow', 'fallow'),
+        // health が受け取る解析範囲は単一の PATH だけで、ファイル一覧は渡せない。
+        // cwd 全体を解析させ、結果を selected に絞る。
         'health',
         '--complexity',
         '--file-scores',
@@ -110,6 +109,8 @@ async function complexityResults(
         'json',
         '--report-only',
         '--quiet',
+        // キャッシュを有効にすると、fallow はレビュー対象の repo に .fallow/ を書き込む。
+        // jeview は対象を書き換えない前提なので、毎回作り直すコストを払ってでも無効にする。
         '--no-cache',
         '--no-production',
       ],

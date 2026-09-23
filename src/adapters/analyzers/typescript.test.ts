@@ -160,8 +160,12 @@ ${Array.from({ length: 9 }, (_, index) => `  if (value === ${index}) return ${in
     expect(normalizePath('src\\a.ts', '/repo')).toBe('src/a.ts');
   });
 
-  it('reports the bundled tsc version and omits it when tsc is overridden', () => {
-    expect(createTypeScriptAnalyzer({ cwd: '/repo' }).version).toMatch(/^tsc@\d+\.\d+\.\d+/);
-    expect(createTypeScriptAnalyzer({ cwd: '/repo', tscPath: '/custom/tsc' }).version).toBeUndefined();
+  it('reports the bundled tool versions and omits the ones that are overridden', () => {
+    expect(createTypeScriptAnalyzer({ cwd: '/repo' }).version).toMatch(/^tsc@\d+\.\d+\.\d+\+fallow@\d+\.\d+\.\d+$/);
+    expect(createTypeScriptAnalyzer({ cwd: '/repo', tscPath: '/custom/tsc' }).version).toMatch(/^fallow@/);
+    expect(createTypeScriptAnalyzer({ cwd: '/repo', fallowPath: '/custom/fallow' }).version).toMatch(/^tsc@[^+]+$/);
+    expect(
+      createTypeScriptAnalyzer({ cwd: '/repo', tscPath: '/custom/tsc', fallowPath: '/custom/fallow' }).version,
+    ).toBeUndefined();
   });
 });
