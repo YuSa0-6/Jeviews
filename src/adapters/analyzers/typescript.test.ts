@@ -32,7 +32,12 @@ ${Array.from({ length: 9 }, (_, index) => `  if (value === ${index}) return ${in
       await writeFile(join(cwd, 'uncertain.ts'), uncertain);
       const analyzer = createTypeScriptAnalyzer({ cwd });
       const result = await analyzer.analyze([
-        { path: 'problem.ts', content: `${problem}\n${branchy}`, bytes: Buffer.byteLength(`${problem}\n${branchy}`), revision: 'problem' },
+        {
+          path: 'problem.ts',
+          content: `${problem}\n${branchy}`,
+          bytes: Buffer.byteLength(`${problem}\n${branchy}`),
+          revision: 'problem',
+        },
         { path: 'clean.ts', content: clean, bytes: Buffer.byteLength(clean), revision: 'clean' },
         { path: 'uncertain.ts', content: uncertain, bytes: Buffer.byteLength(uncertain), revision: 'uncertain' },
         { path: 'dependency.ts', content: dependency, bytes: Buffer.byteLength(dependency), revision: 'dependency' },

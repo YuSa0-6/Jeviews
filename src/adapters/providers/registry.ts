@@ -1,4 +1,3 @@
-
 import type { ProviderId } from '../../review/output.js';
 import type { Provider } from '../../review/ports.js';
 import { createTypeSafeProvider } from './typesafe.js';
@@ -18,7 +17,10 @@ interface ProviderEntry {
 
 const PROVIDERS: ReadonlyArray<readonly [ProviderId, ProviderEntry]> = [
   ['typesafe', { keyEnv: 'TYPESAFE_API_KEY', baseUrlEnv: 'TYPESAFE_BASE_URL', create: createTypeSafeProvider }],
-  ['vercel-gateway', { keyEnv: 'AI_GATEWAY_API_KEY', baseUrlEnv: 'AI_GATEWAY_BASE_URL', create: createVercelGatewayProvider }],
+  [
+    'vercel-gateway',
+    { keyEnv: 'AI_GATEWAY_API_KEY', baseUrlEnv: 'AI_GATEWAY_BASE_URL', create: createVercelGatewayProvider },
+  ],
 ];
 
 export function isProviderId(v: string): v is ProviderId {
@@ -30,7 +32,8 @@ export function detectProvider(env: NodeJS.ProcessEnv): ProviderId | undefined {
 }
 
 export function createProviderFromEnv(id: ProviderId, model: string | undefined, env: NodeJS.ProcessEnv): Provider {
-  const entry = PROVIDERS.find(([pid]) => pid === id)![1];
+  const entry = PROVIDERS.find(([pid]) => pid === id)?.[1];
+  if (!entry) throw new Error(`unsupported provider: ${id}`);
   const apiKey = env[entry.keyEnv];
   if (!apiKey) throw new Error(`${entry.keyEnv} is not set`);
   const opts: ProviderOptions = { apiKey };

@@ -57,7 +57,10 @@ async function parseJson(res: Response, attempts: number): Promise<unknown> {
   try {
     return await res.json();
   } catch (e) {
-    throw withAttempts(new ProviderError('invalid_response', `response is not JSON: ${(e as Error).message}`, res.status), attempts);
+    throw withAttempts(
+      new ProviderError('invalid_response', `response is not JSON: ${(e as Error).message}`, res.status),
+      attempts,
+    );
   }
 }
 
@@ -70,8 +73,10 @@ interface Failure {
 async function classifyFailure(res: Response): Promise<Failure> {
   const text = await res.text().catch(() => '');
   const s = res.status;
-  if (s === 401 || s === 403) return { error: new ProviderError('auth', `authentication failed: ${text}`, s), retry: false };
-  if (s === 400 || s === 404 || s === 422) return { error: new ProviderError('bad_request', `bad request: ${text}`, s), retry: false };
+  if (s === 401 || s === 403)
+    return { error: new ProviderError('auth', `authentication failed: ${text}`, s), retry: false };
+  if (s === 400 || s === 404 || s === 422)
+    return { error: new ProviderError('bad_request', `bad request: ${text}`, s), retry: false };
   if (s === 429) {
     const f: Failure = { error: new ProviderError('rate_limit', `rate limited: ${text}`, s), retry: true };
     const wait = retryAfterMs(res.headers.get('retry-after'));

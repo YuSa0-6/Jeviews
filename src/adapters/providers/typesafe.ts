@@ -1,8 +1,8 @@
 // TypeSafe 直結。POST /v1/systemone に state と questions を送り、answers を返す。
 // 出典: https://docs.typesafe.ai/api.md 、 https://docs.typesafe.ai/introduction/quickstart.md
 
-import { postJsonWithRetry, type HttpOptions } from './http.js';
-import { ProviderError, type NoulAnswer, type Provider, type SystemOneResponse } from '../../review/ports.js';
+import { type NoulAnswer, type Provider, ProviderError, type SystemOneResponse } from '../../review/ports.js';
+import { type HttpOptions, postJsonWithRetry } from './http.js';
 
 export interface TypeSafeOptions extends HttpOptions {
   apiKey: string;

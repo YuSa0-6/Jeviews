@@ -50,7 +50,10 @@ describe('checkVerdict', () => {
 });
 
 describe('fileVerdict', () => {
-  const mk = (verdict: CheckResult['verdict'], opts: { applicable?: boolean; reason?: CheckResult['reason'] } = {}): CheckResult => {
+  const mk = (
+    verdict: CheckResult['verdict'],
+    opts: { applicable?: boolean; reason?: CheckResult['reason'] } = {},
+  ): CheckResult => {
     const r: CheckResult = {
       axisId: 'A',
       group: 'g',
@@ -247,7 +250,7 @@ describe('reviewAll', () => {
   });
 
   it('sends only applicable questions for config files and marks the rest not_applicable', async () => {
-    let sent: string[] = [];
+    const sent: string[] = [];
     const inner = fakeProvider(() => 0.05);
     const provider: Provider = {
       model: 'fake',
@@ -326,7 +329,9 @@ describe('reviewAll', () => {
     expect(calls).toBe(0);
     const f = out.files[0]!;
     expect(f.verdict).toBe('NEED_REVIEW');
-    expect(f.checks.filter((c) => c.applicable).every((c) => c.reason === 'input_too_large' && c.problem === null)).toBe(true);
+    expect(
+      f.checks.filter((c) => c.applicable).every((c) => c.reason === 'input_too_large' && c.problem === null),
+    ).toBe(true);
     expect(out.run.status).toBe('completed');
   });
 
@@ -403,7 +408,9 @@ describe('reviewAll', () => {
     });
     const f = out.files[0]!;
     expect(f.verdict).toBe(null);
-    expect(f.checks.filter((c) => c.applicable).every((c) => c.verdict === null && c.reason === 'api_error')).toBe(true);
+    expect(f.checks.filter((c) => c.applicable).every((c) => c.verdict === null && c.reason === 'api_error')).toBe(
+      true,
+    );
     expect(f.error?.code).toBe('server');
     expect(out.run.status).toBe('partial');
     // 2 軸ともに attempts=2 で失敗する。
@@ -425,7 +432,7 @@ describe('reviewAll', () => {
   });
 
   it('uses static results and sends only unresolved checks to the provider', async () => {
-    let sent: string[] = [];
+    const sent: string[] = [];
     const inner = fakeProvider(() => 0);
     const provider: Provider = {
       ...inner,
@@ -529,7 +536,12 @@ describe('reviewAll', () => {
 
   it('includes analyzer versions in the policy hash', async () => {
     const run = (version?: string) => {
-      const analyzer: StaticAnalyzer = { id: 'fixture', async analyze() { return {}; } };
+      const analyzer: StaticAnalyzer = {
+        id: 'fixture',
+        async analyze() {
+          return {};
+        },
+      };
       if (version !== undefined) analyzer.version = version;
       return reviewAll({
         providerId: 'typesafe',

@@ -24,7 +24,9 @@ function rowsFor(f, truth) {
 }
 
 function pickResult(dir, subset, which) {
-  const files = readdirSync(dir).filter((f) => f.startsWith(`${subset}.`)).sort();
+  const files = readdirSync(dir)
+    .filter((f) => f.startsWith(`${subset}.`))
+    .sort();
   return which === 'latest' ? files.at(-1) : which;
 }
 

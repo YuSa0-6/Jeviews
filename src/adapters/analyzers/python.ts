@@ -68,15 +68,10 @@ interface PythonAnalyzerOptions {
  */
 function runScript(pythonPath: string, cwd: string, payload: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    const child = execFile(
-      pythonPath,
-      ['-I', '-c', SCRIPT],
-      { cwd, maxBuffer: 16 * 1024 * 1024 },
-      (error, stdout) => {
-        if (error) reject(error);
-        else resolve(stdout);
-      },
-    );
+    const child = execFile(pythonPath, ['-I', '-c', SCRIPT], { cwd, maxBuffer: 16 * 1024 * 1024 }, (error, stdout) => {
+      if (error) reject(error);
+      else resolve(stdout);
+    });
     const stdin = child.stdin;
     if (!stdin) {
       reject(new Error('python analyzer: child process has no stdin'));

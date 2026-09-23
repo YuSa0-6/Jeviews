@@ -4,8 +4,27 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { CHECKS, type Check, questionId } from './checks.js';
 import { fileKind, type SourceLanguage, sourceLanguage } from './file-kind.js';
-import type { AxisId, CheckResult, FileKind, FileResult, ProviderId, ReviewOutput, Thresholds, Usage } from './output.js';
-import { type Exclusion, type Provider, ProviderError, type Question, type StaticAnalysis, type StaticAnalyzer, type StaticCheckResult, type SystemOneResponse, type TrackedFile } from './ports.js';
+import type {
+  AxisId,
+  CheckResult,
+  FileKind,
+  FileResult,
+  ProviderId,
+  ReviewOutput,
+  Thresholds,
+  Usage,
+} from './output.js';
+import {
+  type Exclusion,
+  type Provider,
+  ProviderError,
+  type Question,
+  type StaticAnalysis,
+  type StaticAnalyzer,
+  type StaticCheckResult,
+  type SystemOneResponse,
+  type TrackedFile,
+} from './ports.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict, runStatus } from './verdict.js';
 
 export interface ReviewDeps {
@@ -88,8 +107,8 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
 
   function addTokens(u: SystemOneResponse['usage']): void {
     if (typeof u?.input_tokens === 'number') {
-      usage.inputTokens! += u.input_tokens;
-      usage.outputTokens! += u.output_tokens ?? 0;
+      usage.inputTokens = (usage.inputTokens ?? 0) + u.input_tokens;
+      usage.outputTokens = (usage.outputTokens ?? 0) + (u.output_tokens ?? 0);
     } else {
       usageComplete = false;
     }
@@ -133,7 +152,8 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     const { answers, failures, axes } = await askByAxis(state, pending);
     const allFailed = failures.length === axes;
     for (const f of allFailed ? failures.slice(1) : failures) usage.requests += attemptsOf(f.error);
-    if (allFailed) throw failures[0]!.error;
+    const [first] = failures;
+    if (allFailed && first) throw first.error;
     return { answers, failures };
   }
 
@@ -149,7 +169,10 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     const withSkipped = (rest: CheckResult[]) => ordered(checks, [...skipped, ...rest]);
     const analyzed = staticAnalysis[file.path] ?? {};
     const language = sourceLanguage(file.path);
-    const resolved = applicable.filter((c) => analyzed[c.id]).map((c) => analyzedCheck(c, analyzed[c.id]!));
+    const resolved = applicable.flatMap((c) => {
+      const result = analyzed[c.id];
+      return result === undefined ? [] : [analyzedCheck(c, result)];
+    });
     const pending = applicable.filter((c) => !analyzed[c.id]);
 
     if (applicable.length === 0) {
@@ -233,14 +256,21 @@ function buildQuestions(checks: readonly Check[]): Record<string, Question> {
   return q;
 }
 
-function policyHash(checks: readonly Check[], thresholds: Thresholds, model: string, analyzers: readonly StaticAnalyzer[]): string {
+function policyHash(
+  checks: readonly Check[],
+  thresholds: Thresholds,
+  model: string,
+  analyzers: readonly StaticAnalyzer[],
+): string {
   return createHash('sha256')
     .update(
       JSON.stringify({
         checks,
         thresholds,
         model,
-        analyzers: analyzers.map((analyzer) => (analyzer.version === undefined ? analyzer.id : `${analyzer.id}@${analyzer.version}`)),
+        analyzers: analyzers.map((analyzer) =>
+          analyzer.version === undefined ? analyzer.id : `${analyzer.id}@${analyzer.version}`,
+        ),
       }),
     )
     .digest('hex')
@@ -250,7 +280,7 @@ function policyHash(checks: readonly Check[], thresholds: Thresholds, model: str
 /** 公開 JSON では判断基準の定義順に並べる。 */
 function ordered(checks: readonly Check[], results: readonly CheckResult[]): CheckResult[] {
   const byId = new Map(results.map((r) => [r.checkId, r]));
-  return checks.map((c) => byId.get(c.id)!).filter((r) => r !== undefined);
+  return checks.map((c) => byId.get(c.id)).filter((result): result is CheckResult => result !== undefined);
 }
 
 function notApplicable(c: Check): CheckResult {
@@ -272,13 +302,15 @@ function emptyCheck(c: Check, verdict: 'NEED_REVIEW' | null, reason: CheckResult
   return r;
 }
 
-async function runLimited<T>(limit: number, items: readonly T[], fn: (item: T, index: number) => Promise<void>): Promise<void> {
-  let next = 0;
+async function runLimited<T>(
+  limit: number,
+  items: readonly T[],
+  fn: (item: T, index: number) => Promise<void>,
+): Promise<void> {
+  // 全ワーカーで 1 つのイテレータを共有し、手の空いたワーカーから次の要素を取る。
+  const queue = items.entries();
   const workers = Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, async () => {
-    while (next < items.length) {
-      const i = next++;
-      await fn(items[i]!, i);
-    }
+    for (const [i, item] of queue) await fn(item, i);
   });
   await Promise.all(workers);
 }
@@ -326,7 +358,12 @@ function analyzedCheck(c: Check, result: StaticCheckResult): CheckResult {
   };
 }
 
-async function runAnalyzers(analyzers: readonly StaticAnalyzer[], files: readonly TrackedFile[], knownIds: ReadonlySet<string>, log: (line: string) => void): Promise<StaticAnalysis> {
+async function runAnalyzers(
+  analyzers: readonly StaticAnalyzer[],
+  files: readonly TrackedFile[],
+  knownIds: ReadonlySet<string>,
+  log: (line: string) => void,
+): Promise<StaticAnalysis> {
   const merged: StaticAnalysis = {};
   for (const analyzer of analyzers) {
     try {
@@ -342,7 +379,13 @@ async function runAnalyzers(analyzers: readonly StaticAnalyzer[], files: readonl
  * 1 つの analyzer の結果を merged へ足す。先に判定した analyzer を優先し、後勝ちで静かに上書きしない。
  * 未知の checkId は判定に使われないまま静かに消えるので、analyzer ごとに 1 行で知らせる。
  */
-function mergeAnalysis(merged: StaticAnalysis, analysis: StaticAnalysis, analyzerId: string, knownIds: ReadonlySet<string>, log: (line: string) => void): void {
+function mergeAnalysis(
+  merged: StaticAnalysis,
+  analysis: StaticAnalysis,
+  analyzerId: string,
+  knownIds: ReadonlySet<string>,
+  log: (line: string) => void,
+): void {
   const unknown = new Set<string>();
   for (const [path, checks] of Object.entries(analysis)) {
     for (const [checkId, result] of Object.entries(checks)) {
@@ -359,7 +402,13 @@ function mergeAnalysis(merged: StaticAnalysis, analysis: StaticAnalysis, analyze
   if (unknown.size > 0) log(`analyzer ${analyzerId}: 未知の checkId を無視します: ${[...unknown].sort().join(', ')}`);
 }
 
-function failedResult(base: Omit<FileResult, 'verdict' | 'checks'>, withSkipped: (rest: CheckResult[]) => CheckResult[], applicable: readonly Check[], err: Error, resolved: readonly CheckResult[] = []): FileResult {
+function failedResult(
+  base: Omit<FileResult, 'verdict' | 'checks'>,
+  withSkipped: (rest: CheckResult[]) => CheckResult[],
+  applicable: readonly Check[],
+  err: Error,
+  resolved: readonly CheckResult[] = [],
+): FileResult {
   if (err instanceof ProviderError && err.code === 'bad_request') {
     const cs = withSkipped([...resolved, ...applicable.map((c) => emptyCheck(c, 'NEED_REVIEW', 'input_too_large'))]);
     return {

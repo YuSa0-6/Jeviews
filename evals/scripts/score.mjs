@@ -1,8 +1,7 @@
 // scan 結果を expected と突き合わせ、観点ごとの precision / recall とファイル判定の一致率を出す。
 import { appendFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { EVALS, JEVIEWS, evalDir, readJson } from './lib.mjs';
-
+import { EVALS, evalDir, JEVIEWS, readJson } from './lib.mjs';
 
 function abstained(c) {
   return c.verdict === null || (c.verdict === 'NEED_REVIEW' && c.reason !== 'uncertain');
@@ -66,7 +65,12 @@ function div(x, y) {
 }
 
 function rates(p) {
-  return { ...p, precision: div(p.tp, p.tp + p.fp), recall: div(p.tp, p.tp + p.fn), accuracy: div(p.tp + p.tn, p.tp + p.fp + p.fn + p.tn) };
+  return {
+    ...p,
+    precision: div(p.tp, p.tp + p.fp),
+    recall: div(p.tp, p.tp + p.fn),
+    accuracy: div(p.tp + p.tn, p.tp + p.fp + p.fn + p.tn),
+  };
 }
 
 export function score(expected, output) {
@@ -80,27 +84,56 @@ export function score(expected, output) {
   const files = output.files.length;
   const needReview = output.files.filter((f) => f.verdict === 'NEED_REVIEW').length;
   const checks = Object.fromEntries(Object.entries(per).map(([k, p]) => [k, rates(p)]));
-  return { files, ...tot, fileAccuracy: div(tot.agree, tot.known), coveredAccuracy: div(tot.coveredOk, tot.covered), needReviewRate: div(needReview, files), checks };
+  return {
+    files,
+    ...tot,
+    fileAccuracy: div(tot.agree, tot.known),
+    coveredAccuracy: div(tot.coveredOk, tot.covered),
+    needReviewRate: div(needReview, files),
+    checks,
+  };
 }
 
 const fmt = (x) => (x === null || x === undefined ? '  -  ' : (x * 100).toFixed(0).padStart(4) + '%');
 const pad = (n, w = 3) => String(n).padStart(w);
 
 function resultFiles(dir, subset, which) {
-  const all = readdirSync(dir).filter((f) => f.startsWith(`${subset}.`) && f.endsWith('.json')).sort();
+  const all = readdirSync(dir)
+    .filter((f) => f.startsWith(`${subset}.`) && f.endsWith('.json'))
+    .sort();
   if (which === 'latest') return all.slice(-1);
   return which === 'all' ? all : [which];
 }
 
 function print(name, subset, meta, output, s) {
-  console.log(`\n== ${name}/${subset} ${meta.questionVersion} r${meta.run} (${meta.jeviewsCommit})  files=${s.files} covered=${s.covered} coveredAccuracy=${fmt(s.coveredAccuracy)} known=${s.known} fileAccuracy=${fmt(s.fileAccuracy)} needReview=${fmt(s.needReviewRate)} usd=${output.run.usage.costUsd}`);
+  console.log(
+    `\n== ${name}/${subset} ${meta.questionVersion} r${meta.run} (${meta.jeviewsCommit})  files=${s.files} covered=${s.covered} coveredAccuracy=${fmt(s.coveredAccuracy)} known=${s.known} fileAccuracy=${fmt(s.fileAccuracy)} needReview=${fmt(s.needReviewRate)} usd=${output.run.usage.costUsd}`,
+  );
   console.log('  check                      tp  fp  fn  tn abst  prec  rec   acc');
-  for (const [k, p] of Object.entries(s.checks).sort()) console.log(`  ${k.padEnd(26)} ${pad(p.tp)} ${pad(p.fp)} ${pad(p.fn)} ${pad(p.tn)} ${pad(p.abstain, 4)} ${fmt(p.precision)} ${fmt(p.recall)} ${fmt(p.accuracy)}`);
+  for (const [k, p] of Object.entries(s.checks).sort())
+    console.log(
+      `  ${k.padEnd(26)} ${pad(p.tp)} ${pad(p.fp)} ${pad(p.fn)} ${pad(p.tn)} ${pad(p.abstain, 4)} ${fmt(p.precision)} ${fmt(p.recall)} ${fmt(p.accuracy)}`,
+    );
 }
 
 function record(name, subset, meta, rf, output, s) {
-  const checks = Object.fromEntries(Object.entries(s.checks).map(([k, p]) => [k, { tp: p.tp, fp: p.fp, fn: p.fn, tn: p.tn, abstain: p.abstain }]));
-  const row = { repo: name, subset, ...meta, resultFile: rf, costUsd: output.run.usage.costUsd, files: s.files, covered: s.covered, coveredAccuracy: s.coveredAccuracy, known: s.known, fileAccuracy: s.fileAccuracy, needReviewRate: s.needReviewRate, checks };
+  const checks = Object.fromEntries(
+    Object.entries(s.checks).map(([k, p]) => [k, { tp: p.tp, fp: p.fp, fn: p.fn, tn: p.tn, abstain: p.abstain }]),
+  );
+  const row = {
+    repo: name,
+    subset,
+    ...meta,
+    resultFile: rf,
+    costUsd: output.run.usage.costUsd,
+    files: s.files,
+    covered: s.covered,
+    coveredAccuracy: s.coveredAccuracy,
+    known: s.known,
+    fileAccuracy: s.fileAccuracy,
+    needReviewRate: s.needReviewRate,
+    checks,
+  };
   appendFileSync(join(EVALS, 'history.jsonl'), JSON.stringify(row) + '\n');
 }
 
