@@ -104,6 +104,8 @@ describe('fileKind', () => {
     expect(sourceLanguage('src/a.ts')).toBe('typescript');
     expect(sourceLanguage('app/models/a.rb')).toBe('ruby');
     expect(sourceLanguage('README.md')).toBe('other');
+    expect(sourceLanguage('web/App.JSX')).toBe('typescript');
+    expect(sourceLanguage('bin/jeview')).toBe('other');
   });
 });
 
