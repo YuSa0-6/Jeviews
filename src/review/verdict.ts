@@ -21,6 +21,9 @@ export const DEFAULT_THRESHOLDS: Thresholds = {
   },
   problemHighByLanguageAndCheck: {
     'ruby:complexity_branchy_function': 0.26,
+    // PR #23 の独立 TypeScript 評価 (2 回) で決めた値。評価の結果は PR #23 の本文を参照。
+    // 3 つとも problemLow を下回るため、complexity は uncertain の帯が 0.35〜0.38 と狭く、
+    // lint の 2 つは帯が無い (上の problemHighByCheck の説明と同じ構造)。
     'typescript:complexity_branchy_function': 0.38,
     'typescript:lint_constant_condition': 0.2,
     'typescript:lint_unreachable': 0.05,
