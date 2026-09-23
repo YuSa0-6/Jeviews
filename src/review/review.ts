@@ -3,7 +3,7 @@
 
 import { createHash, randomUUID } from 'node:crypto';
 import { CHECKS, type Check, questionId } from './checks.js';
-import { fileKind, sourceLanguage } from './file-kind.js';
+import { fileKind, type SourceLanguage, sourceLanguage } from './file-kind.js';
 import type { CheckResult, FileKind, FileResult, ProviderId, ReviewOutput, Thresholds, Usage } from './output.js';
 import { type Exclusion, type Provider, ProviderError, type Question, type StaticAnalysis, type StaticAnalyzer, type StaticCheckResult, type SystemOneResponse, type TrackedFile } from './ports.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict, runStatus } from './verdict.js';
@@ -26,6 +26,25 @@ export interface ReviewDeps {
 
 /** 仮説: コードは 1 トークン 3 バイト前後。state 上限 32k トークンに対して余裕を取る。 */
 export const DEFAULT_MAX_STATE_BYTES = 60_000;
+
+/** 失敗した判断軸と、そのときのエラー。 */
+interface AxisFailure {
+  axisId: string;
+  error: Error;
+}
+
+/** 軸ごとの問い合わせ結果。失敗した軸があっても成功した軸の回答は残す。 */
+interface AxisAnswers {
+  answers: SystemOneResponse['answers'];
+  failures: AxisFailure[];
+  /** 問い合わせた軸の数。全軸が失敗したかの判定に使う。 */
+  axes: number;
+}
+
+/** 失敗するまでに送った HTTP リクエスト数。報告が無ければ 1 回とみなす。 */
+function attemptsOf(error: Error): number {
+  return (error as ProviderError & { attempts?: number }).attempts ?? 1;
+}
 
 export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
   const thresholds = deps.thresholds ?? DEFAULT_THRESHOLDS;
@@ -66,7 +85,9 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     return response.answers;
   }
 
-  async function askByAxis(state: unknown, requestedChecks: readonly Check[]): Promise<SystemOneResponse['answers']> {
+  // 判断軸ごとに質問を分けるので、1 ファイルあたりのリクエスト数は軸の数だけ増える。
+  // 軸は逐次に問い合わせる。並列にすると同時リクエスト数が concurrency x 軸数になり、rate limit の設計判断が要るため。
+  async function askByAxis(state: unknown, requestedChecks: readonly Check[]): Promise<AxisAnswers> {
     const grouped = new Map<string, Check[]>();
     for (const check of requestedChecks) {
       const checksForAxis = grouped.get(check.axisId) ?? [];
@@ -74,8 +95,16 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
       grouped.set(check.axisId, checksForAxis);
     }
     const answers: SystemOneResponse['answers'] = {};
-    for (const checksForAxis of grouped.values()) Object.assign(answers, await ask(state, checksForAxis));
-    return answers;
+    const failures: AxisFailure[] = [];
+    // 1 軸の失敗で成功した軸の回答まで捨てないよう、軸ごとに失敗を隔離する。
+    for (const [axisId, checksForAxis] of grouped) {
+      try {
+        Object.assign(answers, await ask(state, checksForAxis));
+      } catch (e) {
+        failures.push({ axisId, error: e as Error });
+      }
+    }
+    return { answers, failures, axes: grouped.size };
   }
 
   async function reviewFile(file: TrackedFile, kind: FileKind): Promise<FileResult> {
@@ -111,14 +140,29 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
 
     try {
       const state = { path: file.path, content: file.content };
-      const answers = await askByAxis(state, pending);
+      const { answers, failures, axes } = await askByAxis(state, pending);
+      if (failures.length === axes) {
+        // 全軸が失敗したときは従来どおり最初のエラーを投げ、catch と failedResult に任せる。
+        // 先頭のエラーの attempts は catch が数えるので、ここでは残りの軸の分だけ数える。
+        for (const f of failures.slice(1)) usage.requests += attemptsOf(f.error);
+        throw failures[0]!.error;
+      }
+      // 一部の軸だけ失敗した場合。失敗した軸の分もリクエスト数には数える。
+      for (const f of failures) usage.requests += attemptsOf(f.error);
       const cs = withSkipped([...resolved, ...pending.map((c) => answeredCheck(c, answers, thresholds, language))]);
       const result: FileResult = {
         ...base,
         verdict: fileVerdict(cs),
         checks: cs,
       };
-      if (cs.some((c) => c.applicable && c.verdict === null)) {
+      if (failures.length > 0) {
+        // 回答が無い観点は answeredCheck が api_error にしている。部分失敗を JSON から読めるよう error を立てる。
+        const first = failures[0]!.error;
+        result.error = {
+          code: first instanceof ProviderError ? first.code : 'unknown',
+          message: `axis ${failures.map((f) => f.axisId).join(', ')}: ${first.message ?? String(first)}`,
+        };
+      } else if (cs.some((c) => c.applicable && c.verdict === null)) {
         result.error = {
           code: 'invalid_response',
           message: 'answer missing for some questions',
@@ -232,7 +276,7 @@ function answeredCheck(
   c: Check,
   answers: SystemOneResponse['answers'],
   thresholds: Thresholds,
-  language?: string,
+  language?: SourceLanguage,
 ): CheckResult {
   const p = answers[questionId(c.id, 'problem')]?.noul;
   const n = answers[questionId(c.id, 'needsContext')]?.noul;
@@ -263,8 +307,9 @@ function analyzedCheck(c: Check, result: StaticCheckResult): CheckResult {
     checkId: c.id,
     questionVersion: c.questionVersion,
     applicable: true,
-    problem: { probability: result.verdict === 'NG' ? 1 : 0 },
-    needsContext: { probability: 0 },
+    // probability は Jev が返した noul の値。静的解析の確定判定では合成せず null にする。
+    problem: null,
+    needsContext: null,
     verdict: result.verdict,
     evidence,
   };
@@ -276,7 +321,15 @@ async function runAnalyzers(analyzers: readonly StaticAnalyzer[], files: readonl
     try {
       const analysis = await analyzer.analyze(files);
       for (const [path, checks] of Object.entries(analysis)) {
-        merged[path] = { ...merged[path], ...checks };
+        for (const [checkId, result] of Object.entries(checks)) {
+          // 先に判定した analyzer を優先する。後勝ちで静かに上書きしない。
+          const existing = merged[path]?.[checkId];
+          if (existing !== undefined) {
+            log(`analyzer ${analyzer.id}: ${path}/${checkId} は ${existing.source} の判定を優先します`);
+            continue;
+          }
+          merged[path] = { ...merged[path], [checkId]: result };
+        }
       }
     } catch (error) {
       log(`analyzer ${analyzer.id}: ${error instanceof Error ? error.message : String(error)}`);

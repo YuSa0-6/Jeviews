@@ -1,5 +1,8 @@
 import { execFile } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
+import { rm, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
+import { tmpdir } from 'node:os';
 import { dirname, join, relative } from 'node:path';
 import { promisify } from 'node:util';
 import type { StaticAnalysis, StaticAnalyzer, StaticCheckResult, TrackedFile } from '../../review/ports.js';
@@ -12,6 +15,9 @@ const UNUSED_DIAGNOSTIC = /^(.+?)\((\d+),(\d+)\): error TS(6133|6192|6198)(.*)$/
 const REPORT_CYCLOMATIC = 8;
 /** これ以上の最大複雑度なら NG で確定する。REPORT_CYCLOMATIC との間は確定させず provider に戻す */
 const NG_CYCLOMATIC = 15;
+/** TS1xxx は構文エラー。そのファイルでは未使用解析が走らないので結果を出さない。 */
+const SYNTAX_DIAGNOSTIC = /^(.+?)\(\d+,\d+\): error TS1\d{3}\b/gm;
+const DECLARATION_START = /^\s*(const|let|var)\b/;
 
 interface TypeScriptAnalyzerOptions {
   cwd: string;
@@ -135,7 +141,22 @@ async function complexityResults(
   }
 }
 
+/** ファイル一覧は argv ではなくレスポンスファイルで渡す。argv だと大きな repo で E2BIG になる。 */
 async function runTsc(tscPath: string, cwd: string, files: string[]): Promise<{ code: number; output: string }> {
+  const listFile = join(tmpdir(), `jeview-tsc-${randomUUID()}.txt`);
+  await writeFile(listFile, `${files.map((file) => JSON.stringify(file)).join('\n')}\n`);
+  try {
+    return await runTscWithList(tscPath, cwd, listFile);
+  } finally {
+    await rm(listFile, { force: true });
+  }
+}
+
+async function runTscWithList(
+  tscPath: string,
+  cwd: string,
+  listFile: string,
+): Promise<{ code: number; output: string }> {
   const args = [
     tscPath,
     '--noEmit',
@@ -154,7 +175,7 @@ async function runTsc(tscPath: string, cwd: string, files: string[]): Promise<{ 
     '--noUnusedParameters',
     '--types',
     '',
-    ...files,
+    `@${listFile}`,
   ];
   try {
     const result = await execFileAsync(process.execPath, args, { cwd, maxBuffer: 64 * 1024 * 1024 });
@@ -168,11 +189,14 @@ async function runTsc(tscPath: string, cwd: string, files: string[]): Promise<{ 
 
 function diagnostics(files: readonly TrackedFile[], output: string, cwd: string): StaticAnalysis {
   const byPath = new Map(files.map((file) => [file.path, file]));
+  const broken = syntaxErrorPaths(output, cwd);
   const analysis: StaticAnalysis = Object.fromEntries(
-    files.map((file) => [
-      file.path,
-      Object.fromEntries(CHECKS.map((checkId) => [checkId, { verdict: 'GOOD', source: 'typescript' }])),
-    ]),
+    files
+      .filter((file) => !broken.has(file.path))
+      .map((file) => [
+        file.path,
+        Object.fromEntries(CHECKS.map((checkId) => [checkId, { verdict: 'GOOD', source: 'typescript' }])),
+      ]),
   );
   for (const diagnostic of parseDiagnostics(output, cwd)) {
     const file = byPath.get(diagnostic.path);
@@ -187,6 +211,16 @@ interface UnusedDiagnostic {
   line: number;
   code: string;
   identifier: string;
+}
+
+/** 構文エラーが出たファイル。tsc は構文エラーのあるファイルで未使用解析を走らせないため GOOD の根拠がない。 */
+function syntaxErrorPaths(output: string, cwd: string): Set<string> {
+  const paths = new Set<string>();
+  for (const match of output.matchAll(SYNTAX_DIAGNOSTIC)) {
+    const rawPath = match[1];
+    if (rawPath !== undefined) paths.add(normalizePath(rawPath, cwd));
+  }
+  return paths;
 }
 
 function parseDiagnostics(output: string, cwd: string): UnusedDiagnostic[] {
@@ -209,8 +243,10 @@ function applyDiagnostic(
   file: TrackedFile,
   diagnostic: UnusedDiagnostic,
 ): void {
-  const sourceLine = file.content.split('\n')[diagnostic.line - 1] ?? '';
-  const checkId = diagnosticCheck(diagnostic.code, sourceLine, diagnostic.identifier);
+  const lines = file.content.split('\n');
+  const sourceLine = lines[diagnostic.line - 1] ?? '';
+  const previousLine = previousSourceLine(lines, diagnostic.line);
+  const checkId = diagnosticCheck(diagnostic.code, sourceLine, previousLine, diagnostic.identifier);
   entry[checkId] = {
     verdict: 'NG',
     source: 'typescript',
@@ -223,12 +259,26 @@ function normalizePath(path: string, cwd: string): string {
   return normalized.startsWith('/') ? relative(cwd, normalized).replaceAll('\\', '/') : normalized;
 }
 
-function diagnosticCheck(code: string, sourceLine: string, identifier: string): (typeof CHECKS)[number] {
+/** 直前の非空行。引数リストを複数行に分けた `function f(` のような行を拾う。 */
+function previousSourceLine(lines: readonly string[], line: number): string {
+  for (let index = line - 2; index >= 0; index -= 1) {
+    const candidate = lines[index] ?? '';
+    if (candidate.trim() !== '') return candidate;
+  }
+  return '';
+}
+
+function diagnosticCheck(
+  code: string,
+  sourceLine: string,
+  previousLine: string,
+  identifier: string,
+): (typeof CHECKS)[number] {
   if (code === '6192' || /^\s*import\b/.test(sourceLine)) return 'lint_unused_import';
-  if (
-    !/^\s*(const|let|var)\b/.test(sourceLine) &&
-    new RegExp(`[(,]\\s*(\\.\\.\\.)?${identifier.replace(/[$]/g, '\\$')}\\b`).test(sourceLine)
-  ) {
+  // 変数宣言の guard は行ごとに見る。`const {` の続きの行を引数と取り違えないため。
+  if (DECLARATION_START.test(sourceLine) || DECLARATION_START.test(previousLine)) return 'lint_unused_variable';
+  const context = `${previousLine}${sourceLine}`;
+  if (new RegExp(`[(,{]\\s*(\\.\\.\\.)?${identifier.replace(/[$]/g, '\\$')}\\b`).test(context)) {
     return 'lint_unused_param';
   }
   return 'lint_unused_variable';
