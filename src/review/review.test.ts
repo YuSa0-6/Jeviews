@@ -426,9 +426,77 @@ describe('reviewAll', () => {
     expect(sent.some((id) => id.startsWith('secret_hardcoded__'))).toBe(false);
     expect(result).toMatchObject({
       verdict: 'NG',
-      problem: { probability: 1 },
+      problem: null,
+      needsContext: null,
       evidence: { source: 'fixture' },
     });
+  });
+
+  it('keeps the first analyzer result and logs the duplicate', async () => {
+    const logs: string[] = [];
+    const mkAnalyzer = (id: string, source: string): StaticAnalyzer => ({
+      id,
+      async analyze() {
+        return {
+          'a.ts': {
+            secret_hardcoded: { verdict: 'NG' as const, source },
+          },
+        };
+      },
+    });
+    const out = await reviewAll({
+      providerId: 'typesafe',
+      provider: fakeProvider(() => 0),
+      model: 'fake',
+      snapshotId: 'snap',
+      files: [file('a.ts', 'x')],
+      exclusions: [],
+      analyzers: [mkAnalyzer('first', 'first-source'), mkAnalyzer('second', 'second-source')],
+      log: (line) => logs.push(line),
+    });
+    const result = out.files[0]!.checks.find((check) => check.checkId === 'secret_hardcoded')!;
+    expect(result.evidence).toEqual({ source: 'first-source' });
+    expect(logs.filter((line) => line.startsWith('analyzer second:'))).toEqual([
+      'analyzer second: a.ts/secret_hardcoded は first-source の判定を優先します',
+    ]);
+  });
+
+  it('keeps the static NG on the file verdict when the provider call fails', async () => {
+    const analyzer: StaticAnalyzer = {
+      id: 'fixture',
+      async analyze() {
+        return {
+          'a.ts': {
+            secret_hardcoded: { verdict: 'NG' as const, source: 'fixture' },
+          },
+        };
+      },
+    };
+    const provider: Provider = {
+      model: 'fake',
+      usdPerInputToken: 0.042 / 1_000_000,
+      async ask() {
+        throw new ProviderError('server', 'boom', 500);
+      },
+    };
+    const out = await reviewAll({
+      providerId: 'typesafe',
+      provider,
+      model: 'fake',
+      snapshotId: 'snap',
+      files: [file('a.ts', 'x'), file('b.ts', 'y')],
+      exclusions: [],
+      analyzers: [analyzer],
+      concurrency: 1,
+    });
+    expect(out.run.status).toBe('partial');
+    const withStatic = out.files.find((f) => f.path === 'a.ts')!;
+    expect(withStatic.verdict).toBe('NG');
+    expect(withStatic.error?.code).toBe('server');
+    // 静的解析の結果が無いファイルは従来どおり判定しない。
+    const withoutStatic = out.files.find((f) => f.path === 'b.ts')!;
+    expect(withoutStatic.verdict).toBe(null);
+    expect(withoutStatic.error?.code).toBe('server');
   });
 
   it('falls back to the provider when an analyzer fails', async () => {

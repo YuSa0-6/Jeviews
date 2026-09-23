@@ -301,8 +301,9 @@ function analyzedCheck(c: Check, result: StaticCheckResult): CheckResult {
     checkId: c.id,
     questionVersion: c.questionVersion,
     applicable: true,
-    problem: { probability: result.verdict === 'NG' ? 1 : 0 },
-    needsContext: { probability: 0 },
+    // probability は Jev が返した noul の値。静的解析の確定判定では合成せず null にする。
+    problem: null,
+    needsContext: null,
     verdict: result.verdict,
     evidence,
   };
@@ -314,7 +315,15 @@ async function runAnalyzers(analyzers: readonly StaticAnalyzer[], files: readonl
     try {
       const analysis = await analyzer.analyze(files);
       for (const [path, checks] of Object.entries(analysis)) {
-        merged[path] = { ...merged[path], ...checks };
+        for (const [checkId, result] of Object.entries(checks)) {
+          // 先に判定した analyzer を優先する。後勝ちで静かに上書きしない。
+          const existing = merged[path]?.[checkId];
+          if (existing !== undefined) {
+            log(`analyzer ${analyzer.id}: ${path}/${checkId} は ${existing.source} の判定を優先します`);
+            continue;
+          }
+          merged[path] = { ...merged[path], [checkId]: result };
+        }
       }
     } catch (error) {
       log(`analyzer ${analyzer.id}: ${error instanceof Error ? error.message : String(error)}`);
