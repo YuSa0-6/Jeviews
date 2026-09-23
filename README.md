@@ -120,6 +120,16 @@ npm にはまだ公開していません。それまでは clone して `pnpm in
 
 小さな修正や質問だけでも歓迎です。手順は [CONTRIBUTING.md](CONTRIBUTING.md) にあります。参加するすべての人に [行動規範](CODE_OF_CONDUCT.md) が適用されます。
 
+## Claude Code を使う場合
+
+この repo には PreToolUse フックが入っていて、`git commit` / `git push` の前に
+`fallow audit` を実行します。実体は `.claude/hooks/fallow-gate.sh` です。
+設定は `.claude/settings.json` に commit されているので、clone した全員に適用されます。
+
+- `fallow` が見つからない場合や監査が失敗した場合は、stderr に 1 行出して通します
+- よくある書き方を拾う補助であり、回避は可能です。確実に止めたい場合は git hooks を併用してください
+- 使わない場合は `.claude/settings.local.json` で上書きできます（このファイルは commit されません）
+
 ## License
 
 MIT License. Copyright (c) 2026 Yusa (YuSa0-6). 全文は [LICENSE](LICENSE) を参照してください。
