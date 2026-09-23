@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CHECKS, questionId } from './checks.js';
+import { CHECKS, type Check, questionId } from './checks.js';
 import { fileKind } from './file-kind.js';
 import type { CheckResult } from './output.js';
 import { type Provider, ProviderError, type Question, type StaticAnalyzer } from './ports.js';
@@ -127,6 +127,45 @@ const file = (path: string, content: string) => ({
   revision: 'r',
 });
 
+/** 軸ごとの失敗を試すための、軸を 2 つに絞った確認項目。 */
+const TWO_AXIS_CHECKS: readonly Check[] = [
+  {
+    id: 'a_check',
+    group: 'input_validation',
+    axisId: 'A',
+    appliesTo: ['code'],
+    questionVersion: 'test',
+    problem: 'problem A',
+    needsContext: 'needs context A',
+  },
+  {
+    id: 'b_check',
+    group: 'secret_exposure',
+    axisId: 'B',
+    appliesTo: ['code'],
+    questionVersion: 'test',
+    problem: 'problem B',
+    needsContext: 'needs context B',
+  },
+];
+
+/** 指定した確認項目の質問が含まれる呼び出しだけ失敗させる provider。 */
+function axisFailingProvider(failingCheckIds: readonly string[]): Provider {
+  const inner = fakeProvider(() => 0.05);
+  return {
+    ...inner,
+    async ask(state, questions) {
+      const ids = Object.keys(questions);
+      if (failingCheckIds.some((checkId) => ids.some((id) => id.startsWith(`${checkId}__`)))) {
+        const e = new ProviderError('server', 'boom', 500) as ProviderError & { attempts?: number };
+        e.attempts = 2;
+        throw e;
+      }
+      return inner.ask(state, questions);
+    },
+  };
+}
+
 describe('reviewAll', () => {
   it('maps answers to per-check results and aggregates per file', async () => {
     const provider = fakeProvider((id) => (id === questionId('secret_hardcoded', 'problem') ? 0.9 : 0.05));
@@ -149,12 +188,40 @@ describe('reviewAll', () => {
     expect(secret.group).toBe('secret_exposure');
     expect(secret.problem).toEqual({ probability: 0.9 });
     expect(f.checks.find((c) => c.checkId === 'lint_unused_import')!.verdict).toBe('GOOD');
+    const axes = new Set(CHECKS.map((check) => check.axisId)).size;
     expect(out.run.usage).toEqual({
-      requests: 1,
-      inputTokens: 100,
-      outputTokens: 10,
-      costUsd: 0.0000042,
+      requests: axes,
+      inputTokens: axes * 100,
+      outputTokens: axes * 10,
+      costUsd: axes * 0.0000042,
     });
+  });
+
+  it('asks one judgment axis at a time', async () => {
+    const batches: string[][] = [];
+    const inner = fakeProvider(() => 0);
+    const provider: Provider = {
+      ...inner,
+      async ask(state, questions) {
+        batches.push(Object.keys(questions));
+        return inner.ask(state, questions);
+      },
+    };
+    await reviewAll({
+      providerId: 'typesafe',
+      provider,
+      model: 'fake',
+      snapshotId: 'snap',
+      files: [file('a.ts', 'x')],
+      exclusions: [],
+    });
+
+    const axisByCheck = new Map(CHECKS.map((check) => [check.id, check.axisId]));
+    expect(batches).toHaveLength(new Set(CHECKS.map((check) => check.axisId)).size);
+    for (const batch of batches) {
+      const axes = new Set(batch.map((id) => axisByCheck.get(id.split('__')[0]!)));
+      expect(axes.size).toBe(1);
+    }
   });
 
   it('sends only applicable questions for config files and marks the rest not_applicable', async () => {
@@ -164,7 +231,7 @@ describe('reviewAll', () => {
       model: 'fake',
       usdPerInputToken: 0.042 / 1_000_000,
       async ask(state, questions) {
-        sent = Object.keys(questions);
+        sent.push(...Object.keys(questions));
         return inner.ask(state, questions);
       },
     };
@@ -253,15 +320,59 @@ describe('reviewAll', () => {
       exclusions: [{ path: 'img.png', reason: 'binary' }],
       concurrency: 1,
     });
-    expect(n).toBe(2);
+    // 軸ごとに失敗を隔離するので、失敗するファイルでも全軸に問い合わせる (4 軸 + ok.ts の 4 軸)。
+    expect(n).toBe(8);
     expect(out.run.status).toBe('partial');
     const bad = out.files.find((f) => f.path === 'bad.ts')!;
     expect(bad.verdict).toBe(null);
     expect(bad.error?.code).toBe('server');
     expect(bad.checks.filter((c) => c.applicable).every((c) => c.reason === 'api_error')).toBe(true);
     expect(out.files.find((f) => f.path === 'ok.ts')!.verdict).toBe('GOOD');
-    expect(out.run.usage.requests).toBe(4);
+    // bad.ts は 4 軸すべてが attempts=3 で失敗し 12、ok.ts は 4 軸 x 1 で 4。
+    expect(out.run.usage.requests).toBe(16);
     expect(out.exclusions).toEqual([{ path: 'img.png', reason: 'binary' }]);
+  });
+
+  it('keeps answers from axes that succeeded when one axis fails', async () => {
+    const out = await reviewAll({
+      providerId: 'typesafe',
+      provider: axisFailingProvider(['b_check']),
+      model: 'fake',
+      snapshotId: 'snap',
+      files: [file('a.ts', 'x')],
+      exclusions: [],
+      checks: TWO_AXIS_CHECKS,
+    });
+    const f = out.files[0]!;
+    const a = f.checks.find((c) => c.checkId === 'a_check')!;
+    const b = f.checks.find((c) => c.checkId === 'b_check')!;
+    expect(a.verdict).not.toBe(null);
+    expect(a.reason).not.toBe('api_error');
+    expect(b.verdict).toBe(null);
+    expect(b.reason).toBe('api_error');
+    expect(f.error?.code).toBe('server');
+    expect(out.run.status).toBe('partial');
+    // 成功した軸の 1 回と、失敗した軸の attempts=2。
+    expect(out.run.usage.requests).toBe(3);
+  });
+
+  it('falls back to the existing failure path when every axis fails', async () => {
+    const out = await reviewAll({
+      providerId: 'typesafe',
+      provider: axisFailingProvider(['a_check', 'b_check']),
+      model: 'fake',
+      snapshotId: 'snap',
+      files: [file('a.ts', 'x')],
+      exclusions: [],
+      checks: TWO_AXIS_CHECKS,
+    });
+    const f = out.files[0]!;
+    expect(f.verdict).toBe(null);
+    expect(f.checks.filter((c) => c.applicable).every((c) => c.verdict === null && c.reason === 'api_error')).toBe(true);
+    expect(f.error?.code).toBe('server');
+    expect(out.run.status).toBe('partial');
+    // 2 軸ともに attempts=2 で失敗する。
+    expect(out.run.usage.requests).toBe(4);
   });
 
   it('nulls usage when the provider does not report tokens', async () => {
@@ -275,7 +386,7 @@ describe('reviewAll', () => {
     });
     expect(out.run.usage.inputTokens).toBe(null);
     expect(out.run.usage.costUsd).toBe(null);
-    expect(out.run.usage.requests).toBe(1);
+    expect(out.run.usage.requests).toBe(new Set(CHECKS.map((check) => check.axisId)).size);
   });
 
   it('uses static results and sends only unresolved checks to the provider', async () => {
@@ -284,7 +395,7 @@ describe('reviewAll', () => {
     const provider: Provider = {
       ...inner,
       async ask(state, questions) {
-        sent = Object.keys(questions);
+        sent.push(...Object.keys(questions));
         return inner.ask(state, questions);
       },
     };
@@ -458,7 +569,7 @@ describe('reviewAll', () => {
       log: (line) => logs.push(line),
     });
     expect(out.files[0]!.verdict).toBe('GOOD');
-    expect(out.run.usage.requests).toBe(1);
+    expect(out.run.usage.requests).toBe(new Set(CHECKS.map((check) => check.axisId)).size);
     expect(logs).toContain('analyzer broken: unavailable');
   });
 });

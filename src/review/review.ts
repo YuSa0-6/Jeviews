@@ -4,7 +4,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { CHECKS, type Check, questionId } from './checks.js';
 import { fileKind } from './file-kind.js';
-import type { CheckResult, FileKind, FileResult, ProviderId, ReviewOutput, Thresholds, Usage } from './output.js';
+import type { AxisId, CheckResult, FileKind, FileResult, ProviderId, ReviewOutput, Thresholds, Usage } from './output.js';
 import { type Exclusion, type Provider, ProviderError, type Question, type StaticAnalysis, type StaticAnalyzer, type StaticCheckResult, type SystemOneResponse, type TrackedFile } from './ports.js';
 import { checkVerdict, DEFAULT_THRESHOLDS, fileVerdict, runStatus } from './verdict.js';
 
@@ -26,6 +26,42 @@ export interface ReviewDeps {
 
 /** 仮説: コードは 1 トークン 3 バイト前後。state 上限 32k トークンに対して余裕を取る。 */
 export const DEFAULT_MAX_STATE_BYTES = 60_000;
+
+/** 失敗した判断軸と、そのときのエラー。 */
+interface AxisFailure {
+  axisId: AxisId;
+  error: Error;
+}
+
+/** 軸ごとの問い合わせ結果。失敗した軸があっても成功した軸の回答は残す。 */
+interface AxisAnswers {
+  answers: SystemOneResponse['answers'];
+  failures: AxisFailure[];
+  /** 問い合わせた軸の数。全軸が失敗したかの判定に使う。 */
+  axes: number;
+}
+
+/** 失敗するまでに送った HTTP リクエスト数。報告が無ければ 1 回とみなす。 */
+/**
+ * 回答の組み立て後に FileResult.error へ載せる内容。
+ * 一部の軸が失敗したときは、その軸の観点を answeredCheck が api_error にしているので、
+ * 部分失敗を JSON から読めるよう失敗した軸を書く。
+ */
+function answerError(failures: readonly AxisFailure[], cs: readonly CheckResult[]): FileResult['error'] {
+  const first = failures[0]?.error;
+  if (first !== undefined) {
+    const code = first instanceof ProviderError ? first.code : 'unknown';
+    return { code, message: `axis ${failures.map((f) => f.axisId).join(', ')}: ${first.message}` };
+  }
+  if (cs.some((c) => c.applicable && c.verdict === null)) {
+    return { code: 'invalid_response', message: 'answer missing for some questions' };
+  }
+  return undefined;
+}
+
+function attemptsOf(error: Error): number {
+  return (error as ProviderError & { attempts?: number }).attempts ?? 1;
+}
 
 export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
   const thresholds = deps.thresholds ?? DEFAULT_THRESHOLDS;
@@ -57,6 +93,48 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     } else {
       usageComplete = false;
     }
+  }
+
+  async function ask(state: unknown, requestedChecks: readonly Check[]): Promise<SystemOneResponse['answers']> {
+    const { response, attempts } = await deps.provider.ask(state, buildQuestions(requestedChecks));
+    usage.requests += attempts;
+    addTokens(response.usage);
+    return response.answers;
+  }
+
+  // 判断軸ごとに質問を分けるので、1 ファイルあたりのリクエスト数は軸の数だけ増える。
+  // 軸は逐次に問い合わせる。並列にすると同時リクエスト数が concurrency x 軸数になり、rate limit の設計判断が要るため。
+  async function askByAxis(state: unknown, requestedChecks: readonly Check[]): Promise<AxisAnswers> {
+    const grouped = new Map<AxisId, Check[]>();
+    for (const check of requestedChecks) {
+      const checksForAxis = grouped.get(check.axisId) ?? [];
+      checksForAxis.push(check);
+      grouped.set(check.axisId, checksForAxis);
+    }
+    const answers: SystemOneResponse['answers'] = {};
+    const failures: AxisFailure[] = [];
+    // 1 軸の失敗で成功した軸の回答まで捨てないよう、軸ごとに失敗を隔離する。
+    for (const [axisId, checksForAxis] of grouped) {
+      try {
+        Object.assign(answers, await ask(state, checksForAxis));
+      } catch (e) {
+        failures.push({ axisId, error: e as Error });
+      }
+    }
+    return { answers, failures, axes: grouped.size };
+  }
+
+  /**
+   * 軸ごとに問い合わせ、失敗した軸の分もリクエスト数に数える。
+   * 全軸が失敗したときは先頭のエラーを投げ、呼び出し側の catch と failedResult に任せる
+   * (先頭のエラーの attempts はその catch が数えるので、ここでは残りの軸の分だけ数える)。
+   */
+  async function answerPending(state: unknown, pending: readonly Check[]): Promise<Omit<AxisAnswers, 'axes'>> {
+    const { answers, failures, axes } = await askByAxis(state, pending);
+    const allFailed = failures.length === axes;
+    for (const f of allFailed ? failures.slice(1) : failures) usage.requests += attemptsOf(f.error);
+    if (allFailed) throw failures[0]!.error;
+    return { answers, failures };
   }
 
   async function reviewFile(file: TrackedFile, kind: FileKind): Promise<FileResult> {
@@ -91,21 +169,15 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
 
     try {
       const state = { path: file.path, content: file.content };
-      const { response, attempts } = await deps.provider.ask(state, buildQuestions(pending));
-      usage.requests += attempts;
-      addTokens(response.usage);
-      const cs = withSkipped([...resolved, ...pending.map((c) => answeredCheck(c, response.answers, thresholds))]);
+      const { answers, failures } = await answerPending(state, pending);
+      const cs = withSkipped([...resolved, ...pending.map((c) => answeredCheck(c, answers, thresholds))]);
       const result: FileResult = {
         ...base,
         verdict: fileVerdict(cs),
         checks: cs,
       };
-      if (cs.some((c) => c.applicable && c.verdict === null)) {
-        result.error = {
-          code: 'invalid_response',
-          message: 'answer missing for some questions',
-        };
-      }
+      const error = answerError(failures, cs);
+      if (error) result.error = error;
       return result;
     } catch (e) {
       const err = e as ProviderError & { attempts?: number };
