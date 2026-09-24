@@ -1,12 +1,14 @@
-// TypeSafe 直結。POST /v1/systemone に state と questions を送り、answers を返す。
-// 出典: https://docs.typesafe.ai/api.md 、 https://docs.typesafe.ai/introduction/quickstart.md
+// TypeSafe 直結。@ai-sdk/typesafe-ai の評価モデル (POST {baseUrl}/v1/systemone) を使う。
+// 出典: https://ai-sdk.dev/providers/ai-sdk-providers/typesafe-ai 、 https://docs.typesafe.ai/models.md
 
-import { type NoulAnswer, type Provider, ProviderError, type SystemOneResponse } from '../../review/ports.js';
-import { type HttpOptions, postJsonWithRetry } from './http.js';
+import { createTypeSafeAi } from '@ai-sdk/typesafe-ai';
+import type { Provider } from '../../review/ports.js';
+import { type EvaluationOptions, evaluateNoul } from './evaluate.js';
 
-export interface TypeSafeOptions extends HttpOptions {
+export interface TypeSafeOptions extends EvaluationOptions {
   apiKey: string;
   model?: string;
+  /** API のホスト。SDK の baseURL はこれに /v1 を付けたもの。 */
   baseUrl?: string;
 }
 
@@ -17,37 +19,17 @@ const USD_PER_INPUT_TOKEN = 0.042 / 1_000_000;
 
 export function createTypeSafeProvider(opts: TypeSafeOptions): Provider {
   const model = opts.model ?? DEFAULT_MODEL;
-  const baseUrl = (opts.baseUrl ?? DEFAULT_BASE_URL).replace(/\/$/, '');
+  const baseURL = `${(opts.baseUrl ?? DEFAULT_BASE_URL).replace(/\/$/, '')}/v1`;
 
   return {
     model,
     usdPerInputToken: USD_PER_INPUT_TOKEN,
-    async ask(state, questions) {
-      const { body, status, attempts } = await postJsonWithRetry(
-        `${baseUrl}/v1/systemone`,
-        { Authorization: `Bearer ${opts.apiKey}` },
-        { model, state, questions },
+    ask: (state, questions) =>
+      evaluateNoul(
+        (fetch) => createTypeSafeAi({ apiKey: opts.apiKey, baseURL, fetch }).evaluationModel(model),
+        state,
+        questions,
         opts,
-      );
-      if (!isSystemOneResponse(body)) {
-        const err = new ProviderError('invalid_response', 'unexpected response shape', status);
-        err.attempts = attempts;
-        throw err;
-      }
-      return { response: body, attempts };
-    },
+      ),
   };
-}
-
-function isSystemOneResponse(v: unknown): v is SystemOneResponse {
-  if (typeof v !== 'object' || v === null) return false;
-  const o = v as Record<string, unknown>;
-  if (typeof o['answers'] !== 'object' || o['answers'] === null) return false;
-  return Object.values(o['answers'] as Record<string, unknown>).every(isNoulAnswer);
-}
-
-function isNoulAnswer(a: unknown): a is NoulAnswer {
-  if (typeof a !== 'object' || a === null) return false;
-  const ans = a as Record<string, unknown>;
-  return ans['type'] === 'noul' && typeof ans['noul'] === 'number';
 }
