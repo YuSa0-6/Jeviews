@@ -126,6 +126,23 @@ describe('createOpenRouterProvider', () => {
     expect(calls).toHaveLength(1);
   });
 
+  it('retries on 5xx and reports the attempt count on the error', async () => {
+    const { calls, fetch } = fakeFetch([
+      { status: 500, body: { error: { message: 'boom', code: 500 } }, headers: { 'retry-after': '0' } },
+    ]);
+    const p = createOpenRouterProvider({ apiKey: 'k', fetch, maxRetries: 1 });
+    await expect(p.ask({}, questions)).rejects.toMatchObject({ code: 'server', status: 500, attempts: 2 });
+    expect(calls).toHaveLength(2);
+  });
+
+  it('reports a failed connection as network', async () => {
+    const fetch: typeof globalThis.fetch = async () => {
+      throw new TypeError('fetch failed');
+    };
+    const p = createOpenRouterProvider({ apiKey: 'k', fetch, maxRetries: 0 });
+    await expect(p.ask({}, questions)).rejects.toMatchObject({ code: 'network', attempts: 1 });
+  });
+
   it('does not retry on 401', async () => {
     const { calls, fetch } = fakeFetch([{ status: 401, body: { error: { message: 'No auth', code: 401 } } }]);
     const p = createOpenRouterProvider({ apiKey: 'k', fetch });
