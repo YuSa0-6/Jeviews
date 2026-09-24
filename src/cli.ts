@@ -11,12 +11,14 @@ import type { ProviderId, ReviewOutput } from './review/output.js';
 import { DEFAULT_MAX_STATE_BYTES, reviewAll } from './review/review.js';
 import { DEFAULT_THRESHOLDS } from './review/verdict.js';
 
-const USAGE = `usage: jeview all [--provider typesafe|vercel-gateway] [--model <name>] [--max-state-bytes <n>] [--concurrency <n>]
+const USAGE = `usage: jeview all [--provider typesafe|vercel-gateway|openrouter] [--model <name>] [--max-state-bytes <n>] [--concurrency <n>]
 
-provider (default: typesafe when TYPESAFE_API_KEY is set, otherwise vercel-gateway when AI_GATEWAY_API_KEY is set):
+provider (default: the first one below whose API key env is set):
   typesafe         TypeSafe API direct.       env TYPESAFE_API_KEY, optional TYPESAFE_BASE_URL (https://api.typesafe.ai)
   vercel-gateway   Vercel AI Gateway.         env AI_GATEWAY_API_KEY, optional AI_GATEWAY_BASE_URL (https://ai-gateway.vercel.sh/v4/ai)
                    default model typesafe-ai/jev
+  openrouter       OpenRouter Decisions API.  env OPENROUTER_API_KEY, optional OPENROUTER_BASE_URL (https://openrouter.ai/api/v1)
+                   default model ~typesafe/jev-latest
 `;
 
 function fail(code: string, message: string, provider: ProviderId | null = null): never {
@@ -186,7 +188,7 @@ async function main(): Promise<void> {
   loadEnvFiles();
   const opts = parseArgs(parseCommand(process.argv.slice(2)));
   const providerId = opts.provider ?? detectProvider(process.env);
-  if (!providerId) fail('config', 'set TYPESAFE_API_KEY or AI_GATEWAY_API_KEY (see .env.example)');
+  if (!providerId) fail('config', 'set TYPESAFE_API_KEY, AI_GATEWAY_API_KEY or OPENROUTER_API_KEY (see .env.example)');
   const provider = providerOrFail(providerId, opts.model);
   const target = await listOrFail(createGitRepository(process.cwd()));
   process.stderr.write(
