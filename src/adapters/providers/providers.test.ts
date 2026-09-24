@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ProviderError } from '../../review/ports.js';
+import { createOpenRouterProvider } from './openrouter.js';
 import { createTypeSafeProvider } from './typesafe.js';
 import { createVercelGatewayProvider } from './vercel-gateway.js';
 
@@ -65,6 +66,71 @@ describe('createVercelGatewayProvider', () => {
     };
     const p = createVercelGatewayProvider({ apiKey: 'k', fetch, maxRetries: 0 });
     await expect(p.ask({}, questions)).rejects.toMatchObject({ code: 'network', attempts: 1 });
+  });
+});
+
+describe('createOpenRouterProvider', () => {
+  it('posts noul questions to the Decisions API and reads answers back', async () => {
+    const { calls, fetch } = fakeFetch([
+      {
+        status: 200,
+        body: {
+          model: 'typesafe/jev-1.13',
+          provider: 'TypeSafe',
+          answers: { q1__problem: { type: 'noul', noul: 0.42 } },
+          usage: { input_tokens: 120, output_tokens: 0, cost: 0.000005 },
+        },
+      },
+    ]);
+    const p = createOpenRouterProvider({ apiKey: 'k', fetch });
+    const { response, attempts } = await p.ask({ path: 'a.ts', content: 'x' }, questions);
+
+    expect(calls).toHaveLength(1);
+    expect(calls[0]!.url).toBe('https://openrouter.ai/api/alpha/decisions');
+    expect(calls[0]!.headers.get('authorization')).toBe('Bearer k');
+    expect(calls[0]!.body).toMatchObject({
+      model: '~typesafe/jev-latest',
+      state: { path: 'a.ts', content: 'x' },
+      questions: { q1__problem: { type: 'noul', instructions: 'Is it broken?' } },
+    });
+    expect(response).toEqual({
+      model: 'typesafe/jev-1.13',
+      answers: { q1__problem: { type: 'noul', noul: 0.42 } },
+      usage: { input_tokens: 120, output_tokens: 0 },
+    });
+    expect(attempts).toBe(1);
+    expect(p.model).toBe('~typesafe/jev-latest');
+    expect(p.usdPerInputToken).toBeCloseTo(0.042 / 1_000_000, 12);
+  });
+
+  it('swaps a trailing /v1 in OPENROUTER_BASE_URL for /alpha', async () => {
+    const { calls, fetch } = fakeFetch([
+      { status: 200, body: { answers: { q1__problem: { type: 'noul', noul: 0 } } } },
+    ]);
+    await createOpenRouterProvider({ apiKey: 'k', baseUrl: 'https://proxy.example/api/v1/', fetch }).ask({}, questions);
+    expect(calls[0]!.url).toBe('https://proxy.example/api/alpha/decisions');
+  });
+
+  it('rejects a base URL that does not end in /v1 before sending anything', () => {
+    expect(() => createOpenRouterProvider({ apiKey: 'k', baseUrl: 'https://proxy.example/api' })).toThrow(
+      'OPENROUTER_BASE_URL must end in /v1',
+    );
+  });
+
+  it('reports 402 (out of credits) as auth without retrying', async () => {
+    const { calls, fetch } = fakeFetch([
+      { status: 402, body: { error: { message: 'Insufficient credits', code: 402 } } },
+    ]);
+    const p = createOpenRouterProvider({ apiKey: 'k', fetch, maxRetries: 0 });
+    await expect(p.ask({}, questions)).rejects.toMatchObject({ code: 'auth', status: 402, attempts: 1 });
+    expect(calls).toHaveLength(1);
+  });
+
+  it('does not retry on 401', async () => {
+    const { calls, fetch } = fakeFetch([{ status: 401, body: { error: { message: 'No auth', code: 401 } } }]);
+    const p = createOpenRouterProvider({ apiKey: 'k', fetch });
+    await expect(p.ask({}, questions)).rejects.toMatchObject({ code: 'auth', attempts: 1 });
+    expect(calls).toHaveLength(1);
   });
 });
 

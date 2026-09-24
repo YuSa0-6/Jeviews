@@ -29,10 +29,15 @@
 
 ## はじめかた
 
-必要なのは Node.js 22 以上と、次のどちらかの API キーです。
+必要なのは Node.js 22 以上と、次のどれか 1 つの API キーです。
 
-- TypeSafe のキー（`TYPESAFE_API_KEY`）
-- Vercel AI Gateway のキー（`AI_GATEWAY_API_KEY`）
+| 接続先 | 環境変数 | 既定のモデル |
+| --- | --- | --- |
+| TypeSafe 直結 | `TYPESAFE_API_KEY` | `jev-latest` |
+| Vercel AI Gateway | `AI_GATEWAY_API_KEY` | `typesafe-ai/jev` |
+| OpenRouter | `OPENROUTER_API_KEY` | `~typesafe/jev-latest` |
+
+キーが複数あるときは、上の表の上から順に最初に見つかった接続先を使います。
 
 キーの渡し方は 3 つです。どれか 1 つで動きます。
 
@@ -77,8 +82,8 @@ npm にはまだ公開していません。それまでは clone して `pnpm in
 
 | オプション | 用途 |
 | --- | --- |
-| `--provider typesafe` / `--provider vercel-gateway` | 接続先を指定する。省略時はキーがある方を使う |
-| `--model <name>` | モデルを変える。Vercel AI Gateway の既定は `typesafe-ai/jev` |
+| `--provider typesafe` / `vercel-gateway` / `openrouter` | 接続先を指定する。省略時はキーがあるものを上の表の順で使う |
+| `--model <name>` | モデルを変える。既定は上の表のとおり。OpenRouter で版を固定するなら `typesafe/jev-1.13` |
 | `--max-state-bytes <n>` | これより大きいファイルは送らずに `NEED_REVIEW` にする |
 | `--concurrency <n>` | 同時に送るリクエスト数 |
 
@@ -110,6 +115,8 @@ npm にはまだ公開していません。それまでは clone して `pnpm in
 
 - ファイルの中身は API キーで指定した接続先にそのまま送られます。送りたくないファイルがあるリポジトリでは使わないでください
 - Vercel AI Gateway の無料枠はレートリミットが厳しめです。大きなリポジトリでは `--concurrency` を下げるか TypeSafe 直結を使ってください
+- OpenRouter の Jev は alpha 版の Decisions API（`https://openrouter.ai/api/alpha/decisions`）を使います。API の形が予告なく変わることがあります
+- OpenRouter のクレジットが切れると HTTP 402 になり、`error.code` は `auth` になります
 - 判定は Jev の確率にもとづく目安です。最終的な判断は人が行う前提で作っています
 
 ## 困ったときは

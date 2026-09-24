@@ -1,5 +1,6 @@
 import type { ProviderId } from '../../review/output.js';
 import type { Provider } from '../../review/ports.js';
+import { createOpenRouterProvider } from './openrouter.js';
 import { createTypeSafeProvider } from './typesafe.js';
 import { createVercelGatewayProvider } from './vercel-gateway.js';
 
@@ -21,6 +22,7 @@ const PROVIDERS: ReadonlyArray<readonly [ProviderId, ProviderEntry]> = [
     'vercel-gateway',
     { keyEnv: 'AI_GATEWAY_API_KEY', baseUrlEnv: 'AI_GATEWAY_BASE_URL', create: createVercelGatewayProvider },
   ],
+  ['openrouter', { keyEnv: 'OPENROUTER_API_KEY', baseUrlEnv: 'OPENROUTER_BASE_URL', create: createOpenRouterProvider }],
 ];
 
 export function isProviderId(v: string): v is ProviderId {

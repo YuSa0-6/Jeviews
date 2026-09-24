@@ -87,7 +87,8 @@ function innermostCause(e: unknown): unknown {
 }
 
 function codeForStatus(status: number): ProviderErrorCode {
-  if (status === 401 || status === 403) return 'auth';
+  // 402 は残高不足 (OpenRouter のクレジット切れなど)。鍵を直すのと同じくアカウント側で対処するので auth に含める。
+  if (status === 401 || status === 402 || status === 403) return 'auth';
   if (status === 400 || status === 404 || status === 422) return 'bad_request';
   if (status === 429) return 'rate_limit';
   return status < 300 ? 'invalid_response' : 'server';
