@@ -1,4 +1,5 @@
-// Git とファイル取得。`all` は追跡ファイルの作業ツリー内容を対象にする。
+// Git とファイル取得。`all` は追跡ファイル、`diff` はインデックスとの差分があるファイルの作業ツリー内容を対象にする。
+// どちらも cwd 配下が対象で、git は cwd からのパスを返すので cwd から読む。
 
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -19,10 +20,19 @@ const EXCLUDED_BASENAMES = new Set([
   'go.sum',
 ]);
 
+// --relative: ls-files と同じく cwd 配下を cwd からのパスで返させる。利用者の diff.relative 設定にも左右されない。
+// --no-renames: 改名を「消したファイル」と「新しいファイル」に分け、消した側も除外として報告する。
+const DIFF_ARGS = ['diff', '--name-only', '-z', '--relative', '--no-renames'];
+
 export function createGitRepository(cwd: string): Repository {
   async function git(args: string[]): Promise<string> {
     const { stdout } = await execFileAsync('git', args, { cwd, maxBuffer: 64 * 1024 * 1024 });
     return stdout;
+  }
+
+  /** git が NUL 区切りで返すパス。衝突中のファイルは ls-files だと段の数、diff だと 2 回出るので 1 つにまとめる。 */
+  async function paths(args: string[]): Promise<string[]> {
+    return [...new Set((await git(args)).split('\0').filter((p) => p.length > 0))];
   }
 
   return {
@@ -31,39 +41,51 @@ export function createGitRepository(cwd: string): Repository {
       const dirty = (await git(['status', '--porcelain', '--untracked-files=no'])).trim() !== '';
       return dirty ? `${head}+dirty` : head;
     },
-    async listAll(): Promise<{ files: TrackedFile[]; exclusions: Exclusion[] }> {
-      const root = (await git(['rev-parse', '--show-toplevel'])).trim();
-      const raw = await git(['ls-files', '-z']);
-      const paths = raw.split('\0').filter((p) => p.length > 0);
-      const files: TrackedFile[] = [];
-      const exclusions: Exclusion[] = [];
-      for (const path of paths) {
-        const base = path.slice(path.lastIndexOf('/') + 1);
-        if (EXCLUDED_BASENAMES.has(base)) {
-          exclusions.push({ path, reason: 'lock_file' });
-          continue;
-        }
-        let buf: Buffer;
-        try {
-          buf = await readFile(join(root, path));
-        } catch (e) {
-          exclusions.push({ path, reason: `read_failed: ${(e as Error).message}` });
-          continue;
-        }
-        if (looksBinary(buf)) {
-          exclusions.push({ path, reason: 'binary' });
-          continue;
-        }
-        files.push({
-          path,
-          content: buf.toString('utf8'),
-          bytes: buf.byteLength,
-          revision: createHash('sha256').update(buf).digest('hex'),
-        });
-      }
-      return { files, exclusions };
+    async listAll() {
+      return readFiles(cwd, await paths(['ls-files', '-z']));
+    },
+    async listDiff() {
+      const [changed, deleted] = await Promise.all([
+        paths([...DIFF_ARGS, '--diff-filter=d']),
+        paths([...DIFF_ARGS, '--diff-filter=D']),
+      ]);
+      const { files, exclusions } = await readFiles(cwd, changed);
+      return { files, exclusions: [...deleted.map((path) => ({ path, reason: 'deleted' })), ...exclusions] };
     },
   };
+}
+
+async function readFiles(
+  cwd: string,
+  paths: readonly string[],
+): Promise<{ files: TrackedFile[]; exclusions: Exclusion[] }> {
+  const files: TrackedFile[] = [];
+  const exclusions: Exclusion[] = [];
+  for (const path of paths) {
+    const base = path.slice(path.lastIndexOf('/') + 1);
+    if (EXCLUDED_BASENAMES.has(base)) {
+      exclusions.push({ path, reason: 'lock_file' });
+      continue;
+    }
+    let buf: Buffer;
+    try {
+      buf = await readFile(join(cwd, path));
+    } catch (e) {
+      exclusions.push({ path, reason: `read_failed: ${(e as Error).message}` });
+      continue;
+    }
+    if (looksBinary(buf)) {
+      exclusions.push({ path, reason: 'binary' });
+      continue;
+    }
+    files.push({
+      path,
+      content: buf.toString('utf8'),
+      bytes: buf.byteLength,
+      revision: createHash('sha256').update(buf).digest('hex'),
+    });
+  }
+  return { files, exclusions };
 }
 
 function looksBinary(buf: Buffer): boolean {

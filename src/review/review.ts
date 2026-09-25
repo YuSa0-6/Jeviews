@@ -11,6 +11,7 @@ import type {
   FileResult,
   ProviderId,
   ReviewOutput,
+  Scope,
   Thresholds,
   Usage,
 } from './output.js';
@@ -31,6 +32,7 @@ export interface ReviewDeps {
   provider: Provider;
   providerId: ProviderId;
   model: string;
+  scope: Scope;
   snapshotId: string;
   files: TrackedFile[];
   exclusions: Exclusion[];
@@ -226,7 +228,7 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     schemaVersion: 1,
     run: {
       id: randomUUID(),
-      scope: 'all',
+      scope: deps.scope,
       mode: 'scan',
       provider: deps.providerId,
       model: deps.model,

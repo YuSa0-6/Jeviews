@@ -2,7 +2,7 @@
 
 export type Verdict = 'GOOD' | 'NG' | 'NEED_REVIEW';
 export type AxisId = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G';
-export type Scope = 'all';
+export type Scope = 'all' | 'diff';
 export type Mode = 'scan';
 export type RunStatus = 'completed' | 'partial' | 'failed';
 
@@ -72,7 +72,8 @@ export interface ReviewOutput {
   schemaVersion: 1;
   run: {
     id: string;
-    scope: Scope;
+    /** 対象。failed で対象が決まる前に終わった場合だけ null */
+    scope: Scope | null;
     mode: Mode;
     /** 接続先。failed で接続先が決まる前に終わった場合だけ null */
     provider: ProviderId | null;
