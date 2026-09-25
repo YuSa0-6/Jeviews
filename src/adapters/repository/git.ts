@@ -1,11 +1,12 @@
 // Git とファイル取得。`all` は追跡ファイル、`diff` はインデックス (--base なら分岐点のコミット) との差分がある
 // ファイルの作業ツリー内容を対象にする。
 // どちらも cwd 配下が対象で、git は cwd からのパスを返すので cwd から読む。
+// シンボリックリンクと、実際の場所がリポジトリの外にあるファイルは読まずに除外する (中身を API に送らない)。
 
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { lstat, readFile, realpath } from 'node:fs/promises';
+import { isAbsolute, join, relative, sep } from 'node:path';
 import { promisify } from 'node:util';
 import type { Exclusion, Repository, TrackedFile } from '../../review/ports.js';
 
@@ -36,6 +37,11 @@ export function createGitRepository(cwd: string): Repository {
     return [...new Set((await git(args)).split('\0').filter((p) => p.length > 0))];
   }
 
+  /** リポジトリの直下の実際の場所。読むファイルの実際の場所がこの外にあれば読まない。 */
+  async function root(): Promise<string> {
+    return realpath((await git(['rev-parse', '--show-toplevel'])).trim());
+  }
+
   return {
     async snapshotId() {
       const head = (await git(['rev-parse', 'HEAD'])).trim();
@@ -43,7 +49,7 @@ export function createGitRepository(cwd: string): Repository {
       return dirty ? `${head}+dirty` : head;
     },
     async listAll() {
-      return readFiles(cwd, await paths(['ls-files', '-z']));
+      return readFiles(cwd, await root(), await paths(['ls-files', '-z']));
     },
     async listDiff(commit) {
       const against = commit === undefined ? [] : [commit];
@@ -51,7 +57,7 @@ export function createGitRepository(cwd: string): Repository {
         paths([...DIFF_ARGS, '--diff-filter=d', ...against]),
         paths([...DIFF_ARGS, '--diff-filter=D', ...against]),
       ]);
-      const { files, exclusions } = await readFiles(cwd, changed);
+      const { files, exclusions } = await readFiles(cwd, await root(), changed);
       return { files, exclusions: [...deleted.map((path) => ({ path, reason: 'deleted' })), ...exclusions] };
     },
     async mergeBase(ref) {
@@ -69,35 +75,43 @@ export function createGitRepository(cwd: string): Repository {
 
 async function readFiles(
   cwd: string,
+  root: string,
   paths: readonly string[],
 ): Promise<{ files: TrackedFile[]; exclusions: Exclusion[] }> {
   const files: TrackedFile[] = [];
   const exclusions: Exclusion[] = [];
   for (const path of paths) {
-    const base = path.slice(path.lastIndexOf('/') + 1);
-    if (EXCLUDED_BASENAMES.has(base)) {
-      exclusions.push({ path, reason: 'lock_file' });
-      continue;
-    }
-    let buf: Buffer;
-    try {
-      buf = await readFile(join(cwd, path));
-    } catch (e) {
-      exclusions.push({ path, reason: `read_failed: ${(e as Error).message}` });
-      continue;
-    }
-    if (looksBinary(buf)) {
-      exclusions.push({ path, reason: 'binary' });
-      continue;
-    }
-    files.push({
+    const read = await readTracked(path, join(cwd, path), root);
+    if ('reason' in read) exclusions.push(read);
+    else files.push(read);
+  }
+  return { files, exclusions };
+}
+
+/** 1 ファイルを読む。読まないファイルは除外の理由を返す。 */
+async function readTracked(path: string, full: string, root: string): Promise<TrackedFile | Exclusion> {
+  if (EXCLUDED_BASENAMES.has(path.slice(path.lastIndexOf('/') + 1))) return { path, reason: 'lock_file' };
+  try {
+    // リンク先は、別に追跡しているファイルか、Git の外 (リポジトリの外かもしれない) の中身なので読まない。
+    if ((await lstat(full)).isSymbolicLink()) return { path, reason: 'symlink' };
+    // 途中のディレクトリが手元でリンクに置き換わっていると、ファイル自体はリンクでなくても外を指す。
+    if (!isInside(root, await realpath(full))) return { path, reason: 'outside_repository' };
+    const buf = await readFile(full);
+    if (looksBinary(buf)) return { path, reason: 'binary' };
+    return {
       path,
       content: buf.toString('utf8'),
       bytes: buf.byteLength,
       revision: createHash('sha256').update(buf).digest('hex'),
-    });
+    };
+  } catch (e) {
+    return { path, reason: `read_failed: ${(e as Error).message}` };
   }
-  return { files, exclusions };
+}
+
+function isInside(root: string, target: string): boolean {
+  const rel = relative(root, target);
+  return !isAbsolute(rel) && rel !== '..' && !rel.startsWith(`..${sep}`);
 }
 
 function looksBinary(buf: Buffer): boolean {

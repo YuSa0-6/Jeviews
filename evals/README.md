@@ -27,6 +27,7 @@ pnpm eval:scan <repo> <subset>          # jeview で scan して results に残�
 pnpm eval:score <repo> <subset> [latest|all] [record|dry]   # 採点して history に追記
 pnpm eval:diff <repo> <subset>          # 食い違い (fp / fn) を一覧する
 pnpm eval:codex <repo> <subset> <file>  # codex exec の出力を期待値 (problem のみ) に写す
+pnpm eval:cascade <subset> [repo...]    # Jev を LLM の前段に置いたときの、LLM に回す量と残る problem を数える
 ```
 
 ## 部分集合
@@ -57,6 +58,34 @@ error_empty_catch は道具が「問題あり」と言ったものだけを使�
 - coveredAccuracy: 正解のある観点だけで組み立てたファイル判定（1 つでも problem なら NG、全部 clean なら GOOD）と Jev の判定が一致した割合。主要な指標
 - fileAccuracy: 適用したすべての観点に正解があるファイルだけの一致率。分母が小さいので参考値
 - 揺れが ±0.1 あるので、1 つの質問版につき 2 回 scan する
+
+## 前段 Jev・後段 LLM の試算
+
+`eval:cascade` は、Jev が「問題かもしれない」と見たファイルだけを LLM に回す構成を試算します。材料は保存済みの scan 結果だけなので、API の費用はかかりません。repo ごとに、最新の質問版の scan をすべて使います。
+
+```text
+全ファイル ──▶ 静的解析 (tsc / fallow など) ──▶ Jev ──▶ LLM ──▶ 人
+               機械的な観点を確定する          迷ったファイルだけを回す
+```
+
+LLM に回すのは、次のどれかに当てはまるファイルです。
+
+| 条件 | 理由 |
+| --- | --- |
+| 入力検証・エラー処理・秘密情報の観点で problem の確率が `low` を超える | 意味を読む判断が要り、LLM の読みが効く観点だから |
+| 同じ観点で NG か needs_context | 根拠の行と説明を LLM に書かせる。他のファイルも LLM に読ませる |
+| 大きすぎる、または API エラーで Jev の判定が欠けている | LLM に代わりに読ませるため |
+
+整形・lint・複雑度の観点は、静的解析と Jev で完結させます。出力の最後の表のとおり、道具の正解に対して LLM は誤報が多いからです。
+
+| 出力 | 読みかた |
+| --- | --- |
+| `LLM files` / `LLM bytes` | LLM に回すファイル数とバイト数の割合。バイト数は LLM の入力トークン、つまり費用の目安 |
+| `problems kept` | 期待値で problem の観点 (入力検証・エラー処理・秘密情報) のうち、LLM に回したファイルに入っている割合。LLM だけで全ファイルを見た場合が 100% |
+| 確率ごとの割合 | Jev の確率が低い組ほど problem が少なければ、確率を「LLM に回すか」の合図に使える |
+| 機械的な観点の採点 | 道具の正解に対する Jev と LLM (`codex.json`) の tp / fn / fp。scan を重ねた回数分の合計 |
+
+`low` は `tune` で決め、効果は `holdout` の数字で示します。
 
 ## 止めどき
 
