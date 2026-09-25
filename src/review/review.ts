@@ -7,6 +7,7 @@ import { fileKind, type SourceLanguage, sourceLanguage } from './file-kind.js';
 import type {
   AxisId,
   CheckResult,
+  DiffBase,
   FileKind,
   FileResult,
   ProviderId,
@@ -33,6 +34,8 @@ export interface ReviewDeps {
   providerId: ProviderId;
   model: string;
   scope: Scope;
+  /** diff --base で比べた起点。公開 JSON にそのまま出す */
+  base?: DiffBase;
   snapshotId: string;
   files: TrackedFile[];
   exclusions: Exclusion[];
@@ -229,6 +232,7 @@ export async function reviewAll(deps: ReviewDeps): Promise<ReviewOutput> {
     run: {
       id: randomUUID(),
       scope: deps.scope,
+      base: deps.base ?? null,
       mode: 'scan',
       provider: deps.providerId,
       model: deps.model,

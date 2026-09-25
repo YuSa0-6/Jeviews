@@ -1,4 +1,5 @@
-// Git とファイル取得。`all` は追跡ファイル、`diff` はインデックスとの差分があるファイルの作業ツリー内容を対象にする。
+// Git とファイル取得。`all` は追跡ファイル、`diff` はインデックス (--base なら分岐点のコミット) との差分がある
+// ファイルの作業ツリー内容を対象にする。
 // どちらも cwd 配下が対象で、git は cwd からのパスを返すので cwd から読む。
 
 import { execFile } from 'node:child_process';
@@ -44,13 +45,24 @@ export function createGitRepository(cwd: string): Repository {
     async listAll() {
       return readFiles(cwd, await paths(['ls-files', '-z']));
     },
-    async listDiff() {
+    async listDiff(commit) {
+      const against = commit === undefined ? [] : [commit];
       const [changed, deleted] = await Promise.all([
-        paths([...DIFF_ARGS, '--diff-filter=d']),
-        paths([...DIFF_ARGS, '--diff-filter=D']),
+        paths([...DIFF_ARGS, '--diff-filter=d', ...against]),
+        paths([...DIFF_ARGS, '--diff-filter=D', ...against]),
       ]);
       const { files, exclusions } = await readFiles(cwd, changed);
       return { files, exclusions: [...deleted.map((path) => ({ path, reason: 'deleted' })), ...exclusions] };
+    },
+    async mergeBase(ref) {
+      try {
+        return (await git(['merge-base', ref, 'HEAD'])).trim();
+      } catch (e) {
+        // 共通の祖先が無いとき git は何も言わずに 1 で終わる。shallow clone で base の履歴が無いときもこうなる。
+        throw new Error(
+          `cannot find where HEAD split from "${ref}". fetch the base branch, and fetch more history in a shallow clone (e.g. fetch-depth: 0): ${(e as Error).message}`,
+        );
+      }
     },
   };
 }

@@ -5,7 +5,7 @@
 プロジェクト名は Jeviews、コマンドと npm パッケージの名前は `jeview` です。
 
 大きなリポジトリを前にして「どこから読めばいいか」を決めたいときに使います。
-commit の前に、自分の変更だけを確かめるときにも使えます。
+commit の前の自分の変更や、上がっている PR の差分だけを確かめるときにも使えます。
 
 まだ実験段階です。コマンドや出力の形は予告なく変わることがあります。TypeSafe AI の公式ツールではありません。
 
@@ -13,6 +13,7 @@ commit の前に、自分の変更だけを確かめるときにも使えます�
 
 - Git で追跡しているファイルを一通り scan する（`all`）
 - まだ `git add` していない変更があるファイルだけを scan する（`diff`）
+- 上がっている PR で変わったファイルだけを scan する（`diff --base`）
 - ファイルごとに `GOOD` / `NG` / `NEED_REVIEW` の判定を付ける
 - 判定の根拠になった確率をそのまま残すので、あとから閾値を変えて読み直せる
 
@@ -91,20 +92,36 @@ npm にはまだ公開していません。それまでは clone して `pnpm in
 | --- | --- | --- |
 | `all` | Git で追跡しているファイルすべて | リポジトリ全体から、先に読むファイルを決める |
 | `diff` | まだ `git add` していない変更があるファイル（`git diff` に出るもの） | commit の前に、自分の変更を確かめる |
+| `diff --base <ref>` | `<ref>` から分かれた後に変わったファイル。commit 済みの変更も含む | 上がっている PR を確かめる |
 
 ```sh
 pnpm jeview diff > result.json
 ```
 
-- どちらもファイル全体を Jev に送り、ファイルごとに判定します
+- どれもファイル全体を Jev に送り、ファイルごとに判定します
 - 実行したディレクトリの配下を見ます。リポジトリの直下で実行すると全体が対象です
 - 新しく作ったファイルを `diff` で見るには、先に `git add -N <ファイル>` で Git に知らせます
 - `diff` で消したファイルは、結果の `exclusions` に `"reason": "deleted"` で残ります
+
+### PR の差分を見る
+
+`diff --base <ref>` は、HEAD が `<ref>` から分かれた地点と作業ツリーを比べます。GitHub の PR の「Files changed」と同じ範囲に、まだ commit していない手元の変更が加わります。
+
+| 場面 | 手順 |
+| --- | --- |
+| 上がっている PR を手元で見る | `gh pr checkout 123`（GitHub CLI）で PR のブランチに切り替えてから `jeview diff --base origin/main` |
+| GitHub Actions で PR ごとに見る | `actions/checkout` に `fetch-depth: 0` を付け、`jeview diff --base origin/${{ github.base_ref }}` |
+| commit していない変更をまとめて見る | `jeview diff --base HEAD`（`git add` 済みの変更も含む） |
+
+- 分かれた地点を求めるために base の履歴を使います。shallow clone では `fetch-depth: 0` などで履歴を取ってください
+- GitHub Actions では `pull_request` をきっかけにします。fork からの PR には Secrets が渡らないので、API キーが守られます（`pull_request_target` は fork のコードに Secrets を渡すので避けます）
+- 比べた起点は、結果の `run.base` に `{ "ref": "origin/main", "mergeBase": "<コミット>" }` の形で残ります
 
 ### オプション
 
 | オプション | 用途 |
 | --- | --- |
+| `--base <ref>` | `diff` で比べる起点を、HEAD が `<ref>` から分かれた地点にする。PR の差分を見るときに使う |
 | `--provider typesafe` / `vercel-gateway` / `openrouter` / `cloudflare` | 接続先を指定する。省略時はキーがあるものを上の表の順で使う（Cloudflare は指定したときだけ） |
 | `--model <name>` | モデルを変える。既定は上の表のとおり。OpenRouter で版を固定するなら `typesafe/jev-1.13` |
 | `--max-state-bytes <n>` | これより大きいファイルは送らずに `NEED_REVIEW` にする |
