@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// jeview all / diff: Git 追跡ファイル全体、まだ git add していない変更、または PR の差分 (diff --base) を scan する最小 CLI。
+// jeview [all | diff]: Git 追跡ファイル全体、まだ git add していない変更、または PR の差分 (diff --base) を scan する最小 CLI。
+// 対象を省略すると diff を実行する。
 // stdout にバージョン付き JSON を一つ、進捗と診断は stderr。
 // 終了コード: 0 = 完了、1 = 失敗または部分結果。
 
@@ -12,9 +13,9 @@ import type { Repository } from './review/ports.js';
 import { DEFAULT_MAX_STATE_BYTES, reviewAll } from './review/review.js';
 import { DEFAULT_THRESHOLDS } from './review/verdict.js';
 
-const USAGE = `usage: jeview <target> [--base <ref>] [--provider typesafe|vercel-gateway|openrouter] [--model <name>] [--max-state-bytes <n>] [--concurrency <n>]
+const USAGE = `usage: jeview [<target>] [--base <ref>] [--provider typesafe|vercel-gateway|openrouter] [--model <name>] [--max-state-bytes <n>] [--concurrency <n>]
 
-target (files under the current directory):
+target (files under the current directory, diff when omitted):
   all              every file tracked by Git
   diff             files with changes not yet staged, as listed by "git diff"
                    with --base <ref>: files changed since HEAD split from <ref>, as a pull request shows them
@@ -137,24 +138,30 @@ function isScope(v: string): v is Scope {
   return Object.hasOwn(LISTERS, v);
 }
 
+/** 対象を省略したとき (引数なし、またはオプションから始まるとき) の対象。設計文書の既定に合わせる */
+const DEFAULT_SCOPE: Scope = 'diff';
+
+/** argv の先頭を対象として読む。省略されていれば既定の対象、知らない対象なら null */
+function targetOf(argv: string[]): { scope: Scope | null; rest: string[] } {
+  const [first, ...rest] = argv;
+  if (first === undefined || first.startsWith('-')) return { scope: DEFAULT_SCOPE, rest: argv };
+  return { scope: isScope(first) ? first : null, rest };
+}
+
 /** 失敗時の JSON に載せる対象。argv の対象を読めないときは null */
 function requestedScope(): Scope | null {
-  const target = process.argv[2];
-  return target !== undefined && isScope(target) ? target : null;
+  return targetOf(process.argv.slice(2)).scope;
 }
 
 function parseCommand(argv: string[]): { scope: Scope; rest: string[] } {
-  const [cmd, ...rest] = argv;
-  if (cmd === undefined) {
-    process.stderr.write(USAGE);
-    process.exit(1);
-  }
-  if (HELP_FLAGS.has(cmd)) {
+  const [first] = argv;
+  if (first !== undefined && HELP_FLAGS.has(first)) {
     process.stderr.write(USAGE);
     process.exit(0);
   }
-  if (!isScope(cmd)) fail('config', `unknown target "${cmd}"\n${USAGE}`);
-  return { scope: cmd, rest };
+  const { scope, rest } = targetOf(argv);
+  if (scope === null) fail('config', `unknown target "${first}"\n${USAGE}`);
+  return { scope, rest };
 }
 
 function parseCli(argv: string[]): { scope: Scope; opts: CliOptions } {

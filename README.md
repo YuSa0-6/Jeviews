@@ -83,16 +83,17 @@ npm にはまだ公開していません。それまでは clone して `pnpm in
 
 ### 見る範囲
 
-`jeview` の直後に、見るファイルの範囲を書きます。
+`jeview` の直後に、見るファイルの範囲を書きます。省略すると `diff` を実行します。
 
 | 対象 | 見るファイル | 向いている場面 |
 | --- | --- | --- |
 | `all` | Git で追跡しているファイルすべて | リポジトリ全体から、先に読むファイルを決める |
-| `diff` | まだ `git add` していない変更があるファイル（`git diff` に出るもの） | commit の前に、自分の変更を確かめる |
+| `diff`（省略時） | まだ `git add` していない変更があるファイル（`git diff` に出るもの） | commit の前に、自分の変更を確かめる |
 | `diff --base <ref>` | `<ref>` から分かれた後に変わったファイル。commit 済みの変更も含む | 上がっている PR を確かめる |
 
 ```sh
-pnpm jeview diff > result.json
+pnpm jeview > result.json                         # jeview diff と同じ
+pnpm jeview --base origin/main > result.json      # jeview diff --base origin/main と同じ
 ```
 
 - どれもファイル全体を Jev に送り、ファイルごとに判定します
