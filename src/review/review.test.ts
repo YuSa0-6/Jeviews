@@ -198,6 +198,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider,
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('a.ts', 'const x = 1;')],
       exclusions: [],
@@ -222,6 +223,19 @@ describe('reviewAll', () => {
     });
   });
 
+  it('reports the scope it was given', async () => {
+    const out = await reviewAll({
+      providerId: 'typesafe',
+      provider: fakeProvider(() => 0),
+      model: 'fake',
+      scope: 'diff',
+      snapshotId: 'snap',
+      files: [file('a.ts', 'x')],
+      exclusions: [],
+    });
+    expect(out.run.scope).toBe('diff');
+  });
+
   it('asks one judgment axis at a time', async () => {
     const batches: string[][] = [];
     const inner = fakeProvider(() => 0);
@@ -236,6 +250,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider,
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('a.ts', 'x')],
       exclusions: [],
@@ -264,6 +279,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider,
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('package.json', '{}')],
       exclusions: [],
@@ -285,6 +301,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider: fakeProvider((id) => (id.endsWith('__problem') ? 0.5 : 0.1)),
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('a.ts', 'x')],
       exclusions: [],
@@ -300,6 +317,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider: fakeProvider((id) => (id === questionId('complexity_branchy_function', 'problem') ? 0.26 : 0)),
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('app/models/account.rb', 'class Account; end')],
       exclusions: [],
@@ -321,6 +339,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider,
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('big.ts', 'x'.repeat(100))],
       exclusions: [],
@@ -355,6 +374,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider,
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('bad.ts', 'a'), file('ok.ts', 'b')],
       exclusions: [{ path: 'img.png', reason: 'binary' }],
@@ -378,6 +398,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider: axisFailingProvider(['b_check']),
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('a.ts', 'x')],
       exclusions: [],
@@ -401,6 +422,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider: axisFailingProvider(['a_check', 'b_check']),
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('a.ts', 'x')],
       exclusions: [],
@@ -422,6 +444,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider: fakeProvider(() => 0, { usage: false }),
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('a.ts', 'a')],
       exclusions: [],
@@ -459,6 +482,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider,
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('a.ts', 'x')],
       exclusions: [],
@@ -490,6 +514,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider: fakeProvider(() => 0),
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('a.ts', 'x')],
       exclusions: [],
@@ -521,6 +546,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider: fakeProvider(() => 0),
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('a.ts', 'x'), file('b.ts', 'y')],
       exclusions: [],
@@ -547,6 +573,7 @@ describe('reviewAll', () => {
         providerId: 'typesafe',
         provider: fakeProvider(() => 0),
         model: 'fake',
+        scope: 'all',
         snapshotId: 'snap',
         files: [file('a.ts', 'x')],
         exclusions: [],
@@ -581,6 +608,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider,
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('a.ts', 'x'), file('b.ts', 'y')],
       exclusions: [],
@@ -609,6 +637,7 @@ describe('reviewAll', () => {
       providerId: 'typesafe',
       provider: fakeProvider(() => 0),
       model: 'fake',
+      scope: 'all',
       snapshotId: 'snap',
       files: [file('a.ts', 'x')],
       exclusions: [],
