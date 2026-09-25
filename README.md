@@ -415,7 +415,7 @@ jeview は、Git で管理しているファイルを 1 つずつ Jev（TypeSafe
 
 ## 2. 対象を選ぶ
 
-ユーザーが対象（`all` / `diff` / `diff --base <ref>`）を指定していれば、それを使います。指定がなければ、頼まれたことから選びます。
+ユーザーが対象（`all` / `diff` / `diff --base <ref>`）を指定していれば、それを使います。指定がなければ、頼まれたことから選びます。対象を省略した `jeview` は `jeview diff` と同じです。
 
 | 頼まれたこと | コマンド |
 |---|---|
@@ -442,7 +442,7 @@ grep '^jeview' jeview.log
 | `jeview: status=... {"NG":1,"GOOD":2} ...` | 判定ごとのファイル数、リクエスト数、費用（USD） |
 
 - 進捗は stderr にファイル 1 つにつき 1 行出ます。jeview.log に落とし、`grep '^jeview'` で要約だけを読みます
-- API キー（`TYPESAFE_API_KEY` / `AI_GATEWAY_API_KEY` / `OPENROUTER_API_KEY` のどれか 1 つ）は環境変数か `.env.local` から読まれます。キーが無いと言われたら、ユーザーに `.env.local` へ書いてもらいます。キーの値はチャットで受け取らず、表示もしません
+- API キーは環境変数か `.env.local` から読まれます。`TYPESAFE_API_KEY` / `AI_GATEWAY_API_KEY` / `OPENROUTER_API_KEY` のどれか 1 つ、または `--provider cloudflare` を付けて `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` を使います。キーが無いと言われたら、ユーザーに `.env.local` へ書いてもらいます。キーの値はチャットで受け取らず、表示もしません
 - result.json と jeview.log は作業用のファイルです。commit には含めません
 
 ## 4. 結果を読む
@@ -496,7 +496,7 @@ jq が無ければ、result.json を読んで同じ項目を拾います。
 |---|---|---|
 | `run.fatalError.code` が `config` | キーが無い、またはオプションの書きまちがい | stderr の 1 行目を読んで直す |
 | `run.fatalError.code` が `repository` | Git の外で実行した、または `--base` の分岐点が見つからない | `git fetch origin`。shallow clone なら `git fetch --unshallow` |
-| `error.code` が `auth` | キーの誤り・権限不足・残高切れ（HTTP 401 / 402 / 403） | ユーザーにキーと残高を確かめてもらう |
+| `error.code` が `auth` | キーの誤り・権限不足・残高切れ（HTTP 401 / 402 / 403） | ユーザーにキーと残高を確かめてもらう。Cloudflare はトークンの権限（Workers AI の Read）も |
 | `error.code` が `rate_limit` | 送る速さの上限（HTTP 429） | `--concurrency 1` を付けて再実行 |
 | `error.code` が `bad_request` | ファイルが大きすぎる、またはモデル名のまちがい（HTTP 400 / 404 / 422） | そのファイルは人が読む。`--model` を付けていれば見直す |
 | `error.code` が `server` / `network` / `invalid_response` | 接続先の不調、または通信の失敗 | 少し待って再実行 |
