@@ -18,7 +18,7 @@ Jeviews に興味を持ってくれてありがとうございます。小さな
 
 ```sh
 pnpm install
-cp .env.example .env.local     # TypeSafe か Vercel AI Gateway のキーを 1 つ
+cp .env.example .env.local     # TypeSafe / Vercel AI Gateway / OpenRouter のキーを 1 つ
 pnpm test                      # 単体テスト（API は叩きません）
 pnpm run typecheck
 pnpm dev all                   # 自分の repo を scan する
@@ -33,6 +33,26 @@ pnpm dev diff --base origin/main  # このブランチの PR の差分だけを 
 - 1 つの PR は 1 つの目的に絞り、300 行以内を目安にしてください
 - コードにコメントは書かず、「なぜそうしたか」はコミットメッセージに書いてください。何をしているかはコードで分かるようにします
 - `pnpm test` と `pnpm run typecheck` が通っていることを確認してください
+
+## ドキュメントを変えるとき
+
+README と、AI エージェント向けの手順書 `skills/jeview/SKILL.md` は、内容の一部が重なっています。片方を変えたら、次の表のとおりもう片方も合わせてください。
+
+| 変えたもの | 合わせて変えるもの | `pnpm test` で確かめるか |
+|---|---|---|
+| `skills/jeview/SKILL.md` | README の「エージェントに渡すコンテキスト」のブロック（全文を同じにする） | 確かめる |
+| 観点（`src/review/checks.ts`） | README の「見ている観点」の表と、`SKILL.md` の「観点の意味」の表 | 確かめる |
+| CLI のオプションや出力の形 | README の「使いかた」「結果の読みかた」と `SKILL.md` | 人が確かめる |
+
+## Claude Code で開発する場合
+
+この repo には PreToolUse フックが入っていて、`git commit` / `git push` の前に
+`fallow audit` を実行します。実体は `.claude/hooks/fallow-gate.sh` です。
+設定は `.claude/settings.json` に commit されているので、clone した全員に適用されます。
+
+- `fallow` が見つからない場合や監査が失敗した場合は、stderr に 1 行出して通します
+- よくある書き方を拾う補助であり、回避は可能です。確実に止めたい場合は git hooks を併用してください
+- 使わない場合は `.claude/settings.local.json` で上書きできます（このファイルは commit されません）
 
 ## 連絡先
 
