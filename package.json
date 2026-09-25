@@ -33,14 +33,17 @@
     "eval:scan": "node evals/scripts/scan.mjs",
     "eval:score": "node evals/scripts/score.mjs",
     "eval:diff": "node evals/scripts/diff.mjs",
-    "eval:codex": "node evals/scripts/codex.mjs"
+    "eval:codex": "node evals/scripts/codex.mjs",
+    "eval:cascade": "node evals/scripts/cascade.mjs"
   },
   "dependencies": {
     "@ai-sdk/gateway": "4.0.88",
+    "@ai-sdk/provider-utils": "5.0.45",
     "@ai-sdk/typesafe-ai": "3.0.4",
     "@openrouter/ai-sdk-provider": "3.1.0",
     "ai": "7.0.109",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "zod": "4.6.5"
   },
   "optionalDependencies": {
     "fallow": "3.27.0"

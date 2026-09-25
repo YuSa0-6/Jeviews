@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { promisify } from 'node:util';
@@ -138,6 +138,29 @@ describe('createGitRepository', () => {
     const repo = createGitRepository(root);
     const { files } = await repo.listDiff(await repo.mergeBase('HEAD'));
     expect(files.map((f) => f.path)).toEqual(['pkg/edited.ts', 'pkg/new.ts', 'staged.ts']);
+  });
+
+  it('reads no symlink and nothing whose real place is outside the repository', async () => {
+    const dir = join(tmp, 'links');
+    const outside = join(tmp, 'outside');
+    await write(outside, { 'secret.txt': 'secret\n', 'a.ts': 'secret\n' });
+    await mkdir(dir);
+    await git(dir, 'init', '-q');
+    await mkdir(join(dir, 'pkg'));
+    await symlink('AGENTS.md', join(dir, 'CLAUDE.md'));
+    await symlink(join(outside, 'secret.txt'), join(dir, 'escape.txt'));
+    await commit(dir, { 'AGENTS.md': 'agents\n', 'pkg/a.ts': 'export const a = 1;\n' }, 'links');
+    // 追跡しているディレクトリを、手元でリポジトリの外へのリンクに置き換える。
+    await rm(join(dir, 'pkg'), { recursive: true });
+    await symlink(outside, join(dir, 'pkg'));
+
+    const { files, exclusions } = await createGitRepository(dir).listAll();
+    expect(files.map((f) => f.path)).toEqual(['AGENTS.md']);
+    expect(exclusions).toEqual([
+      { path: 'CLAUDE.md', reason: 'symlink' },
+      { path: 'escape.txt', reason: 'symlink' },
+      { path: 'pkg/a.ts', reason: 'outside_repository' },
+    ]);
   });
 
   it('says how to fix a base it cannot find', async () => {

@@ -66,7 +66,7 @@ export interface Usage {
   costUsd: number | null;
 }
 
-export type ProviderId = 'typesafe' | 'vercel-gateway' | 'openrouter';
+export type ProviderId = 'typesafe' | 'vercel-gateway' | 'openrouter' | 'cloudflare';
 
 /** diff --base で比べた起点。指定した参照と、HEAD がそこから分かれたコミット */
 export interface DiffBase {

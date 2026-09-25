@@ -18,7 +18,7 @@
 
 ```mermaid
 flowchart TD
-    A["対象のファイルを集める<br/>all / diff / diff --base"] --> X["除外<br/>lock ファイル・バイナリ"]
+    A["対象のファイルを集める<br/>all / diff / diff --base"] --> X["除外<br/>lock ファイル・バイナリ<br/>シンボリックリンクなど"]
     A --> B["ファイルの種類から<br/>観点を選ぶ<br/>code / test / config など"]
     B --> C["静的解析で決める<br/>TS/JS・Python の<br/>一部の観点"]
     B --> D["Jev に質問する<br/>残りの観点ごとに<br/>問題の確率を聞く"]
@@ -85,7 +85,7 @@ jeview: status=completed {"GOOD":2,"NG":1} requests=9 inputTokens=23184 costUsd=
 | Node.js 22 以上 | |
 | pnpm | `npm install -g pnpm` で入ります |
 | Git | 見たいリポジトリが Git で管理されていること |
-| API キー 1 つ | TypeSafe / Vercel AI Gateway / OpenRouter のどれか（[接続先と API キー](#接続先と-api-キー)） |
+| API キー 1 つ | TypeSafe / Vercel AI Gateway / OpenRouter / Cloudflare のどれか（[接続先と API キー](#接続先と-api-キー)） |
 | jq（任意） | 結果の JSON を絞り込むときに使います |
 
 ### 1. インストールする
@@ -137,15 +137,22 @@ jq -r '.files[] | select(.verdict == "NG") | .path' result.json
 
 ## 使いかた
 
-見たいリポジトリの直下で、`jeview <対象> [オプション]` の形で実行します。
+見たいリポジトリの直下で、`jeview [対象] [オプション]` の形で実行します。
 
 ### 対象
 
 | 対象 | 見るファイル | 向いている場面 |
 |---|---|---|
 | `all` | Git で追跡しているファイルすべて | リポジトリ全体から、先に読むファイルを決める |
-| `diff` | まだ `git add` していない変更があるファイル（`git diff` に出るもの） | commit の前に、自分の変更を確かめる |
+| `diff`（省略時） | まだ `git add` していない変更があるファイル（`git diff` に出るもの） | commit の前に、自分の変更を確かめる |
 | `diff --base <ref>` | HEAD が `<ref>` から分かれた後に変わったファイル。commit 済みの変更と手元の変更の両方を含む | PR を確かめる |
+
+対象を省略すると `diff` を実行します。
+
+```sh
+jeview > result.json                      # jeview diff と同じ
+jeview --base origin/main > result.json   # jeview diff --base origin/main と同じ
+```
 
 - どの対象でも、選んだファイルの全体を送り、ファイルごとに判定します
 - 実行したディレクトリの配下が対象です。`.env.local` も実行したディレクトリから読みます
@@ -171,7 +178,7 @@ jq -r '.files[] | select(.verdict == "NG") | .path' result.json
 | オプション | 既定 | 用途 |
 |---|---|---|
 | `--base <ref>` | — | `diff` で比べる起点を、HEAD が `<ref>` から分かれた地点にする |
-| `--provider <名前>` | キーがある接続先 | `typesafe` / `vercel-gateway` / `openrouter` から選ぶ |
+| `--provider <名前>` | キーがある接続先 | `typesafe` / `vercel-gateway` / `openrouter` / `cloudflare` から選ぶ。`cloudflare` は指定したときだけ使う |
 | `--model <名前>` | 接続先ごとの既定 | モデルを変える。OpenRouter で版を固定するなら `typesafe/jev-1.13` |
 | `--max-state-bytes <n>` | `60000` | これより大きいファイルは送らずに `NEED_REVIEW` にする |
 | `--concurrency <n>` | `4` | 同時に処理するファイル数（同時に送るリクエスト数） |
@@ -191,13 +198,16 @@ jq -e '[.files[] | select(.verdict == "NG")] | length == 0' result.json
 
 ### 接続先と API キー
 
-| 接続先 | 環境変数 | 既定のモデル |
-|---|---|---|
-| TypeSafe 直結 | `TYPESAFE_API_KEY` | `jev-latest` |
-| Vercel AI Gateway | `AI_GATEWAY_API_KEY` | `typesafe-ai/jev` |
-| OpenRouter | `OPENROUTER_API_KEY` | `~typesafe/jev-latest` |
+| 接続先 | 環境変数 | 既定のモデル | 自動で選ぶ順 |
+|---|---|---|---|
+| TypeSafe 直結 | `TYPESAFE_API_KEY` | `jev-latest` | 1 |
+| Vercel AI Gateway | `AI_GATEWAY_API_KEY` | `typesafe-ai/jev` | 2 |
+| OpenRouter | `OPENROUTER_API_KEY` | `~typesafe/jev-latest` | 3 |
+| Cloudflare | `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` | `typesafe/jev` | `--provider cloudflare` を付けたときだけ使う |
 
-キーが複数あるときは、上の表の上から順に、最初に見つかった接続先を使います。`--provider` で選ぶこともできます。
+キーが複数あるときは、「自動で選ぶ順」で最初に見つかった接続先を使います。`--provider` で選ぶこともできます。
+
+Cloudflare を指名制にしているのは、`CLOUDFLARE_API_TOKEN` が wrangler でのデプロイなど、AI 以外の用途でもよく設定されているためです。指名したときだけ、Cloudflare にコードを送ります。
 
 | キーの渡し方 | 書く場所 | 向いている場面 |
 |---|---|---|
@@ -206,7 +216,7 @@ jq -e '[.files[] | select(.verdict == "NG")] | length == 0' result.json
 | CI の Secrets | GitHub Actions なら `env:` に `${{ secrets.TYPESAFE_API_KEY }}` | CI |
 
 - `jeview` は実行したディレクトリの `.env.local` と `.env` をこの順で読みます。シェルで設定済みの値が優先されます
-- 接続先の URL は `TYPESAFE_BASE_URL` / `AI_GATEWAY_BASE_URL` / `OPENROUTER_BASE_URL`（末尾は `/v1`）で変えられます。書きかたは [.env.example](.env.example) にあります
+- 接続先の URL は `TYPESAFE_BASE_URL` / `AI_GATEWAY_BASE_URL` / `OPENROUTER_BASE_URL`（末尾は `/v1`）/ `CLOUDFLARE_BASE_URL` で変えられます。書きかたは [.env.example](.env.example) にあります
 
 ## 結果の読みかた
 
@@ -350,12 +360,16 @@ TypeScript / JavaScript と Python のファイルでは、一部の観点を Je
 
 ### 対象から外すファイル
 
+Jev に送らなかったファイルは、`exclusions[]` に理由付きで残ります。
+
 | reason | 対象 |
 |---|---|
 | `lock_file` | `pnpm-lock.yaml` `package-lock.json` `yarn.lock` `bun.lockb` `Cargo.lock` `poetry.lock` `go.sum` |
 | `binary` | 先頭 8 KB に NUL バイトを含むファイル |
+| `symlink` | シンボリックリンク。リンク先は、別に追跡しているファイルか Git の外の中身なので読みません |
+| `outside_repository` | 実際の場所がリポジトリの外にあるファイル（途中のディレクトリがリンクに置き換わっているなど） |
 | `deleted` | `diff` で消したファイル |
-| `read_failed: ...` | 読めなかったファイル |
+| `read_failed: …` | 読めなかったファイル。続けて理由が入る |
 
 ## AI エージェントから使う
 
@@ -495,11 +509,15 @@ jq が無ければ、result.json を読んで同じ項目を拾います。
 | 項目 | 内容 |
 |---|---|
 | 送るデータ | ファイルの中身を、選んだ接続先の API にそのまま送ります。外に出してよいリポジトリで使ってください |
+| 送るファイル | 実際の場所がリポジトリの中にあるファイルだけを送ります。シンボリックリンクは、リンク先を読まずに除外します |
 | 判定の性質 | Jev の確率にもとづく目安です。最終的な判断は人が行う前提で作っています |
 | 確率の揺れ | 同じファイルでも、確率は実行ごとに ±0.1 ほど揺れます |
 | 費用 | 実際の額は `run.usage.costUsd` に出ます（Vercel AI Gateway は `null`）。目安として、数 KB のファイルなら 1 つあたり 0.001 USD 未満です（TypeSafe 直結） |
 | Vercel AI Gateway | 無料枠はレートリミットが厳しめです。大きなリポジトリでは `--concurrency` を下げるか、TypeSafe 直結を使ってください |
 | OpenRouter | Jev は alpha 版の Decisions API（`https://openrouter.ai/api/alpha/decisions`）で動きます。API の形が予告なく変わることがあります |
+| Cloudflare のトークン | 「Account > Workers AI > Read」の権限が要ります。AI Gateway の権限だけのトークンは HTTP 401 になり、`error.code` は `auth` になります |
+| Cloudflare の料金 | アカウントに入れたクレジット（Unified Billing）から引かれます。トークン単価は TypeSafe 直結と同じで、クレジットを買うときに 5% の手数料がかかります（`costUsd` には手数料を含みません） |
+| Cloudflare のログ | AI Gateway は、既定でリクエストの本文をログに保存します。jeview は `cf-aig-collect-log-payload: false` を付けて送るので、ログに残るのはトークン数や費用などのメタデータだけです |
 
 ## 困ったときは
 
@@ -507,7 +525,7 @@ jq が無ければ、result.json を読んで同じ項目を拾います。
 |---|---|---|
 | `run.fatalError.code` が `config` | キーが無い、またはオプションの書きまちがい | stderr の 1 行目を読んで直す |
 | `run.fatalError.code` が `repository` | Git の外で実行した、または `--base` の分岐点が見つからない | `git fetch origin`。shallow clone なら履歴を取る（`fetch-depth: 0` など） |
-| `error.code` が `auth` | キーの誤り・権限不足・残高切れ（HTTP 401 / 402 / 403） | キーと残高を確かめる |
+| `error.code` が `auth` | キーの誤り・権限不足・残高切れ（HTTP 401 / 402 / 403） | キーと残高を確かめる。Cloudflare はトークンの権限も確かめる |
 | `error.code` が `rate_limit` | 送る速さの上限（HTTP 429） | `--concurrency` を下げて再実行 |
 | `error.code` が `bad_request` | ファイルが大きすぎる、またはモデル名のまちがい（HTTP 400 / 404 / 422） | `--model` を見直す。大きなファイルは人が読む |
 | `error.code` が `server` / `network` / `invalid_response` | 接続先の不調、または通信の失敗 | 少し待って再実行 |

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ProviderError } from '../../review/ports.js';
+import { createCloudflareProvider } from './cloudflare.js';
 import { createOpenRouterProvider } from './openrouter.js';
 import { createTypeSafeProvider } from './typesafe.js';
 import { createVercelGatewayProvider } from './vercel-gateway.js';
@@ -148,6 +149,113 @@ describe('createOpenRouterProvider', () => {
     const p = createOpenRouterProvider({ apiKey: 'k', fetch });
     await expect(p.ask({}, questions)).rejects.toMatchObject({ code: 'auth', attempts: 1 });
     expect(calls).toHaveLength(1);
+  });
+});
+
+describe('createCloudflareProvider', () => {
+  it('runs typesafe/jev through /ai/run and reads the answers out of the result envelope', async () => {
+    const { calls, fetch } = fakeFetch([
+      {
+        status: 200,
+        body: {
+          result: {
+            model: 'jev-1.13.0',
+            answers: { q1__problem: { type: 'noul', noul: 0.42 } },
+            usage: { input_tokens: 120, output_tokens: 0 },
+          },
+          success: true,
+          errors: [],
+          messages: [],
+        },
+      },
+    ]);
+    const p = createCloudflareProvider({ apiKey: 'k', accountId: 'acc', fetch });
+    const { response, attempts } = await p.ask({ path: 'a.ts', content: 'x' }, questions);
+
+    expect(calls).toHaveLength(1);
+    expect(calls[0]!.url).toBe('https://api.cloudflare.com/client/v4/accounts/acc/ai/run');
+    expect(calls[0]!.headers.get('authorization')).toBe('Bearer k');
+    expect(calls[0]!.headers.get('cf-aig-collect-log-payload')).toBe('false');
+    expect(calls[0]!.body).toEqual({
+      model: 'typesafe/jev',
+      input: {
+        state: { path: 'a.ts', content: 'x' },
+        questions: { q1__problem: { type: 'noul', instructions: 'Is it broken?' } },
+      },
+    });
+    expect(response).toEqual({
+      model: 'jev-1.13.0',
+      answers: { q1__problem: { type: 'noul', noul: 0.42 } },
+      usage: { input_tokens: 120, output_tokens: 0 },
+    });
+    expect(attempts).toBe(1);
+    expect(p.model).toBe('typesafe/jev');
+    expect(p.usdPerInputToken).toBeCloseTo(0.042 / 1_000_000, 12);
+  });
+
+  it('keeps CLOUDFLARE_BASE_URL as the API root and appends the account path', async () => {
+    const { calls, fetch } = fakeFetch([
+      { status: 200, body: { result: { answers: { q1__problem: { type: 'noul', noul: 0 } } }, success: true } },
+    ]);
+    await createCloudflareProvider({
+      apiKey: 'k',
+      accountId: 'acc',
+      baseUrl: 'https://proxy.example/client/v4/',
+      fetch,
+    }).ask({}, questions);
+    expect(calls[0]!.url).toBe('https://proxy.example/client/v4/accounts/acc/ai/run');
+  });
+
+  it('reports the message from the Cloudflare error envelope on 401 without retrying', async () => {
+    const { calls, fetch } = fakeFetch([
+      {
+        status: 401,
+        body: {
+          result: null,
+          success: false,
+          errors: [{ code: 10000, message: 'Authentication error' }],
+          messages: [],
+        },
+      },
+    ]);
+    const p = createCloudflareProvider({ apiKey: 'k', accountId: 'acc', fetch });
+    await expect(p.ask({}, questions)).rejects.toMatchObject({
+      code: 'auth',
+      status: 401,
+      attempts: 1,
+      message: 'HTTP 401: Authentication error (code 10000)',
+    });
+    expect(calls).toHaveLength(1);
+  });
+
+  it('retries on 5xx and reports the attempt count on the error', async () => {
+    const { calls, fetch } = fakeFetch([
+      {
+        status: 502,
+        body: { success: false, errors: [{ code: 7033, message: 'ai_gateway_exception' }] },
+        headers: { 'retry-after': '0' },
+      },
+    ]);
+    const p = createCloudflareProvider({ apiKey: 'k', accountId: 'acc', fetch, maxRetries: 1 });
+    await expect(p.ask({}, questions)).rejects.toMatchObject({ code: 'server', status: 502, attempts: 2 });
+    expect(calls).toHaveLength(2);
+  });
+
+  it('rejects a 200 without the result envelope as invalid_response without retrying', async () => {
+    const { calls, fetch } = fakeFetch([
+      { status: 200, body: { model: 'jev-1.13.0', answers: { q1__problem: { type: 'noul', noul: 0.42 } } } },
+    ]);
+    const p = createCloudflareProvider({ apiKey: 'k', accountId: 'acc', fetch });
+    await expect(p.ask({}, questions)).rejects.toMatchObject({ code: 'invalid_response', attempts: 1 });
+    expect(calls).toHaveLength(1);
+  });
+
+  it('reports a failed connection as network', async () => {
+    const fetch: typeof globalThis.fetch = async () => {
+      throw new TypeError('fetch failed');
+    };
+    const p = createCloudflareProvider({ apiKey: 'k', accountId: 'acc', fetch, maxRetries: 0 });
+    await expect(p.ask({}, questions)).rejects.toMatchObject({ code: 'network', attempts: 1 });
   });
 });
 

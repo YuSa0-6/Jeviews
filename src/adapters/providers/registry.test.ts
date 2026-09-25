@@ -15,6 +15,12 @@ describe('detectProvider', () => {
     expect(detectProvider({})).toBeUndefined();
     expect(detectProvider({ TYPESAFE_API_KEY: '' })).toBeUndefined();
   });
+  it('leaves cloudflare to --provider even when its token and account id are set', () => {
+    expect(detectProvider({ CLOUDFLARE_API_TOKEN: 't', CLOUDFLARE_ACCOUNT_ID: 'a' })).toBeUndefined();
+    expect(detectProvider({ CLOUDFLARE_API_TOKEN: 't', CLOUDFLARE_ACCOUNT_ID: 'a', OPENROUTER_API_KEY: 'c' })).toBe(
+      'openrouter',
+    );
+  });
 });
 
 describe('isProviderId', () => {
@@ -22,6 +28,7 @@ describe('isProviderId', () => {
     expect(isProviderId('typesafe')).toBe(true);
     expect(isProviderId('vercel-gateway')).toBe(true);
     expect(isProviderId('openrouter')).toBe(true);
+    expect(isProviderId('cloudflare')).toBe(true);
     expect(isProviderId('openai')).toBe(false);
   });
 });
@@ -46,5 +53,14 @@ describe('createProviderFromEnv', () => {
   it('applies the model override', () => {
     const p = createProviderFromEnv('vercel-gateway', 'custom/model', { AI_GATEWAY_API_KEY: 'k' });
     expect(p.model).toBe('custom/model');
+  });
+  it('names the missing Cloudflare account id', () => {
+    expect(() => createProviderFromEnv('cloudflare', undefined, { CLOUDFLARE_API_TOKEN: 't' })).toThrow(
+      'CLOUDFLARE_ACCOUNT_ID is not set',
+    );
+  });
+  it('creates cloudflare when named with its token and account id', () => {
+    const p = createProviderFromEnv('cloudflare', undefined, { CLOUDFLARE_API_TOKEN: 't', CLOUDFLARE_ACCOUNT_ID: 'a' });
+    expect(p.model).toBe('typesafe/jev');
   });
 });
