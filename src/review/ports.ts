@@ -76,6 +76,11 @@ export interface Exclusion {
 export interface Repository {
   snapshotId(): Promise<string>;
   listAll(): Promise<{ files: TrackedFile[]; exclusions: Exclusion[] }>;
-  /** インデックスとの差分があるファイル。まだ git add していない変更で、作業ツリーの内容を読む。 */
-  listDiff(): Promise<{ files: TrackedFile[]; exclusions: Exclusion[] }>;
+  /**
+   * インデックスとの差分があるファイル。まだ git add していない変更で、作業ツリーの内容を読む。
+   * commit を渡すと、そのコミットとの差分にする (commit 済みの変更も含む)。
+   */
+  listDiff(commit?: string): Promise<{ files: TrackedFile[]; exclusions: Exclusion[] }>;
+  /** HEAD が ref から分かれたコミット。PR の差分はここから数える。 */
+  mergeBase(ref: string): Promise<string>;
 }

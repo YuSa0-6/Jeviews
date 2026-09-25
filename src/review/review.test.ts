@@ -223,17 +223,19 @@ describe('reviewAll', () => {
     });
   });
 
-  it('reports the scope it was given', async () => {
-    const out = await reviewAll({
-      providerId: 'typesafe',
+  it('reports the scope and base it was given', async () => {
+    const deps = {
+      providerId: 'typesafe' as const,
       provider: fakeProvider(() => 0),
       model: 'fake',
-      scope: 'diff',
+      scope: 'diff' as const,
       snapshotId: 'snap',
       files: [file('a.ts', 'x')],
       exclusions: [],
-    });
-    expect(out.run.scope).toBe('diff');
+    };
+    expect((await reviewAll(deps)).run).toMatchObject({ scope: 'diff', base: null });
+    const base = { ref: 'origin/main', mergeBase: 'abc123' };
+    expect((await reviewAll({ ...deps, base })).run.base).toEqual(base);
   });
 
   it('asks one judgment axis at a time', async () => {
