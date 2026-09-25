@@ -23,6 +23,7 @@ pnpm test                      # 単体テスト（API は叩きません）
 pnpm run typecheck
 pnpm dev all                   # 自分の repo を scan する
 pnpm dev diff                  # まだ git add していない変更だけを scan する
+pnpm dev diff --base origin/main  # このブランチの PR の差分だけを scan する
 ```
 
 質問文を変えたときは、正しいファイルで確率が下がり、わざと壊したファイルで上がることを両方確かめてください。片側だけ見ると、本物も取りこぼす文になっていることに気づけません。確率は回ごとに ±0.1 ほど揺れるので、閾値付近の値は複数回見てください。

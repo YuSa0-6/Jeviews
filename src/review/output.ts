@@ -68,12 +68,20 @@ export interface Usage {
 
 export type ProviderId = 'typesafe' | 'vercel-gateway' | 'openrouter';
 
+/** diff --base で比べた起点。指定した参照と、HEAD がそこから分かれたコミット */
+export interface DiffBase {
+  ref: string;
+  mergeBase: string;
+}
+
 export interface ReviewOutput {
   schemaVersion: 1;
   run: {
     id: string;
     /** 対象。failed で対象が決まる前に終わった場合だけ null */
     scope: Scope | null;
+    /** diff --base で比べた起点。それ以外は null */
+    base: DiffBase | null;
     mode: Mode;
     /** 接続先。failed で接続先が決まる前に終わった場合だけ null */
     provider: ProviderId | null;

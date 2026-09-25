@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// jeview all / diff: Git 追跡ファイル全体、またはまだ git add していない変更のあるファイルを scan する最小 CLI。
+// jeview all / diff: Git 追跡ファイル全体、まだ git add していない変更、または PR の差分 (diff --base) を scan する最小 CLI。
 // stdout にバージョン付き JSON を一つ、進捗と診断は stderr。
 // 終了コード: 0 = 完了、1 = 失敗または部分結果。
 
@@ -7,16 +7,17 @@ import { writeSync } from 'node:fs';
 import { createAnalyzers } from './adapters/analyzers/index.js';
 import { createProviderFromEnv, detectProvider, isProviderId } from './adapters/providers/registry.js';
 import { createGitRepository } from './adapters/repository/git.js';
-import type { ProviderId, ReviewOutput, Scope } from './review/output.js';
+import type { DiffBase, ProviderId, ReviewOutput, Scope } from './review/output.js';
 import type { Repository } from './review/ports.js';
 import { DEFAULT_MAX_STATE_BYTES, reviewAll } from './review/review.js';
 import { DEFAULT_THRESHOLDS } from './review/verdict.js';
 
-const USAGE = `usage: jeview <target> [--provider typesafe|vercel-gateway|openrouter] [--model <name>] [--max-state-bytes <n>] [--concurrency <n>]
+const USAGE = `usage: jeview <target> [--base <ref>] [--provider typesafe|vercel-gateway|openrouter] [--model <name>] [--max-state-bytes <n>] [--concurrency <n>]
 
 target (files under the current directory):
   all              every file tracked by Git
   diff             files with changes not yet staged, as listed by "git diff"
+                   with --base <ref>: files changed since HEAD split from <ref>, as a pull request shows them
 
 provider (default: the first one below whose API key env is set):
   typesafe         TypeSafe API direct.       env TYPESAFE_API_KEY, optional TYPESAFE_BASE_URL (https://api.typesafe.ai)
@@ -32,6 +33,7 @@ function fail(code: string, message: string, provider: ProviderId | null = null)
     run: {
       id: '',
       scope: requestedScope(),
+      base: null,
       mode: 'scan',
       provider,
       model: '',
@@ -54,6 +56,7 @@ function fail(code: string, message: string, provider: ProviderId | null = null)
 }
 
 interface CliOptions {
+  base?: string;
   provider?: ProviderId;
   model?: string;
   maxStateBytes?: number;
@@ -69,6 +72,11 @@ function positiveInt(flag: string, raw: string): number {
 type OptionParser = (opts: CliOptions, value: string, flag: string) => void;
 
 const OPTIONS: Record<string, OptionParser> = {
+  '--base': (o, v, flag) => {
+    // - で始まる値は git がオプションとして読むので受け付けない。
+    if (v.startsWith('-')) fail('config', `${flag} must name a branch, tag or commit, got "${v}"`);
+    o.base = v;
+  },
   '--provider': (o, v) => {
     if (!isProviderId(v)) fail('config', `unknown provider "${v}"\n${USAGE}`);
     o.provider = v;
@@ -120,9 +128,9 @@ function providerOrFail(id: ProviderId, model: string | undefined) {
 const HELP_FLAGS = new Set(['--help', '-h']);
 
 /** 対象ごとのファイルの集め方。 */
-const LISTERS: Record<Scope, (repo: Repository) => ReturnType<Repository['listAll']>> = {
+const LISTERS: Record<Scope, (repo: Repository, commit?: string) => ReturnType<Repository['listAll']>> = {
   all: (repo) => repo.listAll(),
-  diff: (repo) => repo.listDiff(),
+  diff: (repo, commit) => repo.listDiff(commit),
 };
 
 function isScope(v: string): v is Scope {
@@ -149,14 +157,31 @@ function parseCommand(argv: string[]): { scope: Scope; rest: string[] } {
   return { scope: cmd, rest };
 }
 
-async function listOrFail(repo: Repository, scope: Scope) {
+function parseCli(argv: string[]): { scope: Scope; opts: CliOptions } {
+  const { scope, rest } = parseCommand(argv);
+  const opts = parseArgs(rest);
+  if (opts.base !== undefined && scope !== 'diff') fail('config', `--base works only with diff\n${USAGE}`);
+  return { scope, opts };
+}
+
+async function resolveBase(repo: Repository, ref: string | undefined): Promise<DiffBase | undefined> {
+  return ref === undefined ? undefined : { ref, mergeBase: await repo.mergeBase(ref) };
+}
+
+async function listOrFail(repo: Repository, scope: Scope, baseRef: string | undefined) {
   try {
     const snapshotId = await repo.snapshotId();
-    const { files, exclusions } = await LISTERS[scope](repo);
-    return { scope, snapshotId, files, exclusions };
+    const base = await resolveBase(repo, baseRef);
+    const { files, exclusions } = await LISTERS[scope](repo, base?.mergeBase);
+    return { scope, snapshotId, files, exclusions, ...(base && { base }) };
   } catch (e) {
     return fail('repository', (e as Error).message);
   }
+}
+
+function describeTarget(target: Awaited<ReturnType<typeof listOrFail>>): string {
+  const base = target.base ? `, base ${target.base.ref} (${target.base.mergeBase.slice(0, 12)})` : '';
+  return `jeview ${target.scope}: ${target.files.length} files, ${target.exclusions.length} excluded, snapshot ${target.snapshotId}${base}`;
 }
 
 function verdictCounts(out: ReviewOutput): Record<string, number> {
@@ -207,15 +232,12 @@ function toDeps(
 
 async function main(): Promise<void> {
   loadEnvFiles();
-  const { scope, rest } = parseCommand(process.argv.slice(2));
-  const opts = parseArgs(rest);
+  const { scope, opts } = parseCli(process.argv.slice(2));
   const providerId = opts.provider ?? detectProvider(process.env);
   if (!providerId) fail('config', 'set TYPESAFE_API_KEY, AI_GATEWAY_API_KEY or OPENROUTER_API_KEY (see .env.example)');
   const provider = providerOrFail(providerId, opts.model);
-  const target = await listOrFail(createGitRepository(process.cwd()), scope);
-  process.stderr.write(
-    `jeview ${scope}: ${target.files.length} files, ${target.exclusions.length} excluded, snapshot ${target.snapshotId}\n`,
-  );
+  const target = await listOrFail(createGitRepository(process.cwd()), scope, opts.base);
+  process.stderr.write(`${describeTarget(target)}\n`);
 
   const out = await reviewAll(toDeps(opts, provider, providerId, target));
   writeSync(1, JSON.stringify(out, null, 2) + '\n');

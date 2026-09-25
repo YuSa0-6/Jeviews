@@ -30,12 +30,12 @@ async function commit(cwd: string, files: Record<string, string>, message: strin
 
 const contents = (files: readonly TrackedFile[]) => files.map((f) => [f.path, f.content]);
 
-let base: string;
+let tmp: string;
 let root: string;
 
 beforeAll(async () => {
-  base = await mkdtemp(join(tmpdir(), 'jeview-git-'));
-  root = join(base, 'repo');
+  tmp = await mkdtemp(join(tmpdir(), 'jeview-git-'));
+  root = join(tmp, 'repo');
   await mkdir(root);
   await git(root, 'init', '-q');
   await commit(
@@ -64,7 +64,7 @@ beforeAll(async () => {
   await git(root, 'add', '-N', 'pkg/new.ts');
 });
 
-afterAll(() => rm(base, { recursive: true, force: true }));
+afterAll(() => rm(tmp, { recursive: true, force: true }));
 
 describe('createGitRepository', () => {
   it('lists files with unstaged changes, reads the working tree, and reports the rest as exclusions', async () => {
@@ -95,7 +95,7 @@ describe('createGitRepository', () => {
   });
 
   it('lists a file with a merge conflict once', async () => {
-    const dir = join(base, 'conflict');
+    const dir = join(tmp, 'conflict');
     await mkdir(dir);
     await git(dir, 'init', '-q');
     await commit(dir, { 'a.ts': 'base\n' }, 'base');
@@ -108,5 +108,39 @@ describe('createGitRepository', () => {
     const repo = createGitRepository(dir);
     expect((await repo.listAll()).files.map((f) => f.path)).toEqual(['a.ts']);
     expect((await repo.listDiff()).files.map((f) => f.path)).toEqual(['a.ts']);
+  });
+
+  it('diffs against where HEAD split from the base, as a pull request shows', async () => {
+    const dir = join(tmp, 'pull-request');
+    await mkdir(dir);
+    await git(dir, 'init', '-q', '-b', 'trunk');
+    await commit(dir, { 'kept.ts': 'k\n', 'edited.ts': '1\n', 'gone.ts': 'g\n' }, 'base');
+    await git(dir, 'checkout', '-q', '-b', 'feature');
+    await rm(join(dir, 'gone.ts'));
+    await commit(dir, { 'edited.ts': '2\n', 'added.ts': 'a\n' }, 'feature');
+    await git(dir, 'checkout', '-q', 'trunk');
+    await commit(dir, { 'trunk-only.ts': 't\n' }, 'trunk moves on');
+    await git(dir, 'checkout', '-q', 'feature');
+    await write(dir, { 'kept.ts': 'k2\n' });
+
+    const repo = createGitRepository(dir);
+    const { files, exclusions } = await repo.listDiff(await repo.mergeBase('trunk'));
+    // trunk-only.ts は PR の外で trunk が進んだ分なので出ない。まだ commit していない kept.ts は作業ツリーから読む。
+    expect(contents(files)).toEqual([
+      ['added.ts', 'a\n'],
+      ['edited.ts', '2\n'],
+      ['kept.ts', 'k2\n'],
+    ]);
+    expect(exclusions).toEqual([{ path: 'gone.ts', reason: 'deleted' }]);
+  });
+
+  it('includes staged changes when the base is HEAD', async () => {
+    const repo = createGitRepository(root);
+    const { files } = await repo.listDiff(await repo.mergeBase('HEAD'));
+    expect(files.map((f) => f.path)).toEqual(['pkg/edited.ts', 'pkg/new.ts', 'staged.ts']);
+  });
+
+  it('says how to fix a base it cannot find', async () => {
+    await expect(createGitRepository(root).mergeBase('no-such-branch')).rejects.toThrow(/"no-such-branch".*fetch/);
   });
 });
