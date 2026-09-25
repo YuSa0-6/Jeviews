@@ -83,16 +83,17 @@ npm にはまだ公開していません。それまでは clone して `pnpm in
 
 ### 見る範囲
 
-`jeview` の直後に、見るファイルの範囲を書きます。
+`jeview` の直後に、見るファイルの範囲を書きます。省略すると `diff` を実行します。
 
 | 対象 | 見るファイル | 向いている場面 |
 | --- | --- | --- |
 | `all` | Git で追跡しているファイルすべて | リポジトリ全体から、先に読むファイルを決める |
-| `diff` | まだ `git add` していない変更があるファイル（`git diff` に出るもの） | commit の前に、自分の変更を確かめる |
+| `diff`（省略時） | まだ `git add` していない変更があるファイル（`git diff` に出るもの） | commit の前に、自分の変更を確かめる |
 | `diff --base <ref>` | `<ref>` から分かれた後に変わったファイル。commit 済みの変更も含む | 上がっている PR を確かめる |
 
 ```sh
-pnpm jeview diff > result.json
+pnpm jeview > result.json                         # jeview diff と同じ
+pnpm jeview --base origin/main > result.json      # jeview diff --base origin/main と同じ
 ```
 
 - どれもファイル全体を Jev に送り、ファイルごとに判定します
@@ -148,9 +149,21 @@ pnpm jeview diff > result.json
 
 `run.usage` にリクエスト数とトークン数が出るので、コストの見当も付きます。
 
+Jev に送らなかったファイルは、`exclusions[]` に理由付きで残ります。
+
+| reason | 意味 |
+| --- | --- |
+| `lock_file` | `pnpm-lock.yaml` などの lock ファイル |
+| `binary` | バイナリファイル |
+| `symlink` | シンボリックリンク。リンク先は、別に追跡しているファイルか Git の外の中身なので読みません |
+| `outside_repository` | 実際の場所がリポジトリの外にある（途中のディレクトリがリンクに置き換わっているなど） |
+| `deleted` | `diff` で消したファイル |
+| `read_failed: …` | 読めなかった。続けて理由が入る |
+
 ## 知っておくと安心なこと
 
 - ファイルの中身は API キーで指定した接続先にそのまま送られます。送りたくないファイルがあるリポジトリでは使わないでください
+- 送るのは、実際の場所がリポジトリの中にあるファイルの中身だけです。シンボリックリンクは、リンク先を読まずに除外します
 - Vercel AI Gateway の無料枠はレートリミットが厳しめです。大きなリポジトリでは `--concurrency` を下げるか TypeSafe 直結を使ってください
 - OpenRouter の Jev は alpha 版の Decisions API（`https://openrouter.ai/api/alpha/decisions`）を使います。API の形が予告なく変わることがあります
 - OpenRouter のクレジットが切れると HTTP 402 になり、`error.code` は `auth` になります
