@@ -39,8 +39,11 @@ commit の前の自分の変更や、上がっている PR の差分だけを確
 | TypeSafe 直結 | `TYPESAFE_API_KEY` | `jev-latest` |
 | Vercel AI Gateway | `AI_GATEWAY_API_KEY` | `typesafe-ai/jev` |
 | OpenRouter | `OPENROUTER_API_KEY` | `~typesafe/jev-latest` |
+| Cloudflare | `CLOUDFLARE_API_TOKEN` と `CLOUDFLARE_ACCOUNT_ID` | `typesafe/jev` |
 
 キーが複数あるときは、上の表の上から順に最初に見つかった接続先を使います。
+
+Cloudflare は `--provider cloudflare` を付けたときだけ使います。`CLOUDFLARE_API_TOKEN` は wrangler でのデプロイなど、AI 以外の用途でもよく設定されています。知らないうちにコードが送られないよう、指名したときに限っています。
 
 キーの渡し方は 3 つです。どれか 1 つで動きます。
 
@@ -120,7 +123,7 @@ pnpm jeview --base origin/main > result.json      # jeview diff --base origin/ma
 | オプション | 用途 |
 | --- | --- |
 | `--base <ref>` | `diff` で比べる起点を、HEAD が `<ref>` から分かれた地点にする。PR の差分を見るときに使う |
-| `--provider typesafe` / `vercel-gateway` / `openrouter` | 接続先を指定する。省略時はキーがあるものを上の表の順で使う |
+| `--provider typesafe` / `vercel-gateway` / `openrouter` / `cloudflare` | 接続先を指定する。省略時はキーがあるものを上の表の順で使う（Cloudflare は指定したときだけ） |
 | `--model <name>` | モデルを変える。既定は上の表のとおり。OpenRouter で版を固定するなら `typesafe/jev-1.13` |
 | `--max-state-bytes <n>` | これより大きいファイルは送らずに `NEED_REVIEW` にする |
 | `--concurrency <n>` | 同時に送るリクエスト数 |
@@ -167,6 +170,9 @@ Jev に送らなかったファイルは、`exclusions[]` に理由付きで残�
 - Vercel AI Gateway の無料枠はレートリミットが厳しめです。大きなリポジトリでは `--concurrency` を下げるか TypeSafe 直結を使ってください
 - OpenRouter の Jev は alpha 版の Decisions API（`https://openrouter.ai/api/alpha/decisions`）を使います。API の形が予告なく変わることがあります
 - OpenRouter のクレジットが切れると HTTP 402 になり、`error.code` は `auth` になります
+- Cloudflare の API トークンには「Account > Workers AI > Read」の権限が要ります。AI Gateway の権限だけのトークンは HTTP 401 になり、`error.code` は `auth` になります
+- Cloudflare の料金は、アカウントに入れたクレジット（Unified Billing）から引かれます。トークン単価は TypeSafe 直結と同じで、クレジットを買うときに 5% の手数料がかかります
+- Cloudflare の AI Gateway は、既定でリクエストの本文をログに保存します。jeview は `cf-aig-collect-log-payload: false` を付けて送るので、ログに残るのはトークン数や費用などのメタデータだけです
 - 判定は Jev の確率にもとづく目安です。最終的な判断は人が行う前提で作っています
 
 ## 困ったときは

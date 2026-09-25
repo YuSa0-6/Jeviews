@@ -13,19 +13,22 @@ import type { Repository } from './review/ports.js';
 import { DEFAULT_MAX_STATE_BYTES, reviewAll } from './review/review.js';
 import { DEFAULT_THRESHOLDS } from './review/verdict.js';
 
-const USAGE = `usage: jeview [<target>] [--base <ref>] [--provider typesafe|vercel-gateway|openrouter] [--model <name>] [--max-state-bytes <n>] [--concurrency <n>]
+const USAGE = `usage: jeview [<target>] [--base <ref>] [--provider typesafe|vercel-gateway|openrouter|cloudflare] [--model <name>] [--max-state-bytes <n>] [--concurrency <n>]
 
 target (files under the current directory, diff when omitted):
   all              every file tracked by Git
   diff             files with changes not yet staged, as listed by "git diff"
                    with --base <ref>: files changed since HEAD split from <ref>, as a pull request shows them
 
-provider (default: the first one below whose API key env is set):
+provider (default: the first one below whose API key env is set; cloudflare is used only when named):
   typesafe         TypeSafe API direct.       env TYPESAFE_API_KEY, optional TYPESAFE_BASE_URL (https://api.typesafe.ai)
   vercel-gateway   Vercel AI Gateway.         env AI_GATEWAY_API_KEY, optional AI_GATEWAY_BASE_URL (https://ai-gateway.vercel.sh/v4/ai)
                    default model typesafe-ai/jev
   openrouter       OpenRouter Decisions API.  env OPENROUTER_API_KEY, optional OPENROUTER_BASE_URL (https://openrouter.ai/api/v1)
                    default model ~typesafe/jev-latest
+  cloudflare       Cloudflare AI REST API.    env CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID,
+                   optional CLOUDFLARE_BASE_URL (https://api.cloudflare.com/client/v4)
+                   default model typesafe/jev
 `;
 
 function fail(code: string, message: string, provider: ProviderId | null = null): never {
@@ -241,7 +244,12 @@ async function main(): Promise<void> {
   loadEnvFiles();
   const { scope, opts } = parseCli(process.argv.slice(2));
   const providerId = opts.provider ?? detectProvider(process.env);
-  if (!providerId) fail('config', 'set TYPESAFE_API_KEY, AI_GATEWAY_API_KEY or OPENROUTER_API_KEY (see .env.example)');
+  if (!providerId) {
+    fail(
+      'config',
+      'set TYPESAFE_API_KEY, AI_GATEWAY_API_KEY or OPENROUTER_API_KEY, or pass --provider cloudflare with CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID (see .env.example)',
+    );
+  }
   const provider = providerOrFail(providerId, opts.model);
   const target = await listOrFail(createGitRepository(process.cwd()), scope, opts.base);
   process.stderr.write(`${describeTarget(target)}\n`);
