@@ -76,4 +76,6 @@ export interface Exclusion {
 export interface Repository {
   snapshotId(): Promise<string>;
   listAll(): Promise<{ files: TrackedFile[]; exclusions: Exclusion[] }>;
+  /** インデックスとの差分があるファイル。まだ git add していない変更で、作業ツリーの内容を読む。 */
+  listDiff(): Promise<{ files: TrackedFile[]; exclusions: Exclusion[] }>;
 }

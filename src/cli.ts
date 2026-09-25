@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// jeview all: Git 追跡ファイル全体を scan する最小 CLI。
+// jeview all / diff: Git 追跡ファイル全体、またはまだ git add していない変更のあるファイルを scan する最小 CLI。
 // stdout にバージョン付き JSON を一つ、進捗と診断は stderr。
 // 終了コード: 0 = 完了、1 = 失敗または部分結果。
 
@@ -7,11 +7,16 @@ import { writeSync } from 'node:fs';
 import { createAnalyzers } from './adapters/analyzers/index.js';
 import { createProviderFromEnv, detectProvider, isProviderId } from './adapters/providers/registry.js';
 import { createGitRepository } from './adapters/repository/git.js';
-import type { ProviderId, ReviewOutput } from './review/output.js';
+import type { ProviderId, ReviewOutput, Scope } from './review/output.js';
+import type { Repository } from './review/ports.js';
 import { DEFAULT_MAX_STATE_BYTES, reviewAll } from './review/review.js';
 import { DEFAULT_THRESHOLDS } from './review/verdict.js';
 
-const USAGE = `usage: jeview all [--provider typesafe|vercel-gateway|openrouter|cloudflare] [--model <name>] [--max-state-bytes <n>] [--concurrency <n>]
+const USAGE = `usage: jeview <target> [--provider typesafe|vercel-gateway|openrouter|cloudflare] [--model <name>] [--max-state-bytes <n>] [--concurrency <n>]
+
+target (files under the current directory):
+  all              every file tracked by Git
+  diff             files with changes not yet staged, as listed by "git diff"
 
 provider (default: the first one below whose API key env is set; cloudflare is used only when named):
   typesafe         TypeSafe API direct.       env TYPESAFE_API_KEY, optional TYPESAFE_BASE_URL (https://api.typesafe.ai)
@@ -29,7 +34,7 @@ function fail(code: string, message: string, provider: ProviderId | null = null)
     schemaVersion: 1,
     run: {
       id: '',
-      scope: 'all',
+      scope: requestedScope(),
       mode: 'scan',
       provider,
       model: '',
@@ -117,7 +122,23 @@ function providerOrFail(id: ProviderId, model: string | undefined) {
 
 const HELP_FLAGS = new Set(['--help', '-h']);
 
-function parseCommand(argv: string[]): string[] {
+/** 対象ごとのファイルの集め方。 */
+const LISTERS: Record<Scope, (repo: Repository) => ReturnType<Repository['listAll']>> = {
+  all: (repo) => repo.listAll(),
+  diff: (repo) => repo.listDiff(),
+};
+
+function isScope(v: string): v is Scope {
+  return Object.hasOwn(LISTERS, v);
+}
+
+/** 失敗時の JSON に載せる対象。argv の対象を読めないときは null */
+function requestedScope(): Scope | null {
+  const target = process.argv[2];
+  return target !== undefined && isScope(target) ? target : null;
+}
+
+function parseCommand(argv: string[]): { scope: Scope; rest: string[] } {
   const [cmd, ...rest] = argv;
   if (cmd === undefined) {
     process.stderr.write(USAGE);
@@ -127,15 +148,15 @@ function parseCommand(argv: string[]): string[] {
     process.stderr.write(USAGE);
     process.exit(0);
   }
-  if (cmd !== 'all') fail('config', `unsupported target "${cmd}". only "all" is implemented.\n${USAGE}`);
-  return rest;
+  if (!isScope(cmd)) fail('config', `unknown target "${cmd}"\n${USAGE}`);
+  return { scope: cmd, rest };
 }
 
-async function listOrFail(repo: ReturnType<typeof createGitRepository>) {
+async function listOrFail(repo: Repository, scope: Scope) {
   try {
     const snapshotId = await repo.snapshotId();
-    const { files, exclusions } = await repo.listAll();
-    return { snapshotId, files, exclusions };
+    const { files, exclusions } = await LISTERS[scope](repo);
+    return { scope, snapshotId, files, exclusions };
   } catch (e) {
     return fail('repository', (e as Error).message);
   }
@@ -189,7 +210,8 @@ function toDeps(
 
 async function main(): Promise<void> {
   loadEnvFiles();
-  const opts = parseArgs(parseCommand(process.argv.slice(2)));
+  const { scope, rest } = parseCommand(process.argv.slice(2));
+  const opts = parseArgs(rest);
   const providerId = opts.provider ?? detectProvider(process.env);
   if (!providerId) {
     fail(
@@ -198,9 +220,9 @@ async function main(): Promise<void> {
     );
   }
   const provider = providerOrFail(providerId, opts.model);
-  const target = await listOrFail(createGitRepository(process.cwd()));
+  const target = await listOrFail(createGitRepository(process.cwd()), scope);
   process.stderr.write(
-    `jeview all: ${target.files.length} files, ${target.exclusions.length} excluded, snapshot ${target.snapshotId}\n`,
+    `jeview ${scope}: ${target.files.length} files, ${target.exclusions.length} excluded, snapshot ${target.snapshotId}\n`,
   );
 
   const out = await reviewAll(toDeps(opts, provider, providerId, target));
