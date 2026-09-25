@@ -66,7 +66,7 @@ export interface Usage {
   costUsd: number | null;
 }
 
-export type ProviderId = 'typesafe' | 'vercel-gateway' | 'openrouter';
+export type ProviderId = 'typesafe' | 'vercel-gateway' | 'openrouter' | 'cloudflare';
 
 export interface ReviewOutput {
   schemaVersion: 1;
